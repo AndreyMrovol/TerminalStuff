@@ -83,7 +83,7 @@ namespace TerminalStuff
             {
                 int scannedEnemies = RoundManager.Instance.SpawnedEnemies.Count;
                 int getCreds = Plugin.instance.Terminal.groupCredits;
-                int costCreds = ConfigSettings.enemyScanCost.Value;
+                int costCreds = ConfigSettings.bioScanScanCost.Value;
 
                 if (ShouldRunBioscan2(getCreds, costCreds)) //upgraded bioscan
                 {

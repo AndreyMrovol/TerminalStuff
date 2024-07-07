@@ -2,7 +2,9 @@
 
 ## Completely configurable Terminal expansion mod! 40+ new commands, 5+ new features, QoL fixes, and much more
 
-## **For client-side only use, disable ModNetworking in config**
+## Updated for v55 update in version 3.2.4
+
+## **For client-side only use, disable ModNetworking in config (found in the "Networking" section)**
 
 ### Features:
  - **Near infinite** customizable keywords for a majority of commands

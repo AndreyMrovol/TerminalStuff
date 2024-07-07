@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.2.4]
+ ### Fixed/Changed
+ - Recompiled for compatibility with v55.
+ - Moved more configuration options around. Sections have been condensed.
+ - Updated config option name [enemyScanCost] to [bioScanScanCost] for clarity as to what this is
+
 ## [3.2.3]
  ### Added
  - Added new Quality of Life features

@@ -98,7 +98,7 @@ namespace TerminalStuff
         public static ConfigEntry<int> vitalsCost { get; internal set; } //Cost of Vitals Command
         public static ConfigEntry<int> vitalsUpgradeCost { get; internal set; } //Cost of Vitals Upgrade Command
         public static ConfigEntry<int> bioScanUpgradeCost { get; internal set; } //Cost of Enemy Scan Upgrade Command
-        public static ConfigEntry<int> enemyScanCost { get; internal set; } //Cost of Enemy Scan Command
+        public static ConfigEntry<int> bioScanScanCost { get; internal set; } //Cost of Enemy Scan Command
 
         //Other config items
         public static ConfigEntry<int> gambleMinimum { get; internal set; } //Minimum amount of credits needed to gamble
@@ -191,15 +191,15 @@ namespace TerminalStuff
             Plugin.Log.LogInfo("Binding configuration settings");
 
             //Network Configs
-            networkedNodes = MakeBool("Networked Things", "networkedNodes", false, "Enable networked Always-On Display & displaying synced terminal nodes (BETA)");
-            ModNetworking = MakeBool("General", "ModNetworking", true, "Disable this if you want to disable networking and use this mod as a Client-sided mod");
-            terminalClock = MakeBool("General", "terminalClock", true, "Enable or Disable the terminalClock");
+            networkedNodes = MakeBool("Networking", "networkedNodes", false, "Enable networked Always-On Display & displaying synced terminal nodes (BETA)");
+            ModNetworking = MakeBool("Networking", "ModNetworking", true, "Disable this if you want to disable networking and use this mod as a Client-sided mod");
+            terminalClock = MakeBool("Controls Configuration", "terminalClock", true, "Enable or Disable the terminalClock");
             walkieTerm = MakeBool("Quality of Life", "walkieTerm", true, "Enable or Disable the ability to use a walkie from your inventory at the terminal (vanilla method still works)");
-            terminalShortcuts = MakeBool("General", "terminalShortcuts", true, "Enable this for the ability to bind commands to any valid key (also enables the \"bind\" keyword.");
+            terminalShortcuts = MakeBool("Quality of Life", "terminalShortcuts", true, "Enable this for the ability to bind commands to any valid key (also enables the \"bind\" keyword.");
             extensiveLogging = MakeBool("Debug", "extensiveLogging", false, "Enable or Disable extensive logging for this mod.");
             developerLogging = MakeBool("Debug", "developerLogging", false, "Enable or Disable developer logging for this mod. (this will fill your log file FAST)");
-            keyActionsConfig = MakeString("Terminal Shortcuts", "keyActionsConfig", "", "Stored keybinds, don't modify this unless you know what you're doing!");
-            purchasePackCommands = MakeString("Purchase packs", "purchasePackCommands", "Essentials:pro,shov,walkie;PortalPack:teleporter,inverse", "List of purchase pack commands to create. Format is command:item1,item2,etc.;next command:item1,item2");
+            keyActionsConfig = MakeString("Quality of Life", "keyActionsConfig", "", "Stored keybinds, don't modify this unless you know what you're doing!");
+            purchasePackCommands = MakeString("Comfort Configuration", "purchasePackCommands", "Essentials:pro,shov,walkie;PortalPack:teleporter,inverse", "List of purchase pack commands to create. Format is command:item1,item2,etc.;next command:item1,item2");
 
 
             //keybinds
@@ -207,7 +207,7 @@ namespace TerminalStuff
             walkieTermMB = MakeString("Quality of Life", "walkieTermMB", "Left", "Mousebutton used to activate your walkie while at the terminal, see here for valid button names https://docs.unity3d.com/Packages/com.unity.inputsystem@1.3/api/UnityEngine.InputSystem.LowLevel.MouseButton.html");
 
             //Cams Mod Config
-            camsUseDetectedMods = MakeBool("General", "camsUseDetectedMods", true, "With this enabled, this mod will detect if another mod that adds player cams is enabled and use the mod's camera for all cams commands. Currently detects the following: Helmet Cameras by Rick Arg, Body Cameras by Solo, OpenBodyCams by ");
+            camsUseDetectedMods = MakeBool("Extras Configuration", "camsUseDetectedMods", true, "With this enabled, this mod will detect if another mod that adds player cams is enabled and use the mod's camera for all cams commands. Currently detects the following: Helmet Cameras by Rick Arg, Body Cameras by Solo, OpenBodyCams by ");
 
             //enable or disable
             terminalLobby = MakeBool("Comfort Commands (On/Off)", "terminalLobby", true, "Shows the current lobby name <Lobby Name>");
@@ -251,63 +251,63 @@ namespace TerminalStuff
             terminalRouteRandom = MakeBool("Fun Commands (On/Off)", "terminalRouteRandom", true, "Command to route to a random planet, configurable <Previous>");
             terminalPurchasePacks = MakeBool("Comfort Commands (On/Off)", "terminalPurchasePacks", true, "Use [purchasePackCommands] to create purchase packs that contain multiple store items in one run of the command");
             
-            routeRandomBannedWeather = MakeString("Route Random", "routeRandomBannedWeather", "Eclipsed;Flooded;Foggy", "This semi-colon separated list is all keywords that can be used in terminal to return <alwayson> command");
-            routeRandomCost = MakeClampedInt("Route Random", "routeRandomCost", 100, "Flat rate for running the route random command to get a random moon...", 0, 99999);
+            routeRandomBannedWeather = MakeString("Fun Configuration", "routeRandomBannedWeather", "Eclipsed;Flooded;Foggy", "This semi-colon separated list is all keywords that can be used in terminal to return <alwayson> command");
+            routeRandomCost = MakeClampedInt("Fun Configuration", "routeRandomCost", 100, "Flat rate for running the route random command to get a random moon...", 0, 99999);
 
             //String Configs
-            doorOpenString = MakeString("Door", "doorOpenString", "Opening door.", "Message returned on door (open) command.");
-            doorCloseString = MakeString("Door", "doorCloseString", "Closing door.", "Message returned on door (close) command.");
-            doorSpaceString = MakeString("Door", "doorSpaceString", "Can't open doors in space.", "Message returned on door (inSpace) command.");
-            canOpenDoorInSpace = MakeBool("Door", "canOpenDoorInSpace", false, "Set this to true to allow for pressing the button to open the door in space. (does not change whether the door can actually be opened)");
-            quitString = MakeString("Quit", "quitString", "goodbye!", "Message returned on quit command.");
-            leverString = MakeString("Lever", "leverString", "PULLING THE LEVER!!!", "Message returned on lever pull command.");
-            videoStartString = MakeString("Video", "videoStartString", "lol.", "Message displayed when first playing a video.");
-            videoStopString = MakeString("Video", "videoStopString", "No more lol.", "Message displayed if you want to end video playback early.");
-            tpMessageString = MakeString("Teleporters", "tpMessageString", "Teleport Button pressed.", "Message returned when TP command is run.");
-            itpMessageString = MakeString("Teleporters", "itpMessageString", "Inverse Teleport Button pressed.", "Message returned when ITP command is run.");
-            vitalsPoorString = MakeString("Vitals", "vitalsPoorString", "You can't afford to run this command.", "Message returned when you don't have enough credits to run the <Vitals> command.");
-            vitalsUpgradePoor = MakeString("Vitals", "vitalsUpgradePoor", "You can't afford to upgrade the Vitals Scanner.", "Message returned when you don't have enough credits to unlock the vitals scanner upgrade.");
-            healIsFullString = MakeString("Heal", "healIsFullString", "You are full health!", "Message returned when heal command is run and player is already full health.");
-            healString = MakeString("Heal", "healString", "The terminal healed you?!?", "Message returned when heal command is run and player is healed.");
-            camString = MakeString("Cams", "camString", "(CAMS)", "Message returned when enabling Cams command (cams).");
-            camString2 = MakeString("Cams", "camString2", "Cameras disabled.", "Message returned when disabling Cams command (cams).");
-            mapString = MakeString("Cams", "mapString", "(MAP)", "Message returned when enabling map command (map).");
-            mapString2 = MakeString("Cams", "mapString2", "Map View disabled.", "Message returned when disabling map command (map).");
-            ovString = MakeString("Cams", "ovString", "(Overlay)", "Message returned when enabling Overlay command (overlay).");
-            ovString2 = MakeString("Cams", "ovString2", "Overlay disabled.", "Message returned when disabling Overlay command (overlay).");
-            mmString = MakeString("Cams", "mmString", "(MiniMap)", "Message returned when enabling minimap command (minimap).");
-            mmString2 = MakeString("Cams", "mmString2", "MiniMap disabled.", "Message returned when disabling minimap command (minimap).");
-            mcString = MakeString("Cams", "mcString", "(MiniCams)", "Message returned when enabling minicams command (minicams).");
-            mcString2 = MakeString("Cams", "mcString2", "MiniCams disabled.", "Message returned when disabling minicams command (minicams).");
+            doorOpenString = MakeString("Controls Configuration", "doorOpenString", "Opening door.", "Message returned on door (open) command.");
+            doorCloseString = MakeString("Controls Configuration", "doorCloseString", "Closing door.", "Message returned on door (close) command.");
+            doorSpaceString = MakeString("Controls Configuration", "doorSpaceString", "Can't open doors in space.", "Message returned on door (inSpace) command.");
+            canOpenDoorInSpace = MakeBool("Controls Configuration", "canOpenDoorInSpace", false, "Set this to true to allow for pressing the button to open the door in space. (does not change whether the door can actually be opened)");
+            quitString = MakeString("Comfort Configuration", "quitString", "goodbye!", "Message returned on quit command.");
+            leverString = MakeString("Controls Configuration", "leverString", "PULLING THE LEVER!!!", "Message returned on lever pull command.");
+            videoStartString = MakeString("Fun Configuration", "videoStartString", "lol.", "Message displayed when first playing a video.");
+            videoStopString = MakeString("Fun Configuration", "videoStopString", "No more lol.", "Message displayed if you want to end video playback early.");
+            tpMessageString = MakeString("Controls Configuration", "tpMessageString", "Teleport Button pressed.", "Message returned when TP command is run.");
+            itpMessageString = MakeString("Controls Configuration", "itpMessageString", "Inverse Teleport Button pressed.", "Message returned when ITP command is run.");
+            vitalsPoorString = MakeString("Upgrades", "vitalsPoorString", "You can't afford to run this command.", "Message returned when you don't have enough credits to run the <Vitals> command.");
+            vitalsUpgradePoor = MakeString("Upgrades", "vitalsUpgradePoor", "You can't afford to upgrade the Vitals Scanner.", "Message returned when you don't have enough credits to unlock the vitals scanner upgrade.");
+            healIsFullString = MakeString("Comfort Configuration", "healIsFullString", "You are full health!", "Message returned when heal command is run and player is already full health.");
+            healString = MakeString("Comfort Configuration", "healString", "The terminal healed you?!?", "Message returned when heal command is run and player is healed.");
+            camString = MakeString("Fun Configuration", "camString", "(CAMS)", "Message returned when enabling Cams command (cams).");
+            camString2 = MakeString("Fun Configuration", "camString2", "Cameras disabled.", "Message returned when disabling Cams command (cams).");
+            mapString = MakeString("Fun Configuration", "mapString", "(MAP)", "Message returned when enabling map command (map).");
+            mapString2 = MakeString("Fun Configuration", "mapString2", "Map View disabled.", "Message returned when disabling map command (map).");
+            ovString = MakeString("Fun Configuration", "ovString", "(Overlay)", "Message returned when enabling Overlay command (overlay).");
+            ovString2 = MakeString("Fun Configuration", "ovString2", "Overlay disabled.", "Message returned when disabling Overlay command (overlay).");
+            mmString = MakeString("Fun Configuration", "mmString", "(MiniMap)", "Message returned when enabling minimap command (minimap).");
+            mmString2 = MakeString("Fun Configuration", "mmString2", "MiniMap disabled.", "Message returned when disabling minimap command (minimap).");
+            mcString = MakeString("Fun Configuration", "mcString", "(MiniCams)", "Message returned when enabling minicams command (minicams).");
+            mcString2 = MakeString("Fun Configuration", "mcString2", "MiniCams disabled.", "Message returned when disabling minicams command (minicams).");
 
-            customLink = MakeString("Link", "customLink", "https://thunderstore.io/c/lethal-company/p/darmuh/darmuhsTerminalStuff/", "URL to send players to when using the \"link\" command.");
-            customLinkHint = MakeString("Link", "customLinkHint", "Go to a specific web page.", "Hint given to players in extras menu for \"link\" command.");
-            customLink2 = MakeString("Link", "customLink2", "https://github.com/darmuh/TerminalStuff", "URL to send players to when using the second \"link\" command.");
-            customLink2Hint = MakeString("Link", "customLink2Hint", "Go to a specific web page.", "Hint given to players in extras menu for \"link\" command.");
+            customLink = MakeString("Extras Configuration", "customLink", "https://thunderstore.io/c/lethal-company/p/darmuh/darmuhsTerminalStuff/", "URL to send players to when using the \"link\" command.");
+            customLinkHint = MakeString("Extras Configuration", "customLinkHint", "Go to a specific web page.", "Hint given to players in extras menu for \"link\" command.");
+            customLink2 = MakeString("Extras Configuration", "customLink2", "https://github.com/darmuh/TerminalStuff", "URL to send players to when using the second \"link\" command.");
+            customLink2Hint = MakeString("Extras Configuration", "customLink2Hint", "Go to a specific web page.", "Hint given to players in extras menu for \"link\" command.");
 
             //Cost configs
-            vitalsCost = Plugin.instance.Config.Bind<int>("Vitals", "vitalsCost", 10, "Credits cost to run Vitals Command each time it's run.");
-            vitalsUpgradeCost = Plugin.instance.Config.Bind<int>("Vitals", "vitalsUpgradeCost", 200, "Credits cost to upgrade Vitals command to not cost credits anymore.");
-            bioScanUpgradeCost = Plugin.instance.Config.Bind<int>("BioScan", "bioScanUpgradeCost", 300, "Credits cost to upgrade Bioscan command to provide detailed information on scanned enemies.");
-            enemyScanCost = Plugin.instance.Config.Bind<int>("BioScan", "enemyScanCost", 15, "Credits cost to run Bioscan command each time it's run.");
+            vitalsCost = Plugin.instance.Config.Bind<int>("Upgrades", "vitalsCost", 10, "Credits cost to run Vitals Command each time it's run.");
+            vitalsUpgradeCost = Plugin.instance.Config.Bind<int>("Upgrades", "vitalsUpgradeCost", 200, "Credits cost to upgrade Vitals command to not cost credits anymore.");
+            bioScanUpgradeCost = Plugin.instance.Config.Bind<int>("Upgrades", "bioScanUpgradeCost", 300, "Credits cost to upgrade Bioscan command to provide detailed information on scanned enemies.");
+            bioScanScanCost = Plugin.instance.Config.Bind<int>("Upgrades", "bioScanScanCost", 15, "Credits cost to run Bioscan command each time it's run. (scans for enemy information)");
 
             //Other configs
-            gambleMinimum = Plugin.instance.Config.Bind<int>("Gamble", "gambleMinimum", 0, "Credits needed to start gambling, 0 means you can gamble everything.");
-            gamblePityMode = MakeBool("Gamble", "gamblePityMode", false, "Enable Gamble Pity Mode, which gives credits back to those who lose everything.");
-            gamblePityCredits = Plugin.instance.Config.Bind<int>("Gamble", "gamblePityCredits", 10, "If Gamble Pity Mode is enabled, specify how much Pity Credits are given to losers. (Max: 60)");
-            gamblePoorString = MakeString("Gamble", "gamblePoorString", "You don't meet the minimum credits requirement to gamble.", "Message returned when your credits is less than the gambleMinimum set.");
-            videoFolderPath = MakeString("Video", "videoFolderPath", "darmuh-darmuhsTerminalStuff", "Folder name where videos will be pulled from, needs to be in BepInEx/plugins");
-            videoSync = MakeBool("Video", "videoSync", true, "When networking is enabled, this setting will sync videos being played on the terminal for all players whose terminal screen is on.");
-            leverConfirmOverride = MakeBool("Lever", "leverConfirmOverride", false, "Setting this to true will disable the confirmation check for the <lever> command.");
-            restartConfirmOverride = MakeBool("Restart", "restartConfirmOverride", false, "Setting this to true will disable the confirmation check for the <restart> command.");
-            obcResolutionMirror = MakeString("Cams", "obcResolutionMirror", "1000; 700", "Set the resolution of the Mirror Camera created with OpenBodyCams for darmuhsTerminalStuff");
-            obcResolutionBodyCam = MakeString("Cams", "obcResolutionBodyCam", "1000; 700", "Set the resolution of the Body Camera created with OpenBodyCams for darmuhsTerminalStuff");
-            camsNeverHide = MakeBool("Cams", "camsNeverHide", false, "Setting this to true will make it so no command will ever auto-hide any cams command.");
-            defaultCamsView = Plugin.instance.Config.Bind("Cams", "defaultCamsView", "cams", new ConfigDescription("Set the default view switch commands will use when nothing is active.", new AcceptableValueList<string>("map", "cams", "minimap", "minicams", "overlay")));
-            ovOpacity = Plugin.instance.Config.Bind("Cams", "ovOpacity", 10, new ConfigDescription("Opacity percentage for Overlay View.", new AcceptableValueRange<int>(0, 100)));
-            alwaysOnAtStart = MakeBool("AlwaysOn", "alwaysOnAtStart", true, "Setting this to true will set <alwayson> to enabled at launch.");
-            alwaysOnDynamic = MakeBool("AlwaysOn", "alwaysOnDynamic", true, "Setting this to true will disable the terminal screen whenever you are not on the ship when alwayson is enabled.");
-            alwaysOnWhileDead = MakeBool("AlwaysOn", "alwaysOnWhileDead", false, "Set this to true if you wish to keep the screen on after death.");
+            gambleMinimum = Plugin.instance.Config.Bind<int>("Fun Configuration", "gambleMinimum", 0, "Credits needed to start gambling, 0 means you can gamble everything.");
+            gamblePityMode = MakeBool("Fun Configuration", "gamblePityMode", false, "Enable Gamble Pity Mode, which gives credits back to those who lose everything.");
+            gamblePityCredits = Plugin.instance.Config.Bind<int>("Fun Configuration", "gamblePityCredits", 10, "If Gamble Pity Mode is enabled, specify how much Pity Credits are given to losers. (Max: 60)");
+            gamblePoorString = MakeString("Fun Configuration", "gamblePoorString", "You don't meet the minimum credits requirement to gamble.", "Message returned when your credits is less than the gambleMinimum set.");
+            videoFolderPath = MakeString("Fun Configuration", "videoFolderPath", "darmuh-darmuhsTerminalStuff", "Folder name where videos will be pulled from, needs to be in BepInEx/plugins");
+            videoSync = MakeBool("Fun Configuration", "videoSync", true, "When networking is enabled, this setting will sync videos being played on the terminal for all players whose terminal screen is on.");
+            leverConfirmOverride = MakeBool("Controls Configuration", "leverConfirmOverride", false, "Setting this to true will disable the confirmation check for the <lever> command.");
+            restartConfirmOverride = MakeBool("Controls Configuration", "restartConfirmOverride", false, "Setting this to true will disable the confirmation check for the <restart> command.");
+            obcResolutionMirror = MakeString("Extras Configuration", "obcResolutionMirror", "1000; 700", "Set the resolution of the Mirror Camera created with OpenBodyCams for darmuhsTerminalStuff");
+            obcResolutionBodyCam = MakeString("Extras Configuration", "obcResolutionBodyCam", "1000; 700", "Set the resolution of the Body Camera created with OpenBodyCams for darmuhsTerminalStuff");
+            camsNeverHide = MakeBool("Extras Configuration", "camsNeverHide", false, "Setting this to true will make it so no command will ever auto-hide any cams command.");
+            defaultCamsView = Plugin.instance.Config.Bind("Extras Configuration", "defaultCamsView", "cams", new ConfigDescription("Set the default view switch commands will use when nothing is active.", new AcceptableValueList<string>("map", "cams", "minimap", "minicams", "overlay")));
+            ovOpacity = Plugin.instance.Config.Bind("Extras Configuration", "ovOpacity", 10, new ConfigDescription("Opacity percentage for Overlay View.", new AcceptableValueRange<int>(0, 100)));
+            alwaysOnAtStart = MakeBool("Quality of Life", "alwaysOnAtStart", true, "Setting this to true will set <alwayson> to enabled at launch.");
+            alwaysOnDynamic = MakeBool("Quality of Life", "alwaysOnDynamic", true, "Setting this to true will disable the terminal screen whenever you are not on the ship when alwayson is enabled.");
+            alwaysOnWhileDead = MakeBool("Quality of Life", "alwaysOnWhileDead", false, "Set this to true if you wish to keep the screen on after death.");
 
 
             //Keyword configs (multiple per config item)
@@ -347,12 +347,12 @@ namespace TerminalStuff
 
 
             //homescreen lines
-            homeLine1 = MakeString("Home Page", "homeline1", "Welcome to the FORTUNE-9 OS PLUS", "First line of the home command (startup screen)");
-            homeLine2 = MakeString("Home Page", "homeline2", "\tUpgraded by Employee: <color=#e6b800>darmuh</color>", "Second line of the home command (startup screen)");
-            homeLine3 = MakeString("Home Page", "homeline3", "Have a wonderful [currentDay]!", "Last line of the home command (startup screen)");
-            homeHelpLines = MakeString("Home Page", "homeHelpLines", ">>Type \"Help\" for a list of commands.\r\n>>Type <color=#b300b3>\"More\"</color> for a menu of darmuh's commands.\r\n", "these two lines should generally be used to point to menus of other usable commands. Can also be expanded to more than two lines by using \"\\r\\n\" to indicate a new line");
+            homeLine1 = MakeString("Terminal Customization", "homeline1", "Welcome to the FORTUNE-9 OS PLUS", "First line of the home command (startup screen)");
+            homeLine2 = MakeString("Terminal Customization", "homeline2", "\tUpgraded by Employee: <color=#e6b800>darmuh</color>", "Second line of the home command (startup screen)");
+            homeLine3 = MakeString("Terminal Customization", "homeline3", "Have a wonderful [currentDay]!", "Last line of the home command (startup screen)");
+            homeHelpLines = MakeString("Terminal Customization", "homeHelpLines", ">>Type \"Help\" for a list of commands.\r\n>>Type <color=#b300b3>\"More\"</color> for a menu of darmuh's commands.\r\n", "these two lines should generally be used to point to menus of other usable commands. Can also be expanded to more than two lines by using \"\\r\\n\" to indicate a new line");
             
-            homeTextArt = MakeString("Home Page", "homeTextArt", "[leadingSpacex4][leadingSpace]<color=#e6b800>^^      .-=-=-=-.  ^^\r\n ^^        (`-=-=-=-=-`)         ^^\r\n         (`-=-=-=-=-=-=-`)  ^^         ^^\r\n   ^^   (`-=-=-=-=-=-=-=-`)   ^^          \r\n       ( `-=-=-=-(@)-=-=-` )      ^^\r\n       (`-=-=-=-=-=-=-=-=-`)  ^^          \r\n       (`-=-=-=-=-=-=-=-=-`)  ^^\r\n        (`-=-=-=-=-=-=-=-`)          ^^\r\n         (`-=-=-=-=-=-=-`)  ^^            \r\n           (`-=-=-=-=-`)\r\n            `-=-=-=-=-`</color>", "ASCII Art goes here");
+            homeTextArt = MakeString("Terminal Customization", "homeTextArt", "[leadingSpacex4][leadingSpace]<color=#e6b800>^^      .-=-=-=-.  ^^\r\n ^^        (`-=-=-=-=-`)         ^^\r\n         (`-=-=-=-=-=-=-`)  ^^         ^^\r\n   ^^   (`-=-=-=-=-=-=-=-`)   ^^          \r\n       ( `-=-=-=-(@)-=-=-` )      ^^\r\n       (`-=-=-=-=-=-=-=-=-`)  ^^          \r\n       (`-=-=-=-=-=-=-=-=-`)  ^^\r\n        (`-=-=-=-=-=-=-=-`)          ^^\r\n         (`-=-=-=-=-=-=-`)  ^^            \r\n           (`-=-=-=-=-`)\r\n            `-=-=-=-=-`</color>", "ASCII Art goes here");
 
             //Quality of Life Stuff
             LockCameraInTerminal = MakeBool("Quality of Life", "LockCameraInTerminal", false, "Enable this to lock the player camera to the terminal when it is in use.");
@@ -423,6 +423,7 @@ namespace TerminalStuff
                         Plugin.Log.LogWarning($"Setting {configItem.Definition.Key} to false. Networking is disabled and this setting requires networking!");
                     }
                 }
+                Plugin.instance.Config.Save(); //added in 3.2.4
             }
 
             Plugin.Log.LogInfo("Networking check complete.");
