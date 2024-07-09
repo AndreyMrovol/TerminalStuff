@@ -6,6 +6,7 @@ using System.Text;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using static TerminalStuff.DynamicCommands;
 using static TerminalStuff.GetFromConfig;
 using static TerminalStuff.NoMoreAPI.TerminalHook;
@@ -170,7 +171,7 @@ namespace TerminalStuff
             if (keywordAndItems.Count == 0)
                 return;
 
-            foreach(KeyValuePair<string, string> item in keywordAndItems)
+            foreach (KeyValuePair<string, string> item in keywordAndItems)
             {
                 Plugin.Spam($"setting {item.Key} keyword to purchase pack with items: {item.Value}");
                 MakeStoreCommand($"{item.Key}", $"{item.Key}", $"{item.Key}", false, true, false, "", $"You have cancelled the purchase of Purchase Pack [{item.Key}.]\r\n\r\n", 0, CostCommands.AskPurchasePack, CostCommands.CompletePurchasePack, $"{item.Value}", darmuhsTerminalStuff);
@@ -473,15 +474,15 @@ namespace TerminalStuff
             }
         }
 
-        internal static void ShouldDisableTerminalLight(bool value)
+        internal static void ShouldDisableTerminalLight(bool value, string setting)
         {
-            if(!ConfigSettings.DisableTerminalLight.Value)
+            if (setting == "nochange")
                 return;
 
-            if(Plugin.instance.Terminal.terminalLight.enabled == value)
+            if (Plugin.instance.Terminal.terminalLight.enabled == value)
             {
                 Plugin.instance.Terminal.terminalLight.enabled = !value;
-                Plugin.MoreLogs($"terminalLight set to {!value}");
+                Plugin.MoreLogs($"terminalLight set to {!value} for setting: {setting}");
             }
 
         }
@@ -499,11 +500,20 @@ namespace TerminalStuff
             }
             else
                 Plugin.MoreLogs("termMesh is null");
-                
-            
+
+
             Plugin.instance.Terminal.screenText.textComponent.color = ColorCommands.HexToColor(ConfigSettings.TerminalTextColor.Value);
             Plugin.instance.Terminal.topRightText.color = ColorCommands.HexToColor(ConfigSettings.TerminalMoneyColor.Value);
             Plugin.instance.Terminal.screenText.caretColor = ColorCommands.HexToColor(ConfigSettings.TerminalCaretColor.Value);
+            Plugin.instance.Terminal.scrollBarVertical.image.color = ColorCommands.HexToColor(ConfigSettings.TerminalScrollbarColor.Value);
+            Plugin.instance.Terminal.scrollBarVertical.gameObject.GetComponent<Image>().color = ColorCommands.HexToColor(ConfigSettings.TerminalScrollBGColor.Value);
+            Plugin.instance.Terminal.terminalLight.color = ColorCommands.HexToColor(ConfigSettings.TerminalLightColor.Value);
+
+            if (TerminalClockStuff.textComponent != null)
+            {
+                Plugin.MoreLogs("setting clock color to: {}");
+                TerminalClockStuff.textComponent.color = ColorCommands.HexToColor(ConfigSettings.TerminalClockColor.Value);
+            }
         }
     }
 }

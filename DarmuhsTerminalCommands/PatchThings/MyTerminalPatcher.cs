@@ -12,6 +12,7 @@ using static TerminalStuff.TerminalEvents;
 using static TerminalStuff.AlwaysOnStuff;
 using GameNetcodeStuff;
 using UnityEngine.InputSystem;
+using static IngamePlayerSettings;
 
 
 namespace TerminalStuff
@@ -271,6 +272,9 @@ namespace TerminalStuff
                         firstload = true;
                     }
 
+                    if (ConfigSettings.TerminalLightBehaviour.Value == "alwayson")
+                        ShouldDisableTerminalLight(false, "alwayson");
+
                 }
             }
 
@@ -520,7 +524,13 @@ namespace TerminalStuff
         {
             static void Postfix()
             {
-                ShouldDisableTerminalLight(ConfigSettings.DisableTerminalLight.Value);
+                string setting = ConfigSettings.TerminalLightBehaviour.Value;
+                if (setting == "nochange")
+                    return;
+                else if (setting == "disable")
+                    ShouldDisableTerminalLight(true, setting);
+                else if (setting == "alwayson")
+                    ShouldDisableTerminalLight(false, setting);
             }
         }
 

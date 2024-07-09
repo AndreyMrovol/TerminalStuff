@@ -11,10 +11,11 @@ namespace TerminalStuff
         {
             if (dynamicStatus)
                 yield break;
+
             Plugin.MoreLogs("Starting AlwaysOnDynamic Coroutine");
             dynamicStatus = true;
 
-            while (DisableScreenOnDeath() && !MoreCommands.keepAlwaysOnDisabled)
+            while (instance.terminalUIScreen.gameObject != null && !MoreCommands.keepAlwaysOnDisabled)
             {
                 if (!StartOfRound.Instance.localPlayerController.isInHangarShipRoom && instance.terminalUIScreen.gameObject.activeSelf)
                 {
@@ -24,6 +25,8 @@ namespace TerminalStuff
                         QuitPatch.TerminalCameraStatus(false);
 
                     Plugin.Spam("Disabling terminal screen.");
+                    if (ConfigSettings.TerminalLightBehaviour.Value == "alwayson")
+                        TerminalEvents.ShouldDisableTerminalLight(true, "alwayson");
                 }
                 else if (StartOfRound.Instance.localPlayerController.isInHangarShipRoom && !instance.terminalUIScreen.gameObject.activeSelf)
                 {
@@ -33,6 +36,8 @@ namespace TerminalStuff
                         QuitPatch.TerminalCameraStatus(true);
 
                     Plugin.Spam("Enabling terminal screen.");
+                    if (ConfigSettings.TerminalLightBehaviour.Value == "alwayson")
+                        TerminalEvents.ShouldDisableTerminalLight(false, "alwayson");
                 }
 
                 yield return new WaitForSeconds(0.5f);
@@ -48,6 +53,8 @@ namespace TerminalStuff
                 }
 
                 Plugin.Spam("Player detected dead, disabling terminal screen.");
+                if (ConfigSettings.TerminalLightBehaviour.Value == "alwayson")
+                    TerminalEvents.ShouldDisableTerminalLight(false, "alwayson");
             }
 
             dynamicStatus = false; //end of coroutine, opening this up again for another run

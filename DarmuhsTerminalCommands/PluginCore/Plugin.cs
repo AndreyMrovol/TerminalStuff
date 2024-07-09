@@ -29,7 +29,7 @@ namespace TerminalStuff
         {
             public const string PLUGIN_GUID = "darmuh.TerminalStuff";
             public const string PLUGIN_NAME = "darmuhsTerminalStuff";
-            public const string PLUGIN_VERSION = "3.2.4";
+            public const string PLUGIN_VERSION = "3.2.5";
         }
 
         internal static ManualLogSource Log;

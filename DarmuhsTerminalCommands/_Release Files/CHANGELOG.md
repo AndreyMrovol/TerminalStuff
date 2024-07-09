@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.2.5] **CURRENT VERISON**
+ ### Added
+ - New Quality of Life feature which will keep the terminalLight on whenever the screen is on.
+	- This has been added as an option for the [TerminalLightBehaviour] configuration option.
+	- set [TerminalLightBehaviour] to alwayson to try this new feature!
+ - Added customization items for the following:
+	- [TerminalScrollbarColor] change the color of the scrollbar
+	- [TerminalScrollBGColor] change the color of the background portion of the scrollbar
+	- [TerminalClockColor] change the color of the clock text item that is added via [terminalClock]
+	- [TerminalLightColor] change the color of the Terminal Light
+
+ ### Fixed/Changed
+ - Moved [terminalClock] to Quality of Life section and updated description.
+ - Fixed recently introduced issue where alwaysondynamic was not actually disabling the terminal screen when leaving the ship if you had [alwaysOnWhileDead] disabled
+
+	
 ## [3.2.4]
  ### Fixed/Changed
  - Recompiled for compatibility with v55.
@@ -142,7 +158,8 @@ This project does NOT adhere to perfect Semantic Versioning. Mostly because I do
 	- Added better handling for Always On Dynamic, may see slight performance increase.
 	- Adding config item to keep monitors on after death [alwaysOnWhileDead]
  - Improved Terminal Clock feature, will now display on terminal when screen is on (additional compatibility with alwayson feature introduced)
-	- Improved handling of terminal clock feature, may see slight performance increase.
+	- Improved handling of terminal 
+	- feature, may see slight performance increase.
  - Improved home-brew camera creation/handling
 	- Home-brew camera mask should now be up to standards with most other mods that use cameras. Thanks again to Zaggy for all the pointers.
 	- Targeting system for both mirror/bodycams has been improved as well.

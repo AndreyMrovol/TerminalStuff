@@ -165,7 +165,7 @@ namespace TerminalStuff
 
         //Quality of Life features
         public static ConfigEntry<bool> LockCameraInTerminal { get; internal set; }
-        public static ConfigEntry<bool> DisableTerminalLight { get; internal set; }
+        public static ConfigEntry<string> TerminalLightBehaviour { get; internal set; }
         public static ConfigEntry<bool> TerminalAutoComplete { get; internal set; }
         public static ConfigEntry<string> TerminalAutoCompleteKey { get; internal set; }
         public static ConfigEntry<int> TerminalAutoCompleteMaxCount { get; internal set; }
@@ -178,6 +178,11 @@ namespace TerminalStuff
         public static ConfigEntry<string> TerminalTextColor { get; internal set; }
         public static ConfigEntry<string> TerminalMoneyColor { get; internal set; }
         public static ConfigEntry<string> TerminalCaretColor { get; internal set; }
+        public static ConfigEntry<string> TerminalScrollbarColor { get; internal set; }
+        public static ConfigEntry<string> TerminalScrollBGColor { get; internal set; }
+        public static ConfigEntry<string> TerminalClockColor { get; internal set; }
+        public static ConfigEntry<string> TerminalLightColor { get; internal set; }
+
 
 
 
@@ -193,7 +198,7 @@ namespace TerminalStuff
             //Network Configs
             networkedNodes = MakeBool("Networking", "networkedNodes", false, "Enable networked Always-On Display & displaying synced terminal nodes (BETA)");
             ModNetworking = MakeBool("Networking", "ModNetworking", true, "Disable this if you want to disable networking and use this mod as a Client-sided mod");
-            terminalClock = MakeBool("Controls Configuration", "terminalClock", true, "Enable or Disable the terminalClock");
+            terminalClock = MakeBool("Quality of Life", "terminalClock", false, "Enable or Disable the terminalClock feature in it's entirety");
             walkieTerm = MakeBool("Quality of Life", "walkieTerm", true, "Enable or Disable the ability to use a walkie from your inventory at the terminal (vanilla method still works)");
             terminalShortcuts = MakeBool("Quality of Life", "terminalShortcuts", true, "Enable this for the ability to bind commands to any valid key (also enables the \"bind\" keyword.");
             extensiveLogging = MakeBool("Debug", "extensiveLogging", false, "Enable or Disable extensive logging for this mod.");
@@ -356,7 +361,7 @@ namespace TerminalStuff
 
             //Quality of Life Stuff
             LockCameraInTerminal = MakeBool("Quality of Life", "LockCameraInTerminal", false, "Enable this to lock the player camera to the terminal when it is in use.");
-            DisableTerminalLight = MakeBool("Quality of Life", "DisableTerminalLight", false, "Enable this config item to disable the light that turns on when you start using the terminal.");
+            TerminalLightBehaviour = MakeClampedString("Quality of Life", "TerminalLightBehaviour", "nochange", "Use this config item to change how the terminal light behaves. Options are 'nochange' which keeps vanilla behaviour, 'disable' which disables this light whenever you use it, and 'alwayson' which will keep the light on as long as the screen is on from alwayson", new AcceptableValueList<string>("nochange", "disable", "alwayson"));
             TerminalHistory = MakeBool("Quality of Life", "TerminalHistory", false, "(Requires terminalShortcuts feature to function) With this feature enabled, uparrow and downarrow will cycle through a list of previously used commands.");
             TerminalHistoryMaxCount = MakeClampedInt("Quality of Life", "TerminalHistoryMaxCount", 9, "Max amount of previous commands to save in TerminalHistory list.", 3, 50);
             TerminalAutoComplete = MakeBool("Quality of Life", "TerminalAutoComplete", false, "(Requires terminalShortcuts feature to function) With this feature enabled, tab key will cycle through a list of matching commands to the current input.");
@@ -365,11 +370,15 @@ namespace TerminalStuff
 
 
             //Terminal Customization
-            TerminalCustomization = MakeBool("Terminal Customization", "TerminalCustomization", false, "Enable or Disable this section (all terminal customizations)");
+            TerminalCustomization = MakeBool("Terminal Customization", "TerminalCustomization", false, "Enable or Disable terminal color customizations");
             TerminalColor = MakeString("Terminal Customization", "TerminalColor", "#666633", "This changes the color of the physical terminal");
             TerminalTextColor = MakeString("Terminal Customization", "TerminalTextColor", "#ffffb3", "This changes the color of the main text in the terminal");
             TerminalMoneyColor = MakeString("Terminal Customization", "TerminalMoneyColor", "#ccffcc", "This changes the color of the current credits text in the top left of the terminal");
             TerminalCaretColor = MakeString("Terminal Customization", "TerminalCaretColor", "#9900ff", "This changes the color of the text caret in the terminal");
+            TerminalScrollbarColor = MakeString("Terminal Customization", "TerminalScrollbarColor", "#9900ff", "This changes the color of the scrollbar in the terminal");
+            TerminalScrollBGColor = MakeString("Terminal Customization", "TerminalScrollBGColor", "#ffffb3", "This changes the color of the background box of the scrollbar in the terminal");
+            TerminalClockColor = MakeString("Terminal Customization", "TerminalClockColor", "#ccffcc", "This changes the color of the current credits text in the top left of the terminal");
+            TerminalLightColor = MakeString("Terminal Customization", "TerminalLightColor", "#9900ff", "This changes the color of the text caret in the terminal");
 
 
             RemoveOrphanedEntries();

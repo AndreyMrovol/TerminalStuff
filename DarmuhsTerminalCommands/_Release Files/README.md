@@ -1,10 +1,10 @@
 # darmuhsTerminalStuff
 
-## Completely configurable Terminal expansion mod! 40+ new commands, 5+ new features, QoL fixes, and much more
-
-## Updated for v55 update in version 3.2.4
-
 ## **For client-side only use, disable ModNetworking in config (found in the "Networking" section)**
+
+### Completely configurable Terminal expansion mod! 40+ new commands, 5+ new features, QoL fixes, and much more
+
+### Updated for Lethal Company v56 in version 3.2.4
 
 ### Features:
  - **Near infinite** customizable keywords for a majority of commands
