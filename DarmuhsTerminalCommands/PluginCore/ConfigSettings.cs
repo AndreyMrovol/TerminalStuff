@@ -1,11 +1,18 @@
 ﻿using BepInEx.Configuration;
+using static OpenLib.ConfigManager.ConfigSetup;
+using static OpenLib.Common.CommonTerminal;
+using static TerminalStuff.StringStuff;
+using OpenLib.ConfigManager;
 using System.Collections.Generic;
-using System.Reflection;
+using OpenLib.CoreMethods;
 
 namespace TerminalStuff
 {
     public static class ConfigSettings
     {
+        public static List<ManagedBool> TerminalStuffBools = [];
+        public static MainListing TerminalStuffMain;
+
         //keybinds
         public static ConfigEntry<string> walkieTermKey { get; internal set; }
         public static ConfigEntry<string> walkieTermMB { get; internal set; }
@@ -192,261 +199,267 @@ namespace TerminalStuff
 
         public static void BindConfigSettings()
         {
-
-            Plugin.Log.LogInfo("Binding configuration settings");
-
             //Network Configs
-            networkedNodes = MakeBool("Networking", "networkedNodes", false, "Enable networked Always-On Display & displaying synced terminal nodes (BETA)");
-            ModNetworking = MakeBool("Networking", "ModNetworking", true, "Disable this if you want to disable networking and use this mod as a Client-sided mod");
-            terminalClock = MakeBool("Quality of Life", "terminalClock", false, "Enable or Disable the terminalClock feature in it's entirety");
-            walkieTerm = MakeBool("Quality of Life", "walkieTerm", true, "Enable or Disable the ability to use a walkie from your inventory at the terminal (vanilla method still works)");
-            terminalShortcuts = MakeBool("Quality of Life", "terminalShortcuts", true, "Enable this for the ability to bind commands to any valid key (also enables the \"bind\" keyword.");
-            extensiveLogging = MakeBool("Debug", "extensiveLogging", false, "Enable or Disable extensive logging for this mod.");
-            developerLogging = MakeBool("Debug", "developerLogging", false, "Enable or Disable developer logging for this mod. (this will fill your log file FAST)");
-            keyActionsConfig = MakeString("Quality of Life", "keyActionsConfig", "", "Stored keybinds, don't modify this unless you know what you're doing!");
-            purchasePackCommands = MakeString("Comfort Configuration", "purchasePackCommands", "Essentials:pro,shov,walkie;PortalPack:teleporter,inverse", "List of purchase pack commands to create. Format is command:item1,item2,etc.;next command:item1,item2");
+            ModNetworking = MakeBool(Plugin.instance.Config, "Networking", "ModNetworking", true, "Disable this if you want to disable networking and use this mod as a Client-sided mod");
+            networkedNodes = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Networking", "networkedNodes", false, "Enable networked Always-On Display & displaying synced terminal nodes", true);
+            terminalClock = MakeBool(Plugin.instance.Config, "Quality of Life", "terminalClock", false, "Enable or Disable the terminalClock feature in it's entirety");
+            walkieTerm = MakeBool(Plugin.instance.Config, "Quality of Life", "walkieTerm", true, "Enable or Disable the ability to use a walkie from your inventory at the terminal (vanilla method still works)");
+            terminalShortcuts = MakeBool(Plugin.instance.Config, "Quality of Life", "terminalShortcuts", true, "Enable this for the ability to bind commands to any valid key (also enables the \"bind\" keyword.");
+            extensiveLogging = MakeBool(Plugin.instance.Config, "Debug", "extensiveLogging", false, "Enable or Disable extensive logging for this mod.");
+            developerLogging = MakeBool(Plugin.instance.Config, "Debug", "developerLogging", false, "Enable or Disable developer logging for this mod. (this will fill your log file FAST)");
+            keyActionsConfig = MakeString(Plugin.instance.Config,"Quality of Life", "keyActionsConfig", "", "Stored keybinds, don't modify this unless you know what you're doing!");
+            purchasePackCommands = MakeString(Plugin.instance.Config,"Comfort Configuration", "purchasePackCommands", "Essentials:pro,shov,walkie;PortalPack:teleporter,inverse", "List of purchase pack commands to create. Format is command:item1,item2,etc.;next command:item1,item2");
 
+            Plugin.Spam("network configs section done");
 
             //keybinds
-            walkieTermKey = MakeString("Quality of Life", "walkieTermKey", "LeftAlt", "Key used to activate your walkie while at the terminal, see here for valid key names https://docs.unity3d.com/Packages/com.unity.inputsystem@1.0/api/UnityEngine.InputSystem.Key.html");
-            walkieTermMB = MakeString("Quality of Life", "walkieTermMB", "Left", "Mousebutton used to activate your walkie while at the terminal, see here for valid button names https://docs.unity3d.com/Packages/com.unity.inputsystem@1.3/api/UnityEngine.InputSystem.LowLevel.MouseButton.html");
+            walkieTermKey = MakeString(Plugin.instance.Config,"Quality of Life", "walkieTermKey", "LeftAlt", "Key used to activate your walkie while at the terminal, see here for valid key names https://docs.unity3d.com/Packages/com.unity.inputsystem@1.0/api/UnityEngine.InputSystem.Key.html");
+            walkieTermMB = MakeString(Plugin.instance.Config,"Quality of Life", "walkieTermMB", "Left", "Mousebutton used to activate your walkie while at the terminal, see here for valid button names https://docs.unity3d.com/Packages/com.unity.inputsystem@1.3/api/UnityEngine.InputSystem.LowLevel.MouseButton.html");
+
+            Plugin.Spam("keybind configs section done");
 
             //Cams Mod Config
-            camsUseDetectedMods = MakeBool("Extras Configuration", "camsUseDetectedMods", true, "With this enabled, this mod will detect if another mod that adds player cams is enabled and use the mod's camera for all cams commands. Currently detects the following: Helmet Cameras by Rick Arg, Body Cameras by Solo, OpenBodyCams by ");
+            camsUseDetectedMods = MakeBool(Plugin.instance.Config, "Extras Configuration", "camsUseDetectedMods", true, "With this enabled, this mod will detect if another mod that adds player cams is enabled and use the mod's camera for all cams commands. Currently detects the following: Helmet Cameras by Rick Arg, Body Cameras by Solo, OpenBodyCams by ");
 
-            //enable or disable
-            terminalLobby = MakeBool("Comfort Commands (On/Off)", "terminalLobby", true, "Shows the current lobby name <Lobby Name>");
-            terminalQuit = MakeBool("Comfort Commands (On/Off)", "terminalQuit", true, "Command to quit terminal <Quit>");
-            terminalClear = MakeBool("Comfort Commands (On/Off)", "terminalClear", true, "Command to clear terminal text <Clear>");
-            terminalLoot = MakeBool("Extras Commands (On/Off)", "terminalLoot", true, "Command to show total onboard loot value <Loot>");
-            terminalCams = MakeBool("Extras Commands (On/Off)", "terminalCams", true, "Command to toggle displaying cameras in terminal <Cameras>");
-            terminalVideo = MakeBool("Fun Commands (On/Off)", "terminalVideo", true, "Play a video from the videoFolderPath folder <video>");
-            terminalHeal = MakeBool("Comfort Commands (On/Off)", "terminalHeal", true, "Command to heal yourself <Heal>");
-            terminalFov = MakeBool("Comfort Commands (On/Off)", "terminalFov", true, "Command to change your FOV <Fov>");
-            terminalGamble = MakeBool("Fun Commands (On/Off)", "terminalGamble", true, "Command to gamble your credits, by percentage <Gamble>");
-            terminalLever = MakeBool("Controls Commands (On/Off)", "terminalLever", true, "Pull the lever from terminal <Lever>");
-            terminalDanger = MakeBool("Controls Commands (On/Off)", "terminalDanger", true, "Check moon danger level <Danger>");
-            terminalVitals = MakeBool("Extras Commands (On/Off)", "terminalVitals", true, "Scan player being tracked by monitor for their Health/Weight. <Vitals>");
-            terminalBioScan = MakeBool("Extras Commands (On/Off)", "terminalBioScan", true, "Scan for \"non-employee\" lifeforms. <BioScan>");
-            terminalBioScanPatch = MakeBool("Extras Commands (On/Off)", "terminalBioScanPatch", true, "Purchase-able upgrade patch to bioscan for more precise information. <BioScan>");
-            terminalVitalsUpgrade = MakeBool("Extras Commands (On/Off)", "terminalVitalsUpgrade", true, "Purchase-able upgrade to vitals to not cost anything each scan. <Vitals>");
-            terminalTP = MakeBool("Controls Commands (On/Off)", "terminalTP", true, "Command to Activate Teleporter <TP>");
-            terminalITP = MakeBool("Controls Commands (On/Off)", "terminalITP", true, "Command to Activate Inverse Teleporter <ITP>");
-            terminalMods = MakeBool("Comfort Commands (On/Off)", "terminalMods", true, "Command to see your active mods <Mods>");
-            terminalKick = MakeBool("Comfort Commands (On/Off)", "terminalKick", false, "Enables kick command for host. <Kick>");
-            terminalFcolor = MakeBool("Fun Commands (On/Off)", "terminalFcolor", true, "Command to change flashlight color. <Fcolor colorname>");
-            terminalScolor = MakeBool("Fun Commands (On/Off)", "terminalScolor", true, "Command to change ship lights colors. <Scolor all,front,middle,back colorname>");
-            terminalDoor = MakeBool("Controls Commands (On/Off)", "terminalDoor", true, "Command to open/close the ship door. <Door>");
-            terminalLights = MakeBool("Controls Commands (On/Off)", "terminalLights", true, "Command to toggle the ship lights");
-            terminalMap = MakeBool("Extras Commands (On/Off)", "terminalMap", true, "Adds 'map' shortcut to 'view monitor' command <Map>");
-            terminalMinimap = MakeBool("Extras Commands (On/Off)", "terminalMinimap", true, "Command to view cams with radar at the top right. <Minimap>");
-            terminalMinicams = MakeBool("Extras Commands (On/Off)", "terminalMinicams", true, "Command to view radar with cams at the top right. <Minicams>");
-            terminalOverlay = MakeBool("Extras Commands (On/Off)", "terminalOverlay", true, "Command to view cams with radar overlayed on top. <Overlay>");
-            terminalAlwaysOn = MakeBool("Comfort Commands (On/Off)", "terminalAlwaysOn", true, $"Command to toggle Always-On Display <Alwayson>");
-            terminalLink = MakeBool("Extras Commands (On/Off)", "terminalLink", true, "Command to link to an external web-page <Link>");
-            terminalLink2 = MakeBool("Extras Commands (On/Off)", "terminalLink2", false, "Command to link to a second external web-page <Link2>");
-            terminalRandomSuit = MakeBool("Fun Commands (On/Off)", "terminalRandomSuit", true, "Command to switch your suit from a random one off the rack <RandomSuit>");
-            terminalClockCommand = MakeBool("Controls Commands (On/Off)", "terminalClockCommand", true, "Command to toggle the terminal Clock off/on <Clock>");
-            terminalListItems = MakeBool("Extras Commands (On/Off)", "terminalListItems", true, "Command to list all non-scrap & not currently held items on the ship <ItemsList>");
-            terminalLootDetail = MakeBool("Extras Commands (On/Off)", "terminalLootDetail", true, "Command to display an extensive list of all scrap on the ship <LootList>");
-            terminalMirror = MakeBool("Extras Commands (On/Off)", "terminalMirror", true, "Command to toggle displaying a Mirror Cam in the terminal <Mirror>");
-            terminalRefund = MakeBool("Extras Commands (On/Off)", "terminalRefund", true, "Command to cancel an undelivered order and get your credits back <Refund>");
-            terminalRestart = MakeBool("Controls Commands (On/Off)", "terminalRestart", true, "Command to restart the lobby (skips firing sequence) <Restart>");
-            terminalPrevious = MakeBool("Extras Commands (On/Off)", "terminalPrevious", true, "Command to switch back to previous radar target <Previous>");
-            terminalRouteRandom = MakeBool("Fun Commands (On/Off)", "terminalRouteRandom", true, "Command to route to a random planet, configurable <Previous>");
-            terminalPurchasePacks = MakeBool("Comfort Commands (On/Off)", "terminalPurchasePacks", true, "Use [purchasePackCommands] to create purchase packs that contain multiple store items in one run of the command");
-            
-            routeRandomBannedWeather = MakeString("Fun Configuration", "routeRandomBannedWeather", "Eclipsed;Flooded;Foggy", "This semi-colon separated list is all keywords that can be used in terminal to return <alwayson> command");
-            routeRandomCost = MakeClampedInt("Fun Configuration", "routeRandomCost", 100, "Flat rate for running the route random command to get a random moon...", 0, 99999);
+            //override configs
+            leverConfirmOverride = MakeBool(Plugin.instance.Config, "Controls Configuration", "leverConfirmOverride", false, "Setting this to true will disable the confirmation check for the <lever> command.");
+            restartConfirmOverride = MakeBool(Plugin.instance.Config, "Controls Configuration", "restartConfirmOverride", false, "Setting this to true will disable the confirmation check for the <restart> command.");
 
-            //String Configs
-            doorOpenString = MakeString("Controls Configuration", "doorOpenString", "Opening door.", "Message returned on door (open) command.");
-            doorCloseString = MakeString("Controls Configuration", "doorCloseString", "Closing door.", "Message returned on door (close) command.");
-            doorSpaceString = MakeString("Controls Configuration", "doorSpaceString", "Can't open doors in space.", "Message returned on door (inSpace) command.");
-            canOpenDoorInSpace = MakeBool("Controls Configuration", "canOpenDoorInSpace", false, "Set this to true to allow for pressing the button to open the door in space. (does not change whether the door can actually be opened)");
-            quitString = MakeString("Comfort Configuration", "quitString", "goodbye!", "Message returned on quit command.");
-            leverString = MakeString("Controls Configuration", "leverString", "PULLING THE LEVER!!!", "Message returned on lever pull command.");
-            videoStartString = MakeString("Fun Configuration", "videoStartString", "lol.", "Message displayed when first playing a video.");
-            videoStopString = MakeString("Fun Configuration", "videoStopString", "No more lol.", "Message displayed if you want to end video playback early.");
-            tpMessageString = MakeString("Controls Configuration", "tpMessageString", "Teleport Button pressed.", "Message returned when TP command is run.");
-            itpMessageString = MakeString("Controls Configuration", "itpMessageString", "Inverse Teleport Button pressed.", "Message returned when ITP command is run.");
-            vitalsPoorString = MakeString("Upgrades", "vitalsPoorString", "You can't afford to run this command.", "Message returned when you don't have enough credits to run the <Vitals> command.");
-            vitalsUpgradePoor = MakeString("Upgrades", "vitalsUpgradePoor", "You can't afford to upgrade the Vitals Scanner.", "Message returned when you don't have enough credits to unlock the vitals scanner upgrade.");
-            healIsFullString = MakeString("Comfort Configuration", "healIsFullString", "You are full health!", "Message returned when heal command is run and player is already full health.");
-            healString = MakeString("Comfort Configuration", "healString", "The terminal healed you?!?", "Message returned when heal command is run and player is healed.");
-            camString = MakeString("Fun Configuration", "camString", "(CAMS)", "Message returned when enabling Cams command (cams).");
-            camString2 = MakeString("Fun Configuration", "camString2", "Cameras disabled.", "Message returned when disabling Cams command (cams).");
-            mapString = MakeString("Fun Configuration", "mapString", "(MAP)", "Message returned when enabling map command (map).");
-            mapString2 = MakeString("Fun Configuration", "mapString2", "Map View disabled.", "Message returned when disabling map command (map).");
-            ovString = MakeString("Fun Configuration", "ovString", "(Overlay)", "Message returned when enabling Overlay command (overlay).");
-            ovString2 = MakeString("Fun Configuration", "ovString2", "Overlay disabled.", "Message returned when disabling Overlay command (overlay).");
-            mmString = MakeString("Fun Configuration", "mmString", "(MiniMap)", "Message returned when enabling minimap command (minimap).");
-            mmString2 = MakeString("Fun Configuration", "mmString2", "MiniMap disabled.", "Message returned when disabling minimap command (minimap).");
-            mcString = MakeString("Fun Configuration", "mcString", "(MiniCams)", "Message returned when enabling minicams command (minicams).");
-            mcString2 = MakeString("Fun Configuration", "mcString2", "MiniCams disabled.", "Message returned when disabling minicams command (minicams).");
+            //Keyword configs (multiple per config item)
+            alwaysOnKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "alwaysOnKeywords", "alwayson;always on", "This semi-colon separated list is all keywords that can be used in terminal to return <alwayson> command");
+            camsKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "camsKeywords", "cameras; show cams; cams", "This semi-colon separated list is all keywords that can be used in terminal to return <cams> command");
+            mapKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "mapKeywords", "show map; map; view monitor", "Additional This semi-colon separated list is all keywords that can be used in terminal to return <map> command");
+            minimapKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "minimapKeywords", "minimap; show minimap", "This semi-colon separated list is all keywords that can be used in terminal to return <minimap> command.");
+            minicamsKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "minicamsKeywords", "minicams; show minicams", "This semi-colon separated list is all keywords that can be used in terminal to return <minicams> command");
+            overlayKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "overlayKeywords", "overlay; show overlay", "This semi-colon separated list is all keywords that can be used in terminal to return <overlay> command");
+            mirrorKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "mirrorKeywords", "mirror; reflection; show mirror", "This semi-colon separated list is all keywords that can be used in terminal to return <cams> command");
+            doorKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "doorKeywords", "door; toggle door", "This semi-colon separated list is all keywords that can be used in terminal to return <door> command");
+            lightsKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "lightsKeywords", "lights; toggle lights", "This semi-colon separated list is all keywords that can be used in terminal to return <lights> command");
+            modsKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "modsKeywords", "modlist; mods; show mods", "This semi-colon separated list is all keywords that can be used in terminal to return <mods> command");
+            tpKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "tpKeywords", "tp; use teleporter; teleport", "This semi-colon separated list is all keywords that can be used in terminal to return <tp> command");
+            itpKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "itpKeywords", "itp; use inverse; inverse", "This semi-colon separated list is all keywords that can be used in terminal to return <itp> command");
+            quitKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "quitKeywords", "quit;exit;leave", "This semi-colon separated list is all keywords that can be used in terminal to return <quit> command");
+            videoKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "videoKeywords", "lol; play video; lolxd; hahaha", "This semi-colon separated list is all keywords that can be used in terminal to return <video> command");
+            clearKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "clearKeywords", "clear;wipe;clean", "This semi-colon separated list is all keywords that can be used in terminal to return <clear> command");
+            dangerKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "dangerKeywords", "danger;hazard;show danger; show hazard", "This semi-colon separated list is all keywords that can be used in terminal to return <danger> command");
+            healKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "healKeywords", "healme; heal me; heal; medic", "This semi-colon separated list is all keywords that can be used in terminal to return <heal> command");
+            lootKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "lootKeywords", "loot; shiploot; show loot", "This semi-colon separated list is all keywords that can be used in terminal to return <loot> command");
+            randomSuitKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "randomSuitKeywords", "randomsuit; random suit", "This semi-colon separated list is all keywords that can be used in terminal to return <randomsuit> command");
+            clockKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "clockKeywords", "clock; show clock; time; show time", "This semi-colon separated list is all keywords that can be used in terminal to toggle Terminal Clock display");
+            ListItemsKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "ListItemsKeywords", "show items; get items; listitem", "This semi-colon separated list is all keywords that can be used in terminal to return <itemlist> command");
+            ListScrapKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "ListScrapKeywords", "loot detail; listloost", "This semi-colon separated list is all keywords that can be used in terminal to return <lootlist> command");
+            randomRouteKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "randomRouteKeywords", "route random; random moon", "This semi-colon separated list is all keywords that can be used in terminal to return <lootlist> command");
+            lobbyKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "lobbyKeywords", "lobby; show lobby; lobby name; show lobby name", "This semi-colon separated list is all keywords that can be used in terminal to return <lobby> command");
 
-            customLink = MakeString("Extras Configuration", "customLink", "https://thunderstore.io/c/lethal-company/p/darmuh/darmuhsTerminalStuff/", "URL to send players to when using the \"link\" command.");
-            customLinkHint = MakeString("Extras Configuration", "customLinkHint", "Go to a specific web page.", "Hint given to players in extras menu for \"link\" command.");
-            customLink2 = MakeString("Extras Configuration", "customLink2", "https://github.com/darmuh/TerminalStuff", "URL to send players to when using the second \"link\" command.");
-            customLink2Hint = MakeString("Extras Configuration", "customLink2Hint", "Go to a specific web page.", "Hint given to players in extras menu for \"link\" command.");
+            Plugin.Spam("keyword configs section done");
+
+            //terminal patcher keywords
+            fcolorKeyword = MakeString(Plugin.instance.Config, "Custom Keywords", "fcolorKeyword", "fcolor", "Set the keyword that can be used in terminal to return <fcolor> command");
+            gambleKeyword = MakeString(Plugin.instance.Config, "Custom Keywords", "gambleKeyword", "gamble", "Set the keyword that that can be used in terminal to return <gamble> command");
+            leverKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "leverKeywords", "lever", "This semi-colon separated list is all keywords that can be used in terminal to return <lever> command");
+            scolorKeyword = MakeString(Plugin.instance.Config, "Custom Keywords", "scolorKeyword", "scolor", "Set the keyword that that can be used in terminal to return <scolor> command");
+            linkKeyword = MakeString(Plugin.instance.Config, "Custom Keywords", "linkKeyword", "link", "Set the keyword that that can be used in terminal to return <link> command");
+            link2Keyword = MakeString(Plugin.instance.Config, "Custom Keywords", "link2Keyword", "link2", "Set the keyword that that can be used in terminal to return <link2> command");
+
+            Plugin.Spam("special keyword configs section done");
+
+            routeRandomBannedWeather = MakeString(Plugin.instance.Config, "Fun Configuration", "routeRandomBannedWeather", "Eclipsed;Flooded;Foggy", "This semi-colon separated list is all keywords that can be used in terminal to return <alwayson> command");
+            routeRandomCost = MakeClampedInt(Plugin.instance.Config, "Fun Configuration", "routeRandomCost", 100, "Flat rate for running the route random command to get a random moon...", 0, 99999);
+
 
             //Cost configs
-            vitalsCost = Plugin.instance.Config.Bind<int>("Upgrades", "vitalsCost", 10, "Credits cost to run Vitals Command each time it's run.");
-            vitalsUpgradeCost = Plugin.instance.Config.Bind<int>("Upgrades", "vitalsUpgradeCost", 200, "Credits cost to upgrade Vitals command to not cost credits anymore.");
-            bioScanUpgradeCost = Plugin.instance.Config.Bind<int>("Upgrades", "bioScanUpgradeCost", 300, "Credits cost to upgrade Bioscan command to provide detailed information on scanned enemies.");
-            bioScanScanCost = Plugin.instance.Config.Bind<int>("Upgrades", "bioScanScanCost", 15, "Credits cost to run Bioscan command each time it's run. (scans for enemy information)");
+            vitalsCost = MakeInt(Plugin.instance.Config, "Upgrades", "vitalsCost", 10, "Credits cost to run Vitals Command each time it's run.");
+            vitalsUpgradeCost = MakeInt(Plugin.instance.Config, "Upgrades", "vitalsUpgradeCost", 200, "Credits cost to upgrade Vitals command to not cost credits anymore.");
+            bioScanUpgradeCost = MakeInt(Plugin.instance.Config, "Upgrades", "bioScanUpgradeCost", 300, "Credits cost to upgrade Bioscan command to provide detailed information on scanned enemies.");
+            bioScanScanCost = MakeInt(Plugin.instance.Config, "Upgrades", "bioScanScanCost", 15, "Credits cost to run Bioscan command each time it's run. (scans for enemy information)");
+
+            Plugin.Spam("cost configs section done");
+
+            //------------------------------------------------MANAGED BOOLS START------------------------------------------------//
+
+            terminalLobby = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Comfort Commands (On/Off)", "terminalLobby", true, "Check for the current lobby name", false, "COMFORT", GetKeywordsPerConfigItem(lobbyKeywords.Value), MoreCommands.GetLobbyName);
+            
+            terminalQuit = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Comfort Commands (On/Off)", "terminalQuit", true, "Command to quit terminal", false, "COMFORT", GetKeywordsPerConfigItem(quitKeywords.Value), TerminalEvents.QuitTerminalCommand);
+            
+            terminalClear = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Comfort Commands (On/Off)", "terminalClear", true, "Command to clear terminal text", false, "COMFORT", GetKeywordsPerConfigItem(clearKeywords.Value), ClearText);
+            
+            terminalLoot = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalLoot", true, "Command to show total onboard loot value", false, "EXTRAS", GetKeywordsPerConfigItem(lootKeywords.Value), AllTheLootStuff.GetLootSimple, 0, false);
+            
+            terminalHeal = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Comfort Commands (On/Off)", "terminalHeal", true, "Command to heal yourself", false, "COMFORT", GetKeywordsPerConfigItem(healKeywords.Value), MoreCommands.HealCommand);
+            
+            terminalFov = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Comfort Commands (On/Off)", "terminalFov", true, "Command to change your FOV", false, "COMFORT", GetKeywordsPerConfigItem("fov"), DynamicCommands.FovPrompt, 1, true, DynamicCommands.FovConfirm, DynamicCommands.FovDeny, "", "", "fov");
+            
+            terminalGamble = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Fun Commands (On/Off)", "terminalGamble", true, "Command to gamble your credits, by percentage", true, "FUN", GetKeywordsPerConfigItem(gambleKeyword.Value), GambaCommands.Ask2Gamble, 1, true, GambaCommands.GambleConfirm, GambaCommands.GambleDeny, "", "", gambleKeyword.Value);
+
+            if (leverConfirmOverride.Value)
+                terminalLever = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Controls Commands (On/Off)", "terminalLever", true, "Pull the lever from terminal", false, "CONTROLS", GetKeywordsPerConfigItem(leverKeywords.Value), ShipControls.LeverControlCommand);
+            else
+                terminalLever = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Controls Commands (On/Off)", "terminalLever", true, "Pull the lever from terminal", false, "CONTROLS", GetKeywordsPerConfigItem(leverKeywords.Value), ShipControls.AskLever, 1, true, ShipControls.LeverControlCommand, ShipControls.DenyLever);
+
+            if (restartConfirmOverride.Value)
+                terminalRestart = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Controls Commands (On/Off)", "terminalRestart", true, "Command to restart the lobby (skips firing sequence)", false, "CONTROLS", GetKeywordsPerConfigItem("restart"), SpecialConfirmationLogic.RestartAction);
+            else
+                terminalRestart = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Controls Commands (On/Off)", "terminalRestart", true, "Command to restart the lobby (skips firing sequence)", false, "CONTROLS", GetKeywordsPerConfigItem("restart"), SpecialConfirmationLogic.RestartAsk, 1, true, SpecialConfirmationLogic.RestartAction, SpecialConfirmationLogic.RestartDeny);
+
+            terminalDanger = AddManagedBool(Plugin.instance.Config,defaultManagedBools, "Controls Commands (On/Off)", "terminalDanger", true, "Check moon danger level", false, "CONTROLS", GetKeywordsPerConfigItem(dangerKeywords.Value), MoreCommands.DangerCommand);
+
+            terminalVitals = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalVitals", true, "Scan player being monitored for their vitals", true, "EXTRAS", GetKeywordsPerConfigItem("vitals"), CostCommands.VitalsCommand);
+
+            terminalBioScan = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalBioScan", true, "Scan for \"non-employee\" lifeforms.", true, "EXTRAS", GetKeywordsPerConfigItem("bioscan"), CostCommands.BioscanCommand);
+
+            //----------------------------------upgrade managed bools----------------------------------//
+
+            terminalBioScanPatch = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalBioScanPatch", true, "Purchase-able upgrade patch to bioscan command. The command will provide more precise information after the upgrade.", true, "EXTRAS", GetKeywordsPerConfigItem("bioscanpatch"), CostCommands.AskBioscanUpgrade, 2, true, CostCommands.PerformBioscanUpgrade, null, "", "You have opted out of purchasing the BioScanner 2.0 Upgrade Patch.\n\n", "", -1, "", "", bioScanUpgradeCost.Value, "BioscanPatch", true, 1);
+
+            terminalVitalsUpgrade = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalVitalsUpgrade", true, "Purchase-able upgrade to vitals command to make the cost of each vitaals scan free!", true, "EXTRAS", GetKeywordsPerConfigItem("vitalspatch"), CostCommands.AskVitalsUpgrade, 2, true, CostCommands.PerformVitalsUpgrade, null, "", "You have opted out of purchasing the Vitals Scanner Upgrade.\n\n", "", -1, "   ", "", vitalsUpgradeCost.Value, "VitalsPatch", true, 1);
+
+            //----------------------------------upgrade managed bools----------------------------------//
+
+            terminalMods = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Comfort Commands (On/Off)", "terminalMods", true, "Command to see your active mods", false, "COMFORT", GetKeywordsPerConfigItem(modsKeywords.Value), MoreCommands.ModListCommand);
+
+            terminalKick = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Comfort Commands (On/Off)", "terminalKick", false, "Enables kick command for host.", false, "COMFORT", GetKeywordsPerConfigItem("kick"), AdminCommands.KickPlayersAsk, 1, true, AdminCommands.KickPlayerConfirm, AdminCommands.KickPlayerDeny);
+
+            terminalFcolor = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Fun Commands (On/Off)", "terminalFcolor", true, "Command to change flashlight color.", true, "FUN", GetKeywordsPerConfigItem(fcolorKeyword.Value), ColorCommands.FlashColorBase, 0, true, null, null, "", "", fcolorKeyword.Value);
+
+            terminalScolor = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Fun Commands (On/Off)", "terminalScolor", true, "Command to change ship lights colors.", true, "FUN", GetKeywordsPerConfigItem(scolorKeyword.Value), ColorCommands.ShipColorBase, 0, true, null, null, "", "", scolorKeyword.Value);
+
+            terminalDoor = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Controls Commands (On/Off)", "terminalDoor", true, "Command to open/close the ship door.", false, "CONTROLS", GetKeywordsPerConfigItem(doorKeywords.Value), ShipControls.BasicDoorCommand);
+
+            terminalLights = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Controls Commands (On/Off)", "terminalLights", true, "Command to toggle the ship lights", false, "CONTROLS", GetKeywordsPerConfigItem(lightsKeywords.Value), ShipControls.BasicLightsCommand);
+
+                //----------------------------------termview managed bools----------------------------------//
+
+            terminalCams = AddManagedBool(Plugin.instance.Config, TerminalStuffBools, "Extras Commands (On/Off)", "terminalCams", true, "Command to toggle displaying cameras in terminal", false, "EXTRAS", GetKeywordsPerConfigItem(camsKeywords.Value), ViewCommands.TermCamsEvent, 0, true, null, null, "", "", "cams", 1, "ViewInsideShipCam 1");
+
+            terminalVideo = AddManagedBool(Plugin.instance.Config, TerminalStuffBools, "Fun Commands (On/Off)", "terminalVideo", true, "Play a video from the videoFolderPath folder <video>", false, "FUN", GetKeywordsPerConfigItem(videoKeywords.Value), ViewCommands.LolVideoPlayerEvent, 0, true, null, null, "", "", "lol", 0, "darmuh's videoPlayer");
+
+            terminalMap = AddManagedBool(Plugin.instance.Config, TerminalStuffBools, "Extras Commands (On/Off)", "terminalMap", true, "Command to toggle displaying radar in the terminal", false, "EXTRAS", GetKeywordsPerConfigItem(mapKeywords.Value), ViewCommands.TermMapEvent, 0, true, null, null, "", "", "map", 5, "ViewInsideShipCam 1");
+
+            terminalMinimap = AddManagedBool(Plugin.instance.Config, TerminalStuffBools, "Extras Commands (On/Off)", "terminalMinimap", true, "Command to toggle displaying radar/cam minimap view in the terminal", false, "EXTRAS", GetKeywordsPerConfigItem(minimapKeywords.Value), ViewCommands.MiniMapTermEvent, 0, true, null, null, "", "", "minimap", 3, "ViewInsideShipCam 1");
+
+            terminalMinicams = AddManagedBool(Plugin.instance.Config, TerminalStuffBools, "Extras Commands (On/Off)", "terminalMinicams", true, "Command to toggle displaying radar/cam minicams view in the terminal", false, "EXTRAS", GetKeywordsPerConfigItem(minicamsKeywords.Value), ViewCommands.MiniCamsTermEvent, 0, true, null, null, "", "", "minicams", 4, "ViewInsideShipCam 1");
+
+            terminalOverlay = AddManagedBool(Plugin.instance.Config, TerminalStuffBools, "Extras Commands (On/Off)", "terminalOverlay", true, "Command to toggle displaying radar/cam overlay view in the terminal", false, "EXTRAS", GetKeywordsPerConfigItem(overlayKeywords.Value), ViewCommands.OverlayTermEvent, 0, true, null, null, "", "", "overlay", 2, "ViewInsideShipCam 1");
+
+            terminalMirror = AddManagedBool(Plugin.instance.Config, TerminalStuffBools, "Extras Commands (On/Off)", "terminalMirror", true, "Command to toggle displaying a Mirror Cam in the terminal <Mirror>", false, "EXTRAS", GetKeywordsPerConfigItem(mirrorKeywords.Value), ViewCommands.MirrorEvent, 0, true, null, null, "", "", "mirror", 6, "terminalStuff Mirror");
+
+            //----------------------------------termview managed bools----------------------------------//
+
+            terminalAlwaysOn = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Comfort Commands (On/Off)", "terminalAlwaysOn", true, $"Command to toggle Always-On Display", false, "COMFORT", GetKeywordsPerConfigItem(alwaysOnKeywords.Value), MoreCommands.AlwaysOnDisplay);
+
+            terminalLink = AddManagedBool(Plugin.instance.Config,defaultManagedBools, "Extras Commands (On/Off)", "terminalLink", true, "Command to link to an external web-page", false, "EXTRAS", GetKeywordsPerConfigItem(linkKeyword.Value), MoreCommands.FirstLinkAsk, 1, true, MoreCommands.FirstLinkDo, MoreCommands.FirstLinkDeny);
+
+            terminalLink2 = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalLink2", false, "Command to link to a second external web-page", false, "EXTRAS", GetKeywordsPerConfigItem(link2Keyword.Value), MoreCommands.SecondLinkAsk, 1, true, MoreCommands.SecondLinkDo, MoreCommands.SecondLinkDeny);
+
+            terminalRandomSuit = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Fun Commands (On/Off)", "terminalRandomSuit", true, "Command to switch your suit from a random one off the rack", false, "FUN", GetKeywordsPerConfigItem(randomSuitKeywords.Value), TerminalEvents.RandomSuit);
+
+            terminalClockCommand = AddManagedBool(Plugin.instance.Config,defaultManagedBools, "Controls Commands (On/Off)", "terminalClockCommand", false, "Command to toggle the Terminal Clock off/on", false, "CONTROLS", GetKeywordsPerConfigItem(clockKeywords.Value), TerminalEvents.ClockToggle);
+
+            terminalListItems = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalListItems", true, "Command to list all non-scrap & not currently held items on the ship", false, "EXTRAS", GetKeywordsPerConfigItem(ListItemsKeywords.Value), MoreCommands.GetItemsOnShip);
+
+            terminalLootDetail = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalLootDetail", true, "Command to display an extensive list of all scrap on the ship", false, "EXTRAS", GetKeywordsPerConfigItem(ListScrapKeywords.Value), AllTheLootStuff.DetailedLootCommand);
+            
+            terminalRefund = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalRefund", true, "Command to cancel an undelivered order and get your credits back", true, "EXTRAS", GetKeywordsPerConfigItem("refund"), CostCommands.GetRefund);
+
+            
+            terminalPrevious = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalPrevious", true, "Command to switch back to previous radar target", false, "EXTRAS", GetKeywordsPerConfigItem("previous"), ViewCommands.HandlePreviousSwitchEvent);
+            
+            terminalRouteRandom = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Fun Commands (On/Off)", "terminalRouteRandom", true, "Command to route to a random planet", true, "FUN", GetKeywordsPerConfigItem(randomRouteKeywords.Value), LevelCommands.RouteRandomCommand);
+
+            //------------------------------------------------MANAGED BOOLS END------------------------------------------------//
+
+            //NOT MANAGED BOOLS THAT ARE COMMANDS, DEFINE THESE COMMANDS LATER THAN TERMINAL AWAKE
+            terminalTP = MakeBool(Plugin.instance.Config, "Controls Commands (On/Off)", "terminalTP", true, "Command to Activate Teleporter <TP>");
+            terminalITP = MakeBool(Plugin.instance.Config, "Controls Commands (On/Off)", "terminalITP", true, "Command to Activate Inverse Teleporter <ITP>");
+            terminalPurchasePacks = MakeBool(Plugin.instance.Config, "Comfort Commands (On/Off)", "terminalPurchasePacks", true, "Use [purchasePackCommands] to create purchase packs that contain multiple store items in one run of the command");
+            //NOT MANAGED BOOLS THAT ARE COMMANDS, DEFINE THESE COMMANDS LATER THAN TERMINAL AWAKE
+
+            //String Configs
+            doorOpenString = MakeString(Plugin.instance.Config,"Controls Configuration", "doorOpenString", "Opening door.", "Message returned on door (open) command.");
+            doorCloseString = MakeString(Plugin.instance.Config,"Controls Configuration", "doorCloseString", "Closing door.", "Message returned on door (close) command.");
+            doorSpaceString = MakeString(Plugin.instance.Config,"Controls Configuration", "doorSpaceString", "Can't open doors in space.", "Message returned on door (inSpace) command.");
+            canOpenDoorInSpace = MakeBool(Plugin.instance.Config,"Controls Configuration", "canOpenDoorInSpace", true, "Set this to true to allow for pressing the button to open the door in space. (does not change whether the door can actually be opened)");
+            quitString = MakeString(Plugin.instance.Config,"Comfort Configuration", "quitString", "goodbye!", "Message returned on quit command.");
+            leverString = MakeString(Plugin.instance.Config,"Controls Configuration", "leverString", "PULLING THE LEVER!!!", "Message returned on lever pull command.");
+            videoStartString = MakeString(Plugin.instance.Config,"Fun Configuration", "videoStartString", "lol.", "Message displayed when first playing a video.");
+            videoStopString = MakeString(Plugin.instance.Config,"Fun Configuration", "videoStopString", "No more lol.", "Message displayed if you want to end video playback early.");
+            tpMessageString = MakeString(Plugin.instance.Config,"Controls Configuration", "tpMessageString", "Teleport Button pressed.", "Message returned when TP command is run.");
+            itpMessageString = MakeString(Plugin.instance.Config,"Controls Configuration", "itpMessageString", "Inverse Teleport Button pressed.", "Message returned when ITP command is run.");
+            vitalsPoorString = MakeString(Plugin.instance.Config,"Upgrades", "vitalsPoorString", "You can't afford to run this command.", "Message returned when you don't have enough credits to run the <Vitals> command.");
+            vitalsUpgradePoor = MakeString(Plugin.instance.Config,"Upgrades", "vitalsUpgradePoor", "You can't afford to upgrade the Vitals Scanner.", "Message returned when you don't have enough credits to unlock the vitals scanner upgrade.");
+            healIsFullString = MakeString(Plugin.instance.Config,"Comfort Configuration", "healIsFullString", "You are full health!", "Message returned when heal command is run and player is already full health.");
+            healString = MakeString(Plugin.instance.Config,"Comfort Configuration", "healString", "The terminal healed you?!?", "Message returned when heal command is run and player is healed.");
+            camString = MakeString(Plugin.instance.Config,"Fun Configuration", "camString", "(CAMS)", "Message returned when enabling Cams command (cams).");
+            camString2 = MakeString(Plugin.instance.Config,"Fun Configuration", "camString2", "Cameras disabled.", "Message returned when disabling Cams command (cams).");
+            mapString = MakeString(Plugin.instance.Config,"Fun Configuration", "mapString", "(MAP)", "Message returned when enabling map command (map).");
+            mapString2 = MakeString(Plugin.instance.Config,"Fun Configuration", "mapString2", "Map View disabled.", "Message returned when disabling map command (map).");
+            ovString = MakeString(Plugin.instance.Config,"Fun Configuration", "ovString", "(Overlay)", "Message returned when enabling Overlay command (overlay).");
+            ovString2 = MakeString(Plugin.instance.Config,"Fun Configuration", "ovString2", "Overlay disabled.", "Message returned when disabling Overlay command (overlay).");
+            mmString = MakeString(Plugin.instance.Config,"Fun Configuration", "mmString", "(MiniMap)", "Message returned when enabling minimap command (minimap).");
+            mmString2 = MakeString(Plugin.instance.Config,"Fun Configuration", "mmString2", "MiniMap disabled.", "Message returned when disabling minimap command (minimap).");
+            mcString = MakeString(Plugin.instance.Config,"Fun Configuration", "mcString", "(MiniCams)", "Message returned when enabling minicams command (minicams).");
+            mcString2 = MakeString(Plugin.instance.Config,"Fun Configuration", "mcString2", "MiniCams disabled.", "Message returned when disabling minicams command (minicams).");
+
+            customLink = MakeString(Plugin.instance.Config,"Extras Configuration", "customLink", "https://thunderstore.io/c/lethal-company/p/darmuh/darmuhsTerminalStuff/", "URL to send players to when using the \"link\" command.");
+            customLinkHint = MakeString(Plugin.instance.Config,"Extras Configuration", "customLinkHint", "Go to a specific web page.", "Hint given to players in extras menu for \"link\" command.");
+            customLink2 = MakeString(Plugin.instance.Config,"Extras Configuration", "customLink2", "https://github.com/darmuh/TerminalStuff", "URL to send players to when using the second \"link\" command.");
+            customLink2Hint = MakeString(Plugin.instance.Config,"Extras Configuration", "customLink2Hint", "Go to a specific web page.", "Hint given to players in extras menu for \"link\" command.");
 
             //Other configs
             gambleMinimum = Plugin.instance.Config.Bind<int>("Fun Configuration", "gambleMinimum", 0, "Credits needed to start gambling, 0 means you can gamble everything.");
-            gamblePityMode = MakeBool("Fun Configuration", "gamblePityMode", false, "Enable Gamble Pity Mode, which gives credits back to those who lose everything.");
+            gamblePityMode = MakeBool(Plugin.instance.Config,"Fun Configuration", "gamblePityMode", false, "Enable Gamble Pity Mode, which gives credits back to those who lose everything.");
             gamblePityCredits = Plugin.instance.Config.Bind<int>("Fun Configuration", "gamblePityCredits", 10, "If Gamble Pity Mode is enabled, specify how much Pity Credits are given to losers. (Max: 60)");
-            gamblePoorString = MakeString("Fun Configuration", "gamblePoorString", "You don't meet the minimum credits requirement to gamble.", "Message returned when your credits is less than the gambleMinimum set.");
-            videoFolderPath = MakeString("Fun Configuration", "videoFolderPath", "darmuh-darmuhsTerminalStuff", "Folder name where videos will be pulled from, needs to be in BepInEx/plugins");
-            videoSync = MakeBool("Fun Configuration", "videoSync", true, "When networking is enabled, this setting will sync videos being played on the terminal for all players whose terminal screen is on.");
-            leverConfirmOverride = MakeBool("Controls Configuration", "leverConfirmOverride", false, "Setting this to true will disable the confirmation check for the <lever> command.");
-            restartConfirmOverride = MakeBool("Controls Configuration", "restartConfirmOverride", false, "Setting this to true will disable the confirmation check for the <restart> command.");
-            obcResolutionMirror = MakeString("Extras Configuration", "obcResolutionMirror", "1000; 700", "Set the resolution of the Mirror Camera created with OpenBodyCams for darmuhsTerminalStuff");
-            obcResolutionBodyCam = MakeString("Extras Configuration", "obcResolutionBodyCam", "1000; 700", "Set the resolution of the Body Camera created with OpenBodyCams for darmuhsTerminalStuff");
-            camsNeverHide = MakeBool("Extras Configuration", "camsNeverHide", false, "Setting this to true will make it so no command will ever auto-hide any cams command.");
+            gamblePoorString = MakeString(Plugin.instance.Config,"Fun Configuration", "gamblePoorString", "You don't meet the minimum credits requirement to gamble.", "Message returned when your credits is less than the gambleMinimum set.");
+            videoFolderPath = MakeString(Plugin.instance.Config,"Fun Configuration", "videoFolderPath", "darmuh-darmuhsTerminalStuff", "Folder name where videos will be pulled from, needs to be in BepInEx/plugins");
+            videoSync = MakeBool(Plugin.instance.Config,"Fun Configuration", "videoSync", true, "When networking is enabled, this setting will sync videos being played on the terminal for all players whose terminal screen is on.");
+            obcResolutionMirror = MakeString(Plugin.instance.Config,"Extras Configuration", "obcResolutionMirror", "1000; 700", "Set the resolution of the Mirror Camera created with OpenBodyCams for darmuhsTerminalStuff");
+            obcResolutionBodyCam = MakeString(Plugin.instance.Config,"Extras Configuration", "obcResolutionBodyCam", "1000; 700", "Set the resolution of the Body Camera created with OpenBodyCams for darmuhsTerminalStuff");
+            camsNeverHide = MakeBool(Plugin.instance.Config,"Extras Configuration", "camsNeverHide", false, "Setting this to true will make it so no command will ever auto-hide any cams command.");
             defaultCamsView = Plugin.instance.Config.Bind("Extras Configuration", "defaultCamsView", "cams", new ConfigDescription("Set the default view switch commands will use when nothing is active.", new AcceptableValueList<string>("map", "cams", "minimap", "minicams", "overlay")));
             ovOpacity = Plugin.instance.Config.Bind("Extras Configuration", "ovOpacity", 10, new ConfigDescription("Opacity percentage for Overlay View.", new AcceptableValueRange<int>(0, 100)));
-            alwaysOnAtStart = MakeBool("Quality of Life", "alwaysOnAtStart", true, "Setting this to true will set <alwayson> to enabled at launch.");
-            alwaysOnDynamic = MakeBool("Quality of Life", "alwaysOnDynamic", true, "Setting this to true will disable the terminal screen whenever you are not on the ship when alwayson is enabled.");
-            alwaysOnWhileDead = MakeBool("Quality of Life", "alwaysOnWhileDead", false, "Set this to true if you wish to keep the screen on after death.");
-
-
-            //Keyword configs (multiple per config item)
-            alwaysOnKeywords = MakeString("Custom Keywords", "alwaysOnKeywords", "alwayson;always on", "This semi-colon separated list is all keywords that can be used in terminal to return <alwayson> command");
-            camsKeywords = MakeString("Custom Keywords", "camsKeywords", "cameras; show cams; cams", "This semi-colon separated list is all keywords that can be used in terminal to return <cams> command");
-            mapKeywords = MakeString("Custom Keywords", "mapKeywords", "show map; map; view monitor", "Additional This semi-colon separated list is all keywords that can be used in terminal to return <map> command");
-            minimapKeywords = MakeString("Custom Keywords", "minimapKeywords", "minimap; show minimap", "This semi-colon separated list is all keywords that can be used in terminal to return <minimap> command.");
-            minicamsKeywords = MakeString("Custom Keywords", "minicamsKeywords", "minicams; show minicams", "This semi-colon separated list is all keywords that can be used in terminal to return <minicams> command");
-            overlayKeywords = MakeString("Custom Keywords", "overlayKeywords", "overlay; show overlay", "This semi-colon separated list is all keywords that can be used in terminal to return <overlay> command");
-            mirrorKeywords = MakeString("Custom Keywords", "mirrorKeywords", "mirror; reflection; show mirror", "This semi-colon separated list is all keywords that can be used in terminal to return <cams> command");
-            doorKeywords = MakeString("Custom Keywords", "doorKeywords", "door; toggle door", "This semi-colon separated list is all keywords that can be used in terminal to return <door> command");
-            lightsKeywords = MakeString("Custom Keywords", "lightsKeywords", "lights; toggle lights", "This semi-colon separated list is all keywords that can be used in terminal to return <lights> command");
-            modsKeywords = MakeString("Custom Keywords", "modsKeywords", "modlist; mods; show mods", "This semi-colon separated list is all keywords that can be used in terminal to return <mods> command");
-            tpKeywords = MakeString("Custom Keywords", "tpKeywords", "tp; use teleporter; teleport", "This semi-colon separated list is all keywords that can be used in terminal to return <tp> command");
-            itpKeywords = MakeString("Custom Keywords", "itpKeywords", "itp; use inverse; inverse", "This semi-colon separated list is all keywords that can be used in terminal to return <itp> command");
-            quitKeywords = MakeString("Custom Keywords", "quitKeywords", "quit;exit;leave", "This semi-colon separated list is all keywords that can be used in terminal to return <quit> command");
-            videoKeywords = MakeString("Custom Keywords", "videoKeywords", "lol; play video; lolxd; hahaha", "This semi-colon separated list is all keywords that can be used in terminal to return <video> command");
-            clearKeywords = MakeString("Custom Keywords", "clearKeywords", "clear;wipe;clean", "This semi-colon separated list is all keywords that can be used in terminal to return <clear> command");
-            dangerKeywords = MakeString("Custom Keywords", "dangerKeywords", "danger;hazard;show danger; show hazard", "This semi-colon separated list is all keywords that can be used in terminal to return <danger> command");
-            healKeywords = MakeString("Custom Keywords", "healKeywords", "healme; heal me; heal; medic", "This semi-colon separated list is all keywords that can be used in terminal to return <heal> command");
-            lootKeywords = MakeString("Custom Keywords", "lootKeywords", "loot; shiploot; show loot", "This semi-colon separated list is all keywords that can be used in terminal to return <loot> command");
-            randomSuitKeywords = MakeString("Custom Keywords", "randomSuitKeywords", "randomsuit; random suit", "This semi-colon separated list is all keywords that can be used in terminal to return <randomsuit> command");
-            clockKeywords = MakeString("Custom Keywords", "clockKeywords", "clock; show clock; time; show time", "This semi-colon separated list is all keywords that can be used in terminal to toggle Terminal Clock display");
-            ListItemsKeywords = MakeString("Custom Keywords", "ListItemsKeywords", "show items; get items; listitem", "This semi-colon separated list is all keywords that can be used in terminal to return <itemlist> command");
-            ListScrapKeywords = MakeString("Custom Keywords", "ListScrapKeywords", "loot detail; listloost", "This semi-colon separated list is all keywords that can be used in terminal to return <lootlist> command");
-            randomRouteKeywords = MakeString("Custom Keywords", "randomRouteKeywords", "route random; random moon", "This semi-colon separated list is all keywords that can be used in terminal to return <lootlist> command");
-            lobbyKeywords = MakeString("Custom Keywords", "lobbyKeywords", "lobby; show lobby; lobby name; show lobby name", "This semi-colon separated list is all keywords that can be used in terminal to return <lobby> command");
-
-
-            //terminal patcher keywords
-            fcolorKeyword = MakeString("Custom Keywords", "fcolorKeyword", "fcolor", "Set the keyword that can be used in terminal to return <fcolor> command");
-            gambleKeyword = MakeString("Custom Keywords", "gambleKeyword", "gamble", "Set the keyword that that can be used in terminal to return <gamble> command"); ;
-            leverKeywords = MakeString("Custom Keywords", "leverKeywords", "lever", "This semi-colon separated list is all keywords that can be used in terminal to return <lever> command"); ;
-            scolorKeyword = MakeString("Custom Keywords", "scolorKeyword", "scolor", "Set the keyword that that can be used in terminal to return <scolor> command"); ;
-            linkKeyword = MakeString("Custom Keywords", "linkKeyword", "link", "Set the keyword that that can be used in terminal to return <link> command"); ;
-            link2Keyword = MakeString("Custom Keywords", "link2Keyword", "link2", "Set the keyword that that can be used in terminal to return <link2> command"); ;
+            alwaysOnAtStart = MakeBool(Plugin.instance.Config,"Quality of Life", "alwaysOnAtStart", true, "Setting this to true will set <alwayson> to enabled at launch.");
+            alwaysOnDynamic = MakeBool(Plugin.instance.Config,"Quality of Life", "alwaysOnDynamic", true, "Setting this to true will disable the terminal screen whenever you are not on the ship when alwayson is enabled.");
+            alwaysOnWhileDead = MakeBool(Plugin.instance.Config,"Quality of Life", "alwaysOnWhileDead", false, "Set this to true if you wish to keep the screen on after death.");
 
 
             //homescreen lines
-            homeLine1 = MakeString("Terminal Customization", "homeline1", "Welcome to the FORTUNE-9 OS PLUS", "First line of the home command (startup screen)");
-            homeLine2 = MakeString("Terminal Customization", "homeline2", "\tUpgraded by Employee: <color=#e6b800>darmuh</color>", "Second line of the home command (startup screen)");
-            homeLine3 = MakeString("Terminal Customization", "homeline3", "Have a wonderful [currentDay]!", "Last line of the home command (startup screen)");
-            homeHelpLines = MakeString("Terminal Customization", "homeHelpLines", ">>Type \"Help\" for a list of commands.\r\n>>Type <color=#b300b3>\"More\"</color> for a menu of darmuh's commands.\r\n", "these two lines should generally be used to point to menus of other usable commands. Can also be expanded to more than two lines by using \"\\r\\n\" to indicate a new line");
+            homeLine1 = MakeString(Plugin.instance.Config,"Terminal Customization", "homeline1", "Welcome to the FORTUNE-9 OS PLUS", "First line of the home command (startup screen)");
+            homeLine2 = MakeString(Plugin.instance.Config,"Terminal Customization", "homeline2", "\tUpgraded by Employee: <color=#e6b800>darmuh</color>", "Second line of the home command (startup screen)");
+            homeLine3 = MakeString(Plugin.instance.Config,"Terminal Customization", "homeline3", "Have a wonderful [currentDay]!", "Last line of the home command (startup screen)");
+            homeHelpLines = MakeString(Plugin.instance.Config,"Terminal Customization", "homeHelpLines", ">>Type \"Help\" for a list of commands.\r\n>>Type <color=#b300b3>\"More\"</color> for a menu of darmuh's commands.\r\n", "these two lines should generally be used to point to menus of other usable commands. Can also be expanded to more than two lines by using \"\\r\\n\" to indicate a new line");
             
-            homeTextArt = MakeString("Terminal Customization", "homeTextArt", "[leadingSpacex4][leadingSpace]<color=#e6b800>^^      .-=-=-=-.  ^^\r\n ^^        (`-=-=-=-=-`)         ^^\r\n         (`-=-=-=-=-=-=-`)  ^^         ^^\r\n   ^^   (`-=-=-=-=-=-=-=-`)   ^^          \r\n       ( `-=-=-=-(@)-=-=-` )      ^^\r\n       (`-=-=-=-=-=-=-=-=-`)  ^^          \r\n       (`-=-=-=-=-=-=-=-=-`)  ^^\r\n        (`-=-=-=-=-=-=-=-`)          ^^\r\n         (`-=-=-=-=-=-=-`)  ^^            \r\n           (`-=-=-=-=-`)\r\n            `-=-=-=-=-`</color>", "ASCII Art goes here");
+            homeTextArt = MakeString(Plugin.instance.Config,"Terminal Customization", "homeTextArt", "[leadingSpacex4][leadingSpace]<color=#e6b800>^^      .-=-=-=-.  ^^\r\n ^^        (`-=-=-=-=-`)         ^^\r\n         (`-=-=-=-=-=-=-`)  ^^         ^^\r\n   ^^   (`-=-=-=-=-=-=-=-`)   ^^          \r\n       ( `-=-=-=-(@)-=-=-` )      ^^\r\n       (`-=-=-=-=-=-=-=-=-`)  ^^          \r\n       (`-=-=-=-=-=-=-=-=-`)  ^^\r\n        (`-=-=-=-=-=-=-=-`)          ^^\r\n         (`-=-=-=-=-=-=-`)  ^^            \r\n           (`-=-=-=-=-`)\r\n            `-=-=-=-=-`</color>", "ASCII Art goes here");
 
             //Quality of Life Stuff
-            LockCameraInTerminal = MakeBool("Quality of Life", "LockCameraInTerminal", false, "Enable this to lock the player camera to the terminal when it is in use.");
-            TerminalLightBehaviour = MakeClampedString("Quality of Life", "TerminalLightBehaviour", "nochange", "Use this config item to change how the terminal light behaves. Options are 'nochange' which keeps vanilla behaviour, 'disable' which disables this light whenever you use it, and 'alwayson' which will keep the light on as long as the screen is on from alwayson", new AcceptableValueList<string>("nochange", "disable", "alwayson"));
-            TerminalHistory = MakeBool("Quality of Life", "TerminalHistory", false, "(Requires terminalShortcuts feature to function) With this feature enabled, uparrow and downarrow will cycle through a list of previously used commands.");
-            TerminalHistoryMaxCount = MakeClampedInt("Quality of Life", "TerminalHistoryMaxCount", 9, "Max amount of previous commands to save in TerminalHistory list.", 3, 50);
-            TerminalAutoComplete = MakeBool("Quality of Life", "TerminalAutoComplete", false, "(Requires terminalShortcuts feature to function) With this feature enabled, tab key will cycle through a list of matching commands to the current input.");
-            TerminalAutoCompleteKey = MakeString("Quality of Life", "TerminalAutoCompleteKey", "Tab", "Key used to activate TerminalAutoComplete feature https://docs.unity3d.com/Packages/com.unity.inputsystem@1.0/api/UnityEngine.InputSystem.Key.html");
-            TerminalAutoCompleteMaxCount = MakeClampedInt("Quality of Life", "TerminalAutoCompleteMaxCount", 5, "Max amount of matching commands to store before disabling autocomplete.", 3, 50);
+            LockCameraInTerminal = MakeBool(Plugin.instance.Config,"Quality of Life", "LockCameraInTerminal", false, "Enable this to lock the player camera to the terminal when it is in use.");
+            TerminalLightBehaviour = MakeClampedString(Plugin.instance.Config, "Quality of Life", "TerminalLightBehaviour", "nochange", "Use this config item to change how the terminal light behaves. Options are 'nochange' which keeps vanilla behaviour, 'disable' which disables this light whenever you use it, and 'alwayson' which will keep the light on as long as the screen is on from alwayson", new AcceptableValueList<string>("nochange", "disable", "alwayson"));
+            TerminalHistory = MakeBool(Plugin.instance.Config,"Quality of Life", "TerminalHistory", false, "(Requires terminalShortcuts feature to function) With this feature enabled, uparrow and downarrow will cycle through a list of previously used commands.");
+            TerminalHistoryMaxCount = MakeClampedInt(Plugin.instance.Config, "Quality of Life", "TerminalHistoryMaxCount", 9, "Max amount of previous commands to save in TerminalHistory list.", 3, 50);
+            TerminalAutoComplete = MakeBool(Plugin.instance.Config,"Quality of Life", "TerminalAutoComplete", false, "(Requires terminalShortcuts feature to function) With this feature enabled, tab key will cycle through a list of matching commands to the current input.");
+            TerminalAutoCompleteKey = MakeString(Plugin.instance.Config, "Quality of Life", "TerminalAutoCompleteKey", "Tab", "Key used to activate TerminalAutoComplete feature https://docs.unity3d.com/Packages/com.unity.inputsystem@1.0/api/UnityEngine.InputSystem.Key.html");
+            TerminalAutoCompleteMaxCount = MakeClampedInt(Plugin.instance.Config, "Quality of Life", "TerminalAutoCompleteMaxCount", 5, "Max amount of matching commands to store before disabling autocomplete.", 3, 50);
 
 
             //Terminal Customization
-            TerminalCustomization = MakeBool("Terminal Customization", "TerminalCustomization", false, "Enable or Disable terminal color customizations");
-            TerminalColor = MakeString("Terminal Customization", "TerminalColor", "#666633", "This changes the color of the physical terminal");
-            TerminalTextColor = MakeString("Terminal Customization", "TerminalTextColor", "#ffffb3", "This changes the color of the main text in the terminal");
-            TerminalMoneyColor = MakeString("Terminal Customization", "TerminalMoneyColor", "#ccffcc", "This changes the color of the current credits text in the top left of the terminal");
-            TerminalCaretColor = MakeString("Terminal Customization", "TerminalCaretColor", "#9900ff", "This changes the color of the text caret in the terminal");
-            TerminalScrollbarColor = MakeString("Terminal Customization", "TerminalScrollbarColor", "#9900ff", "This changes the color of the scrollbar in the terminal");
-            TerminalScrollBGColor = MakeString("Terminal Customization", "TerminalScrollBGColor", "#ffffb3", "This changes the color of the background box of the scrollbar in the terminal");
-            TerminalClockColor = MakeString("Terminal Customization", "TerminalClockColor", "#ccffcc", "This changes the color of the current credits text in the top left of the terminal");
-            TerminalLightColor = MakeString("Terminal Customization", "TerminalLightColor", "#9900ff", "This changes the color of the text caret in the terminal");
+            TerminalCustomization = MakeBool(Plugin.instance.Config, "Terminal Customization", "TerminalCustomization", false, "Enable or Disable terminal color customizations");
+            TerminalColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalColor", "#666633", "This changes the color of the physical terminal");
+            TerminalTextColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalTextColor", "#ffffb3", "This changes the color of the main text in the terminal");
+            TerminalMoneyColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalMoneyColor", "#ccffcc", "This changes the color of the current credits text in the top left of the terminal");
+            TerminalCaretColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalCaretColor", "#9900ff", "This changes the color of the text caret in the terminal");
+            TerminalScrollbarColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalScrollbarColor", "#9900ff", "This changes the color of the scrollbar in the terminal");
+            TerminalScrollBGColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalScrollBGColor", "#ffffb3", "This changes the color of the background box of the scrollbar in the terminal");
+            TerminalClockColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalClockColor", "#ccffcc", "This changes the color of the clock element that is added to the terminal");
+            TerminalLightColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalLightColor", "#9900ff", "This changes the color of the light that shines from the terminal");
 
+            PluginCore.StuffForLibrary.ManualCommands(); //add more managedbools that dont come from a specific config item
 
-            RemoveOrphanedEntries();
-            NetworkingCheck();
+            Plugin.Log.LogInfo("end of config setup");
+
+            RemoveOrphanedEntries(Plugin.instance.Config);
+            ReadConfigAndAssignValues(Plugin.instance.Config, defaultManagedBools);
+            ReadConfigAndAssignValues(Plugin.instance.Config, TerminalStuffBools);
+            NetworkingCheck(ModNetworking.Value, Plugin.instance.Config, defaultManagedBools);
         }
 
-        private static ConfigEntry<bool> MakeBool(string section, string configItemName, bool defaultValue, string configDescription)
-        {
-            return Plugin.instance.Config.Bind<bool>(section, configItemName, defaultValue, configDescription);
-        }
-
-        private static ConfigEntry<int> MakeInt(string section, string configItemName, int defaultValue, string configDescription)
-        {
-            return Plugin.instance.Config.Bind<int>(section, configItemName, defaultValue, configDescription);
-        }
-
-        private static ConfigEntry<string> MakeClampedString(string section, string configItemName, string defaultValue, string configDescription, AcceptableValueList<string> acceptedValues)
-        {
-            return Plugin.instance.Config.Bind(section, configItemName, defaultValue, new ConfigDescription(configDescription, acceptedValues));
-        }
-
-        private static ConfigEntry<int> MakeClampedInt(string section, string configItemName, int defaultValue, string configDescription, int minValue, int maxValue)
-        {
-            return Plugin.instance.Config.Bind(section, configItemName, defaultValue, new ConfigDescription(configDescription, new AcceptableValueRange<int>(minValue, maxValue)));
-        }
-
-        private static ConfigEntry<float> MakeClampedFloat(string section, string configItemName, float defaultValue, string configDescription, float minValue, float maxValue)
-        {
-            return Plugin.instance.Config.Bind(section, configItemName, defaultValue, new ConfigDescription(configDescription, new AcceptableValueRange<float>(minValue, maxValue)));
-        }
-
-        private static ConfigEntry<string> MakeString(string section, string configItemName, string defaultValue, string configDescription)
-        {
-
-            return Plugin.instance.Config.Bind(section, configItemName, defaultValue, configDescription);
-        }
-
-        private static void NetworkingCheck()
-        {
-            Plugin.Log.LogInfo("Checking if networking is disabled...");
-
-            if (!ModNetworking.Value)
-            {
-                List<ConfigEntry<bool>> networkingRequiredConfigOptions = [terminalBioScan, terminalVitals, terminalBioScanPatch, terminalVitalsUpgrade, terminalRefund, terminalScolor, terminalFcolor, terminalGamble, networkedNodes, terminalRouteRandom, videoSync];
-
-                foreach (ConfigEntry<bool> configItem in networkingRequiredConfigOptions)
-                {
-                    if (configItem.Value)
-                    {
-                        configItem.Value = false;
-                        Plugin.Log.LogWarning($"Setting {configItem.Definition.Key} to false. Networking is disabled and this setting requires networking!");
-                    }
-                }
-                Plugin.instance.Config.Save(); //added in 3.2.4
-            }
-
-            Plugin.Log.LogInfo("Networking check complete.");
-        }
-
-        private static void RemoveOrphanedEntries()
-        {
-            Plugin.MoreLogs("removing orphaned entries (credits to Kittenji)");
-            PropertyInfo orphanedEntriesProp = Plugin.instance.Config.GetType().GetProperty("OrphanedEntries", BindingFlags.NonPublic | BindingFlags.Instance);
-
-            var orphanedEntries = (Dictionary<ConfigDefinition, string>)orphanedEntriesProp.GetValue(Plugin.instance.Config, null);
-
-            orphanedEntries.Clear(); // Clear orphaned entries (Unbinded/Abandoned entries)
-            Plugin.instance.Config.Save(); // Save the config file
-        }
     }
 }

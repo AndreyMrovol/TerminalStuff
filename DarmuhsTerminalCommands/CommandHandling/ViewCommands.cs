@@ -8,8 +8,8 @@ namespace TerminalStuff
 {
     internal class ViewCommands
     {
-        internal static Dictionary<TerminalNode, int> termViewNodes = [];
-        internal static Dictionary<int, string> termViewNodeNums = [];
+        //internal static Dictionary<TerminalNode, int> termViewNodes = []; //defaultListing.specialListNum
+        //internal static Dictionary<int, string> termViewNodeNums = []; //defaultListing.ListNumToString
         internal static bool externalcamsmod = false;
         internal static bool isVideoPlaying = false;
         internal static Camera playerCam = null;
@@ -599,8 +599,6 @@ namespace TerminalStuff
             FixVideoPatch.sanityCheckLOL = true;
 
             SplitViewChecks.CheckForSplitView("neither"); // Disables split view components if enabled
-
-            //VideoPlayer termVP = GameObject.Find("Environment/HangarShip/Terminal/Canvas/MainContainer/ImageContainer/Image (1)").GetComponent<VideoPlayer>();
 
             string displayText = VideoManager.PickVideoToPlay(Plugin.instance.Terminal.videoPlayer);
             return displayText;

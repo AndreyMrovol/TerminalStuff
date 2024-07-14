@@ -59,50 +59,6 @@ namespace TerminalStuff
         }
     }
 
-    [HarmonyPatch(typeof(ShipTeleporter), "Awake")]
-    public class TeleporterInit : ShipTeleporter
-    {
-        static void Postfix(ShipTeleporter __instance)
-        {
-            if (!ConfigSettings.terminalTP.Value && !ConfigSettings.terminalITP.Value)
-                return;
-
-            CheckTeleporterTypeAndAssign(__instance);
-        }
-
-        private static void CheckTeleporterTypeAndAssign(ShipTeleporter instance)
-        {
-            if (instance.isInverseTeleporter)
-            {
-                ITPexists(instance);
-            }
-            else
-            {
-                TPexists(instance);
-            }
-        }
-
-        private static void TPexists(ShipTeleporter instance)
-        {
-            if (!ConfigSettings.terminalTP.Value)
-                return;
-
-            Plugin.NormalTP = instance;
-            Plugin.MoreLogs("NormalTP instance detected and set.");
-            TerminalEvents.AddTeleportKeywords();
-        }
-
-        private static void ITPexists(ShipTeleporter instance)
-        {
-            if (!ConfigSettings.terminalITP.Value)
-                return;
-
-            Plugin.InverseTP = instance;
-            Plugin.MoreLogs("InverseTP instance detected and set.");
-            TerminalEvents.AddInverseTeleportKeywords();
-        }
-    }
-
     [HarmonyPatch(typeof(ManualCameraRenderer), "updateMapTarget")]
     public class SwitchRadarPatch
     {

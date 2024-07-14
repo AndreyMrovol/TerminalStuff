@@ -8,7 +8,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using UnityEngine;
-using static TerminalStuff.NoMoreAPI.CommandStuff;
 
 namespace TerminalStuff
 {
@@ -37,7 +36,6 @@ namespace TerminalStuff
 
             upgrade = CheckUnlockableStatus(itemName);
 
-            Plugin.ERROR($"Unlockable could NOT be found {itemName}");
             return upgrade;
         }
 
@@ -48,7 +46,7 @@ namespace TerminalStuff
                 //Plugin.MoreLogs($"Checking {itemName}");
                 if (item.unlockableName == itemName)
                 {
-                    if (item.alreadyUnlocked || item.hasBeenUnlockedByPlayer || item.spawnPrefab)
+                    if (item.alreadyUnlocked || item.hasBeenUnlockedByPlayer)
                     {
                         Plugin.Spam($"Upgrade: {itemName} already unlocked. Setting variable to true");
                         return true;
@@ -56,6 +54,7 @@ namespace TerminalStuff
                 }
             }
 
+            Plugin.Spam($"Upgrade: {itemName} is NOT unlocked already");
             return false;
         }
 
@@ -77,7 +76,7 @@ namespace TerminalStuff
         internal static string BioscanCommand()
         {
             string displayText;
-            CheckUpgradeStatus(ref enemyScanUpgradeEnabled, "BioScanner 2.0 Upgrade Patch (bioscanpatch)");
+            CheckUpgradeStatus(ref enemyScanUpgradeEnabled, "BioscanPatch");
 
             if (RoundManager.Instance != null)
             {
@@ -159,7 +158,7 @@ namespace TerminalStuff
         internal static string VitalsCommand()
         {
             string displayText;
-            CheckUpgradeStatus(ref vitalsUpgradeEnabled, "Vitals Scanner Upgrade (vitalspatch)");
+            CheckUpgradeStatus(ref vitalsUpgradeEnabled, "VitalsPatch");
             PlayerControllerB getPlayerInfo = StartOfRound.Instance.mapScreen.targetedPlayer;
 
             if (getPlayerInfo == null)

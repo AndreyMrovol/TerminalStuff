@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static TerminalStuff.DynamicCommands;
-using static TerminalStuff.NoMoreAPI.CommandStuff;
-using static TerminalStuff.NoMoreAPI.TerminalHook;
+using static OpenLib.ConfigManager.ConfigSetup;
+using static OpenLib.CoreMethods.AddingThings;
+using static OpenLib.CoreMethods.LogicHandling;
 using static TerminalStuff.TerminalEvents;
 
 namespace TerminalStuff
@@ -19,14 +19,14 @@ namespace TerminalStuff
         {
             string firstWord = words[0].ToLower();
             HandleAnyNode(terminal, currentNode, words, firstWord, out resultNode);
-            if (GetNewDisplayText(ref resultNode))
-                Plugin.MoreLogs("command found in base funcstring listing...");
+            if (GetNewDisplayText(defaultListing, ref resultNode) || GetNewDisplayText(ConfigSettings.TerminalStuffMain, ref resultNode))
+                Plugin.MoreLogs("command found in one of the listings for shortcut...");
             return resultNode;
         }
 
         internal static int FindViewInt(TerminalNode givenNode)
         {
-            foreach (KeyValuePair<TerminalNode, int> pairValue in ViewCommands.termViewNodes)
+            foreach (KeyValuePair<TerminalNode, int> pairValue in ConfigSettings.TerminalStuffMain.specialListNum)
             {
                 if (pairValue.Key == givenNode)
                 {
@@ -46,7 +46,7 @@ namespace TerminalStuff
                 return -1;
             else
             {
-                foreach (KeyValuePair<int, string> pairValue in ViewCommands.termViewNodeNums)
+                foreach (KeyValuePair<int, string> pairValue in ConfigSettings.TerminalStuffMain.ListNumToString)
                 {
                     if (pairValue.Value == currentMode)
                     {
@@ -109,9 +109,9 @@ namespace TerminalStuff
 
         internal static TerminalNode FindViewNode(int givenInt)
         {
-            if (givenInt < 0 || givenInt >= ViewCommands.termViewNodes.Count)
+            if (givenInt < 0 || givenInt >= ConfigSettings.TerminalStuffMain.specialListNum.Count)
                 return null;
-            foreach (KeyValuePair<TerminalNode, int> pairValue in ViewCommands.termViewNodes)
+            foreach (KeyValuePair<TerminalNode, int> pairValue in ConfigSettings.TerminalStuffMain.specialListNum)
             {
                 if (pairValue.Value == givenInt)
                 {
@@ -130,7 +130,7 @@ namespace TerminalStuff
             Plugin.MoreLogs("Networked nodes enabled, sending result to server.");
             if (resultNode != null)
             {
-                if (ViewCommands.termViewNodes.ContainsKey(resultNode))
+                if (ConfigSettings.TerminalStuffMain.specialListNum.ContainsKey(resultNode)) //should be the listing that contains the viewnodes
                 {
                     int nodeNum = FindViewInt(resultNode);
                     NetHandler.NetNodeReset(true);
@@ -213,19 +213,9 @@ namespace TerminalStuff
                     }
                 }
             }
-            else if (nodesThatAcceptNum.ContainsValue(firstWord))
-            {
-                resultNode = GetNodeFromList(firstWord, nodesThatAcceptNum);
-                return resultNode;
-            }
-            else if (nodesThatAcceptAnyString.ContainsValue(firstWord))
-            {
-                resultNode = GetNodeFromList(firstWord, nodesThatAcceptAnyString);
-                return resultNode;
-            }
             else
             {
-                resultNode = currentNode;
+                resultNode = Plugin.instance.Terminal.currentNode;
                 return resultNode;
             }
         }
@@ -265,11 +255,6 @@ namespace TerminalStuff
             MoreCamStuff.VideoPersist(initialResult.name);
 
             MoreCamStuff.CamPersistance(initialResult.name);
-
-            if (initialResult != null && !MenuBuild.allMenuNodes.ContainsValue(initialResult))
-            {
-                MenuBuild.CheckAndResetMenuVariables();
-            }
 
             return;
         }

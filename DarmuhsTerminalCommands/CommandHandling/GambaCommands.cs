@@ -10,6 +10,7 @@ namespace TerminalStuff
 
         internal static string Ask2Gamble()
         {
+            Plugin.MoreLogs("Ask2Gamble");
             string[] words = GetWords();
 
             if (words.Length < 2 || words.Length > 2)
@@ -27,6 +28,7 @@ namespace TerminalStuff
                 Plugin.MoreLogs("))))))))))))))))))Integer Established");
                 ParsedValue = parsedValue;
                 string displayText = $"Gamble {ParsedValue}% of your credits?\n\n\n\n\n\n\n\n\n\n\n\nPlease CONFIRM or DENY.\n";
+                //Plugin.MoreLogs(displayText);
                 return displayText;
             }
             else

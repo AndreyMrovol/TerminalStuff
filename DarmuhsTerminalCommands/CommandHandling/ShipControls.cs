@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
-using static TerminalStuff.GetFromConfig;
 using static TerminalStuff.Misc;
 using static TerminalStuff.StringStuff;
 using static UnityEngine.Object;
 using Object = UnityEngine.Object;
+using static OpenLib.Common.Teleporter;
 
 namespace TerminalStuff
 {
@@ -113,9 +113,9 @@ namespace TerminalStuff
         internal static string RegularTeleporterCommand()
         {
             string[] screenWords = GetWords();
-            string[] words = GetWordsAndKeyword(tpKW, screenWords);
+            string[] words = GetWordsAndKeyword(GetKeywordsPerConfigItem(ConfigSettings.tpKeywords.Value), screenWords);
             string displayText;
-            ShipTeleporter tp = Plugin.NormalTP;
+            ShipTeleporter tp = NormalTP;
             if ((Object)tp != (Object)null)
             {
                 float cooldownTime = tp.cooldownTime;
@@ -173,7 +173,7 @@ namespace TerminalStuff
         internal static string InverseTeleporterCommand()
         {
             string displayText;
-            ShipTeleporter tp = Plugin.InverseTP;
+            ShipTeleporter tp = InverseTP;
             if ((Object)tp != (Object)null)
             {
                 float cooldownTime = tp.cooldownTime;

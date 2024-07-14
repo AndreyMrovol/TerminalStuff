@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using static TerminalStuff.AllMyTerminalPatches;
-using static TerminalStuff.NoMoreAPI.CommandStuff;
-using static TerminalStuff.NoMoreAPI.TerminalHook;
+using static TerminalStuff.EventSub.TerminalStart;
+using static OpenLib.ConfigManager.ConfigSetup;
+using static OpenLib.CoreMethods.AddingThings;
+using static OpenLib.CoreMethods.LogicHandling;
 using Object = UnityEngine.Object;
 
 namespace TerminalStuff
@@ -61,7 +62,7 @@ namespace TerminalStuff
         [ClientRpc]
         internal void NodeLoadClientRpc(string topRightText, string nodeName, string nodeText, bool fromHost, int nodeNumber = -1)
         {
-            if (!Plugin.instance.Terminal.terminalUIScreen.gameObject.activeSelf && TerminalStartPatch.firstload)
+            if (!Plugin.instance.Terminal.terminalUIScreen.gameObject.activeSelf && firstload)
                 return;
 
             NetworkManager networkManager = base.NetworkManager;
@@ -157,7 +158,7 @@ namespace TerminalStuff
 
             NetNodeReset(true);
 
-            if (nodeNumber != -1 && nodeNumber <= ViewCommands.termViewNodes.Count)
+            if (nodeNumber != -1 && nodeNumber <= ConfigSettings.TerminalStuffMain.ListNumToString.Count)
             {
                 TerminalNode viewNode = StartofHandling.FindViewNode(nodeNumber);
                 SyncViewNodeWithNum(ref viewNode, nodeNumber, nodeText);
@@ -421,11 +422,11 @@ namespace TerminalStuff
         internal void AoDClientRpc(bool aod)
         {
             Plugin.MoreLogs($"Client: setting alwaysondisplay to {aod}");
-            TerminalStartPatch.alwaysOnDisplay = aod;
-            if (TerminalStartPatch.isTermInUse == false && aod == true)
-                TerminalStartPatch.ToggleScreen(aod);
-            else if (TerminalStartPatch.isTermInUse == false && aod == false)
-                TerminalStartPatch.ToggleScreen(aod);
+            alwaysOnDisplay = aod;
+            if (isTermInUse == false && aod == true)
+                ToggleScreen(aod);
+            else if (isTermInUse == false && aod == false)
+                ToggleScreen(aod);
         }
 
 

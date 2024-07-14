@@ -1,11 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static TerminalStuff.ColorCommands;
-using static TerminalStuff.NoMoreAPI.TerminalHook;
-using static TerminalStuff.SpecialConfirmationLogic;
 using static TerminalStuff.StringStuff;
-using static TerminalStuff.TerminalEvents;
 
 namespace TerminalStuff
 {
@@ -17,13 +13,8 @@ namespace TerminalStuff
 
         //fov
         internal static bool validFovNum = false;
-        internal static Dictionary<TerminalNode, string> nodesThatAcceptNum = [];
         internal static bool fovEnum = false;
 
-        //commands that accept any input after keyword
-        internal static Dictionary<TerminalNode, string> nodesThatAcceptAnyString = [];
-
-        //special keywords
         internal static string fColor;
         internal static string Gamble;
         internal static string sColor;
@@ -32,72 +23,6 @@ namespace TerminalStuff
         internal static string Restart;
         public static string Linktext { get; internal set; } //public static string
 
-        internal static void GetConfigKeywordsToUse()
-        {
-            if (ConfigSettings.fcolorKeyword.Value != null && !TryGetKeyword(ConfigSettings.fcolorKeyword.Value))
-                fColor = ConfigSettings.fcolorKeyword.Value.ToLower();
-            else
-                fColor = "fcolor";
-            if (ConfigSettings.gambleKeyword.Value != null && !TryGetKeyword(ConfigSettings.gambleKeyword.Value))
-                Gamble = ConfigSettings.gambleKeyword.Value.ToLower();
-            else
-                Gamble = "gamble";
-
-            if (ConfigSettings.scolorKeyword.Value != null && !TryGetKeyword(ConfigSettings.scolorKeyword.Value))
-                sColor = ConfigSettings.scolorKeyword.Value.ToLower();
-            else
-                sColor = "scolor";
-
-            if (ConfigSettings.linkKeyword.Value != null && !TryGetKeyword(ConfigSettings.linkKeyword.Value))
-                Link = ConfigSettings.linkKeyword.Value.ToLower();
-            else
-                Link = "link";
-
-            if (ConfigSettings.link2Keyword.Value != null && !TryGetKeyword(ConfigSettings.link2Keyword.Value))
-                Link2 = ConfigSettings.link2Keyword.Value.ToLower();
-            else
-                Link2 = "link2";
-
-            Restart = "restart";
-
-            MenuBuild.CreateMenus();
-            InitDynamicCommands();
-            InitKeywords();
-        }
-
-        internal static void InitDynamicCommands()
-        {
-            Plugin.Spam("fov init");
-            if (ConfigSettings.terminalFov.Value)
-                MakeCommand($"fov_node", "fov", "fov prompt (this shouldnt show)", false, true, true, false, $"fov_confirm_node", $"fov_deny_node", "fov accepted", "fov denied", 0, FovPrompt, FovConfirm, FovDeny, nodesThatAcceptNum, darmuhsTerminalStuff);
-
-            Plugin.Spam("scolor init");
-            if (ConfigSettings.terminalScolor.Value && ConfigSettings.ModNetworking.Value)
-            {
-                MakeDynamicCommand("scolor_node", sColor, "scolor command", true, false, ShipColorBase, nodesThatAcceptAnyString, darmuhsTerminalStuff);
-            }
-
-            Plugin.Spam("fcolor init");
-            if (ConfigSettings.terminalFcolor.Value && ConfigSettings.ModNetworking.Value)
-            {
-                MakeDynamicCommand("fcolor_node", fColor, "fcolor command", true, false, FlashColorBase, nodesThatAcceptAnyString, darmuhsTerminalStuff);
-            }
-
-            Plugin.Spam("kick init");
-            if (ConfigSettings.terminalKick.Value)
-                MakeCommand("kick", "kick", "kick command failed\r\n", false, true, true, false, "kickYes", "kickNo", "kicking player", "not kicking player", 0, AdminCommands.KickPlayersAsk, AdminCommands.KickPlayerConfirm, AdminCommands.KickPlayerDeny, nodesThatAcceptAnyString, darmuhsTerminalStuff);
-
-            Plugin.Spam("shortcuts init");
-            if (ConfigSettings.terminalShortcuts.Value)
-            {
-                MakeDynamicCommand("bind", "bind", "bind failed", true, false, BindKeyToCommand, nodesThatAcceptAnyString, darmuhsTerminalStuff);
-                MakeDynamicCommand("unbind", "unbind", "unbind failed", true, false, UnBindKeyToCommand, nodesThatAcceptAnyString, darmuhsTerminalStuff);
-
-            }
-
-            Plugin.Spam("home");
-            AddKeywordToExistingNode("home", Plugin.instance.Terminal.terminalNodes.specialNodes[1]);
-        }
 
         internal static string BindKeyToCommand()
         {

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static TerminalStuff.EventSub.TerminalQuit;
 
 namespace TerminalStuff
 {
@@ -161,7 +162,7 @@ namespace TerminalStuff
         {
             if (ConfigSettings.camsUseDetectedMods.Value && Plugin.instance.OpenBodyCamsMod)
             {
-                AllMyTerminalPatches.QuitPatch.TerminalCameraStatus(state);
+                TerminalCameraStatus(state);
             }
             else
                 ViewCommands.SetCameraState(state);

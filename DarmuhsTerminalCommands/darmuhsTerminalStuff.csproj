@@ -82,6 +82,9 @@
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\BepInEx\dontloadpls\Zaggy1024-OpenBodyCams\OpenBodyCams.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="OpenLib">
+      <HintPath>..\..\..\publicDevLibrary\DarmuhsTerminalCommands\bin\Debug\OpenLib.dll</HintPath>
+    </Reference>
     <Reference Include="suitsTerminal">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\BepInEx\dontloadpls\suitsTerminal.dll</HintPath>
       <Private>False</Private>
@@ -169,14 +172,19 @@
     <Compile Include="Compatibility\BMX-LobbyCompat.cs" />
     <Compile Include="Compatibility\FovAdjustStuff.cs" />
     <Compile Include="CommandHandling\GambaCommands.cs" />
+    <Compile Include="EventSub\Subscribers.cs" />
+    <Compile Include="EventSub\Teleporters.cs" />
+    <Compile Include="EventSub\TerminalBeginUsing.cs" />
+    <Compile Include="EventSub\TerminalGeneral.cs" />
+    <Compile Include="EventSub\TerminalParse.cs" />
+    <Compile Include="EventSub\TerminalQuit.cs" />
+    <Compile Include="EventSub\TerminalStart.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="NoMoreAPI\RemoveThings.cs" />
-    <Compile Include="NoMoreAPI\TerminalHook.cs" />
-    <Compile Include="NoMoreAPI\CommandStuff.cs" />
     <Compile Include="PluginCore\BoolStuff.cs" />
-    <Compile Include="PluginCore\GetFromConfig.cs" />
     <Compile Include="PluginCore\Misc.cs" />
+    <Compile Include="PluginCore\RemoveThings.cs" />
     <Compile Include="PluginCore\StringStuff.cs" />
+    <Compile Include="PluginCore\StuffForLibrary.cs" />
     <Compile Include="SpecialStuff\AutoComplete.cs" />
     <Compile Include="SpecialStuff\TerminalHistory.cs" />
     <Compile Include="VisualCore\AlwaysOnStuff.cs" />
@@ -187,7 +195,6 @@
     <Compile Include="Networking\netHandler.cs" />
     <Compile Include="Compatibility\OpenBodyCamsCompatibility.cs" />
     <Compile Include="PatchThings\OtherPatches.cs" />
-    <Compile Include="PluginCore\PageBuilder.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

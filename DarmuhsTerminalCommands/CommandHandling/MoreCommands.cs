@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using static TerminalStuff.AllMyTerminalPatches;
+using static TerminalStuff.EventSub.TerminalStart;
 using static TerminalStuff.DynamicCommands;
 using static TerminalStuff.TerminalEvents;
 
@@ -195,7 +195,7 @@ namespace TerminalStuff
         internal static string AlwaysOnDisplay()
         {
             string displayText;
-            if (!TerminalStartPatch.alwaysOnDisplay && ConfigSettings.networkedNodes.Value && ConfigSettings.ModNetworking.Value)
+            if (!alwaysOnDisplay && ConfigSettings.networkedNodes.Value && ConfigSettings.ModNetworking.Value)
             {
                 keepAlwaysOnDisabled = false;
                 NetHandler.Instance.AoDServerRpc(true);
@@ -203,7 +203,7 @@ namespace TerminalStuff
                 return displayText;
                 //Plugin.Log.LogInfo("set alwaysondisplay to true");
             }
-            else if (TerminalStartPatch.alwaysOnDisplay && ConfigSettings.networkedNodes.Value && ConfigSettings.ModNetworking.Value)
+            else if (alwaysOnDisplay && ConfigSettings.networkedNodes.Value && ConfigSettings.ModNetworking.Value)
             {
                 keepAlwaysOnDisabled = true;
                 NetHandler.Instance.AoDServerRpc(false);
@@ -211,17 +211,17 @@ namespace TerminalStuff
                 return displayText;
                 //Plugin.Log.LogInfo("set alwaysondisplay to false");
             }
-            else if (!TerminalStartPatch.alwaysOnDisplay && !ConfigSettings.networkedNodes.Value)
+            else if (!alwaysOnDisplay && !ConfigSettings.networkedNodes.Value)
             {
                 keepAlwaysOnDisabled = false;
-                TerminalStartPatch.alwaysOnDisplay = true;
+                alwaysOnDisplay = true;
                 displayText = $"Terminal Always-on Display [ENABLED]\r\n";
                 return displayText;
             }
-            else if (TerminalStartPatch.alwaysOnDisplay && !ConfigSettings.networkedNodes.Value)
+            else if (alwaysOnDisplay && !ConfigSettings.networkedNodes.Value)
             {
                 keepAlwaysOnDisabled = true;
-                TerminalStartPatch.alwaysOnDisplay = false;
+                alwaysOnDisplay = false;
                 displayText = $"Terminal Always-on Display [DISABLED]\r\n";
                 return displayText;
             }

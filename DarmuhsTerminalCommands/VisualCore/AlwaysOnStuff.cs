@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
-using static TerminalStuff.AllMyTerminalPatches;
+using static TerminalStuff.EventSub.TerminalQuit;
 
 namespace TerminalStuff
 {
@@ -22,7 +22,7 @@ namespace TerminalStuff
                     instance.terminalUIScreen.gameObject.SetActive(false);
 
                     if (ViewCommands.externalcamsmod && Plugin.instance.OpenBodyCamsMod && ViewCommands.AnyActiveMonitoring())
-                        QuitPatch.TerminalCameraStatus(false);
+                        TerminalCameraStatus(false);
 
                     Plugin.Spam("Disabling terminal screen.");
                     if (ConfigSettings.TerminalLightBehaviour.Value == "alwayson")
@@ -33,7 +33,7 @@ namespace TerminalStuff
                     instance.terminalUIScreen.gameObject.SetActive(true);
 
                     if (ViewCommands.externalcamsmod && Plugin.instance.OpenBodyCamsMod && ViewCommands.AnyActiveMonitoring())
-                        QuitPatch.TerminalCameraStatus(true);
+                        TerminalCameraStatus(true);
 
                     Plugin.Spam("Enabling terminal screen.");
                     if (ConfigSettings.TerminalLightBehaviour.Value == "alwayson")
@@ -48,7 +48,7 @@ namespace TerminalStuff
                 instance.terminalUIScreen.gameObject.SetActive(false);
                 if (ViewCommands.externalcamsmod && Plugin.instance.OpenBodyCamsMod && ViewCommands.AnyActiveMonitoring())
                 {
-                    QuitPatch.TerminalCameraStatus(false);
+                    TerminalCameraStatus(false);
                     Plugin.Spam("Cams disabled on player death");
                 }
 

@@ -6,26 +6,26 @@ using static TerminalStuff.AllMyTerminalPatches;
 
 namespace TerminalStuff
 {
-    internal class MoreCamStuff
+    internal class MoreCamStuff //UPDATE excludedNames to configItem Names for Nodes that dont specify nodeName!!!
     {
         internal static List<string> excludedNames =
                 //stuff that should not disable cams
                 [
                     "ViewInsideShipCam 1",
-                    "TerminalStuff Mirror",
-                    "Toggle Doors",
-                    "Toggle Lights",
-                    "Always-On Display",
+                    "terminalStuff Mirror",
+                    "terminalDoor",
+                    "terminalLights",
+                    "terminalAlwaysOn",
                     "Use Inverse Teleporter",
                     "Use Teleporter",
-                    "Clear Terminal Screen",
-                    "Check Danger Level",
-                    "Check Vitals",
-                    "HealFromTerminal",
-                    "Check Loot Value",
-                    "RandomSuit",
-                    "Terminal Clock",
-                    "Switch to Previous",
+                    "terminalClear",
+                    "terminalDanger",
+                    "terminalVitals",
+                    "terminalHeal",
+                    "terminalLoot",
+                    "terminalRandomSuit",
+                    "terminalClockCommand",
+                    "terminalPrevious",
                     "SwitchRadarCamPlayer 1",
                     "SwitchedCam",
                     "switchDummy",
@@ -41,7 +41,7 @@ namespace TerminalStuff
                     "FinishedRadarBooster",
                 ];
 
-        internal static void VideoPersist(String nodeName)
+        internal static void VideoPersist(string nodeName)
         {
             if (ViewCommands.isVideoPlaying && nodeName != "darmuh's videoPlayer")
             {

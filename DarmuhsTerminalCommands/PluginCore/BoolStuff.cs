@@ -1,5 +1,4 @@
 ﻿using static TerminalStuff.AlwaysOnStuff;
-using static TerminalStuff.AllMyTerminalPatches;
 using static TerminalStuff.TerminalClockStuff;
 using static TerminalStuff.ShipControls;
 using static TerminalStuff.TerminalEvents;
@@ -9,6 +8,8 @@ using static TerminalStuff.NetHandler;
 using static TerminalStuff.AdminCommands;
 using static TerminalStuff.WalkieTerm;
 using static TerminalStuff.StartofHandling;
+using static TerminalStuff.EventSub.TerminalQuit;
+using static TerminalStuff.EventSub.TerminalStart;
 
 namespace TerminalStuff
 {
@@ -28,9 +29,9 @@ namespace TerminalStuff
 
         internal static void ResetEnumBools()
         {
-            TerminalStartPatch.delayStartEnum = false;
+            delayStartEnum = false;
             dynamicStatus = false;
-            QuitPatch.videoQuitEnum = false;
+            videoQuitEnum = false;
             quitTerminalEnum = false;
             leverEnum = false;
             fovEnum = false;
