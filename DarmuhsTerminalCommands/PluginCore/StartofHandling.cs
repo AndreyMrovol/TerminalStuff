@@ -1,8 +1,8 @@
-﻿using System.Collections;
+﻿using OpenLib.CoreMethods;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static OpenLib.ConfigManager.ConfigSetup;
-using static OpenLib.CoreMethods.AddingThings;
 using static OpenLib.CoreMethods.LogicHandling;
 using static TerminalStuff.TerminalEvents;
 
@@ -11,16 +11,32 @@ namespace TerminalStuff
     internal class StartofHandling
     {
         internal static Coroutine delayedUpdater;
-        internal static TerminalNode dummyNode = CreateDummyNode("handling_node", true, "");
+        //internal static TerminalNode dummyNode = CreateDummyNode("handling_node", true, "");
 
         internal static bool textUpdater = false;
+
+        internal static TerminalNode HandleShortcut(Terminal terminal, TerminalNode currentNode, string[] words, out TerminalNode resultNode)
+        {
+            string firstWord = words[0].ToLower();
+            HandleAnyNode(terminal, currentNode, words, firstWord, out resultNode);
+
+            List<MainListing> fullListings =
+            [
+                defaultListing, ConfigSettings.TerminalStuffMain
+            ];
+
+            if (GetNewDisplayText(fullListings, ref resultNode))
+                Plugin.MoreLogs("command found in one of the listings for shortcut...");
+            return resultNode;
+        }
 
         internal static TerminalNode HandleParsed(Terminal terminal, TerminalNode currentNode, string[] words, out TerminalNode resultNode)
         {
             string firstWord = words[0].ToLower();
             HandleAnyNode(terminal, currentNode, words, firstWord, out resultNode);
-            if (GetNewDisplayText(defaultListing, ref resultNode) || GetNewDisplayText(ConfigSettings.TerminalStuffMain, ref resultNode))
-                Plugin.MoreLogs("command found in one of the listings for shortcut...");
+
+            if (GetNewDisplayText(ConfigSettings.TerminalStuffMain, ref resultNode))
+                Plugin.MoreLogs("command found in special terminalStuff listing");
             return resultNode;
         }
 
@@ -109,7 +125,7 @@ namespace TerminalStuff
 
         internal static TerminalNode FindViewNode(int givenInt)
         {
-            if (givenInt < 0 || givenInt >= ConfigSettings.TerminalStuffMain.specialListNum.Count)
+            if (givenInt < 0 || !ConfigSettings.TerminalStuffMain.specialListNum.ContainsValue(givenInt))
                 return null;
             foreach (KeyValuePair<TerminalNode, int> pairValue in ConfigSettings.TerminalStuffMain.specialListNum)
             {
@@ -172,6 +188,7 @@ namespace TerminalStuff
                     ViewCommands.DisplayTextUpdater(out string displayText);
 
                     resultNode.displayText = displayText;
+                    Plugin.Spam(displayText);
                     return resultNode;
                 }
                 else
@@ -215,8 +232,9 @@ namespace TerminalStuff
             }
             else
             {
-                resultNode = Plugin.instance.Terminal.currentNode;
-                return resultNode;
+                Plugin.Spam("returning current node");
+                resultNode = currentNode;
+                return currentNode;
             }
         }
 
@@ -251,6 +269,8 @@ namespace TerminalStuff
         {
             if (initialResult == null)
                 return;
+
+
 
             MoreCamStuff.VideoPersist(initialResult.name);
 

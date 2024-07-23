@@ -72,3 +72,26 @@ Z:\games\modding\LC\networkpatcher\
 
 netcode-patch plugins\darmuh-darmuhsTerminalStuff deps
 
+terminal materials:
+0 = terminal body
+1 = terminal glass buttons
+2 = sticker
+terminal.003 = keyboard
+screen background - Environment/HangarShip/Terminal/Canvas/MainContainer/Scroll View/Viewport/InputField (TMP)
+enable image component from above object (prob a config bool)
+image alpha
+image color
+
+things to fix:
+
+-purchase packs are registering as unlocked upgrades sometimes and idk why
+*not sure if this fixed on it's own but cant replicate it now
+
+with tworadarmaps on:
+previous only cycles to the first target and does not roll back to the top
+*HOLY SHIT I THINK I FIXED IT
+
+
+bugs from previous version reported:
+-disabling just cams will break all cams methods 
+*(was comparing view int to count of view ints, which would throw null when stuff was disabled)

@@ -30,10 +30,7 @@ namespace TerminalStuff
             if (netNodeSet && (networkManager.IsHost || networkManager.IsServer))
             {
                 Plugin.MoreLogs("RPC called from host, sending to client RPC ");
-                if (nodeNumber != -1)
-                    NodeLoadClientRpc(topRightText, nodeName, nodeText, true, nodeNumber);
-                else
-                    NodeLoadClientRpc(topRightText, nodeName, nodeText, true);
+                NodeLoadClientRpc(topRightText, nodeName, nodeText, true, nodeNumber);
                 return;
             }
             else if (!netNodeSet && networkManager.IsHost || networkManager.IsServer)
@@ -42,18 +39,12 @@ namespace TerminalStuff
                     return;
 
                 Plugin.MoreLogs($"Host: attempting to sync node {nodeName}/{nodeNumber}");
-                if (nodeNumber != -1)
-                    SyncNodes(topRightText, nodeName, nodeText, nodeNumber);
-                else
-                    SyncNodes(topRightText, nodeName, nodeText);
+                SyncNodes(topRightText, nodeName, nodeText, nodeNumber);
             }
             else
             {
                 Plugin.MoreLogs($"Server: This should only be coming from clients");
-                if (nodeNumber != -1)
-                    NodeLoadClientRpc(topRightText, nodeName, nodeText, true, nodeNumber);
-                else
-                    NodeLoadClientRpc(topRightText, nodeName, nodeText, true);
+                NodeLoadClientRpc(topRightText, nodeName, nodeText, true, nodeNumber);
             }
 
             Plugin.MoreLogs("Server: Attempting to sync nodes between clients.");
@@ -76,10 +67,7 @@ namespace TerminalStuff
             if (!netNodeSet)
             {
                 Plugin.MoreLogs($"Client: attempting to sync node, {nodeName}/{nodeNumber}");
-                if (nodeNumber != -1)
-                    SyncNodes(topRightText, nodeName, nodeText, nodeNumber);
-                else
-                    SyncNodes(topRightText, nodeName, nodeText);
+                SyncNodes(topRightText, nodeName, nodeText, nodeNumber);
             }
             else
             {
@@ -161,6 +149,10 @@ namespace TerminalStuff
             if (nodeNumber != -1 && nodeNumber <= ConfigSettings.TerminalStuffMain.ListNumToString.Count)
             {
                 TerminalNode viewNode = StartofHandling.FindViewNode(nodeNumber);
+                
+                if (viewNode == null)
+                    return;
+
                 SyncViewNodeWithNum(ref viewNode, nodeNumber, nodeText);
                 Plugin.instance.Terminal.LoadNewNode(viewNode);
                 //Plugin.instance.Terminal.currentNode.displayText = viewNode.displayText;
@@ -219,9 +211,32 @@ namespace TerminalStuff
         }
 
         [ServerRpc(RequireOwnership = false)]
+        internal void SyncTwoRadarMapsServerRpc(int fromClient, int playerNum)
+        {
+            Plugin.Spam($"Server: Client ({fromClient}) attempting to sync tworadarmaps target to {playerNum}");
+            SyncTwoRadarMapsClientRpc(fromClient, playerNum);
+        }
+
+        [ClientRpc]
+        internal void SyncTwoRadarMapsClientRpc(int fromClient, int playerNum)
+        {
+            if (((int)StartOfRound.Instance.localPlayerController.playerClientId) == fromClient)
+            {
+                Plugin.Spam($"This is the client updating target to {playerNum}");
+                return;
+            }
+            else
+            {
+                Plugin.Spam("SyncTwoRadarMapsClientRpc called from another client");
+                TwoRadarMapsCompatibility.SyncTarget(playerNum);
+            }
+            
+        }
+
+        [ServerRpc(RequireOwnership = false)]
         internal void SyncVideoChoiceServerRpc(int fromClient, string videoPlaying)
         {
-            Plugin.MoreLogs($"Server: Attempting to sync video choice: {videoPlaying}");
+            Plugin.Spam($"Server: Attempting to sync video choice: {videoPlaying}");
             SyncVideoChoiceClientRpc(fromClient, videoPlaying);
         }
 
@@ -303,7 +318,7 @@ namespace TerminalStuff
         {
             if (fromClient == -1 || otherClient == -1)
             {
-                Plugin.ERROR($"Invalid client ID detected.\nfromClient: {fromClient}\notherClient: {otherClient}");
+                Plugin.ERROR($"GetCurrentNodeServerRpc FATAL ERROR: Invalid client ID detected.\nfromClient: {fromClient}\notherClient: {otherClient}");
                 return;
             }
 
@@ -402,6 +417,32 @@ namespace TerminalStuff
             if (networkManager.IsHost || networkManager.IsServer)
             {
                 Plugin.instance.Terminal.SyncGroupCreditsServerRpc(newCreds, items);
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        internal void SyncRadarZoomServerRpc(float zoom)
+        {
+            Plugin.MoreLogs("Server: syncing radar zoom level...");
+            SyncRadarZoomClientRpc(zoom);
+        }
+        [ClientRpc]
+        internal void SyncRadarZoomClientRpc(float zoom)
+        {
+            if (ViewCommands.radarZoom == zoom)
+                return;
+
+            ViewCommands.radarZoom = zoom;
+
+            if (Plugin.instance.TwoRadarMapsMod)
+            {
+                TwoRadarMapsCompatibility.ChangeMapZoom(ViewCommands.radarZoom);
+                Plugin.MoreLogs($"Radar Zoom for TwoRadarMaps set to {ViewCommands.radarZoom}");
+            }
+            else
+            {
+                StartOfRound.Instance.mapScreen.cam.orthographicSize = ViewCommands.radarZoom;
+                Plugin.MoreLogs($"Radar Zoom set to {ViewCommands.radarZoom}");
             }
         }
 
@@ -618,6 +659,30 @@ namespace TerminalStuff
 
             rainbowFlashEnum = false;
         }
+
+        //QuickRestart RPC
+        [ServerRpc(RequireOwnership = true)]
+        internal void QuickRestartServerRpc()
+        {
+            QuickRestartClientRpc();
+        }
+
+        [ClientRpc]
+        internal void QuickRestartClientRpc()
+        {
+            GameNetworkManager.Instance.localPlayerController.DropAllHeldItemsAndSync();
+            //DeleteInventory();
+            Plugin.instance.Terminal.ClearBoughtItems();
+
+            if (StartOfRound.Instance.IsServer)
+            {
+                GameNetworkManager.Instance.ResetSavedGameValues();
+            }
+
+            StartOfRound.Instance.ResetShip();
+            StartOfRound.Instance.currentPlanetPrefab.transform.position = StartOfRound.Instance.planetContainer.transform.position;
+        }
+
 
 
         //DO NOT REMOVE

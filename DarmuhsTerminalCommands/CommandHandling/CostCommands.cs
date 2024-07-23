@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
+using static OpenLib.CoreMethods.AddingThings;
 using UnityEngine;
 
 namespace TerminalStuff
@@ -19,6 +19,7 @@ namespace TerminalStuff
         internal static string currentPackName;
         internal static string buyPackName;
         internal static Dictionary<Item, int> itemsIndexed = [];
+        internal static TerminalNode dummyNode = CreateDummyNode("costcommands_dummy", true, "");
 
         internal static bool CheckUpgradeStatus(ref bool upgrade, string itemName)
         {
@@ -320,7 +321,7 @@ namespace TerminalStuff
             List<string> itemList = StringStuff.GetItemList(currentPackList);
             Dictionary<Item,int> itemsToPurchase = [];
             StringBuilder packAsk = new();
-            packAsk.AppendLine($"Would you like to purchase the {currentPackName} PurchasePack?\r\n\r\n\tContents:\r\n");
+            packAsk.AppendLine($"Would you like to purchase the [{currentPackName}] PurchasePack?\r\n\r\n\tContents:\r\n");
             
             PurchasePackContents(itemList, ref itemsToPurchase, ref packAsk, out List<TerminalNode> upgradeItems);
 
@@ -343,6 +344,8 @@ namespace TerminalStuff
             else
             {
                 Plugin.MoreLogs("not enough credits to purchase, sending to cannot afford display");
+                dummyNode.displayText = $"You cannot afford the {currentPackName} PurchasePack ({itemCount} items).\r\n\r\n\tTotal Cost: ■<color=#BD3131>{totalCost}</color>\r\n\r\n";
+                Plugin.instance.Terminal.LoadNewNode(dummyNode);
                 return $"You cannot afford the {currentPackName} PurchasePack ({itemCount} items).\r\n\r\n\tTotal Cost: ■<color=#BD3131>{totalCost}</color>\r\n\r\n";
             }
         }

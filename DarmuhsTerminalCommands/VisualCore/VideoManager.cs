@@ -108,7 +108,7 @@ namespace TerminalStuff
             // Play the next video if not playing
             if (Videos.Count == 0)
             {
-                Plugin.ERROR("No videos found.");
+                Plugin.ERROR("ERROR: No videos found, video player failure.");
                 return;
             }
             else if (Videos.Count <= 2)

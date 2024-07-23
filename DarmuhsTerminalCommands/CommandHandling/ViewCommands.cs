@@ -18,6 +18,7 @@ namespace TerminalStuff
         internal static Texture camsTexture = null;
         internal static int cullingMaskInt;
         internal static int targetInt = 0;
+        internal static float radarZoom;
 
         internal static void InitializeTextures()
         {
@@ -327,6 +328,44 @@ namespace TerminalStuff
             }
         }
 
+        internal static string RadarZoomEvent()
+        {
+            if (!AnyActiveMonitoring())
+            {
+                return $"No active monitoring detected, unable to change zoom.\r\n\r\n";
+            }
+            else
+            {
+                if (Plugin.instance.TwoRadarMapsMod)
+                {
+                    TwoRadarMapsCompatibility.ChangeMapZoom(GetNewZoom(ref radarZoom));
+                    Plugin.MoreLogs($"Radar Zoom for TwoRadarMaps set to {radarZoom}");
+                }
+                else
+                {
+                    StartOfRound.Instance.mapScreen.cam.orthographicSize = GetNewZoom(ref radarZoom);
+                    Plugin.MoreLogs($"Radar Zoom set to {radarZoom}");
+                }
+
+                if(ConfigSettings.networkedNodes.Value)
+                    NetHandler.Instance.SyncRadarZoomServerRpc(radarZoom);
+
+                return $"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRadar Zoom level adjusted.\r\n";
+            }
+        }
+
+        internal static float GetNewZoom(ref float currentZoom)
+        {
+            if (currentZoom >= 10f)
+            {
+                currentZoom -= 5f;
+            }
+            else
+                currentZoom = 30f;
+
+            return currentZoom;
+        }
+
         internal static string MiniMapTermEvent()
         {
             isVideoPlaying = false;
@@ -495,7 +534,6 @@ namespace TerminalStuff
             }
 
         }
-
 
         private static Texture PlayerCamTexture(int targetPlayer)
         {
@@ -735,12 +773,15 @@ namespace TerminalStuff
         internal static int GetPrevValidTarget(List<TransformAndName> targets, int initialIndex)
         {
             int count = targets.Count;
+            Plugin.Spam($"Count:{targets.Count}");
+            Plugin.Spam($"initialIndex: {initialIndex}");
 
             // Handle the case when initialIndex is zero
             if (initialIndex == 0)
             {
                 // Set initialIndex to the last index
-                initialIndex = count - 1;
+                initialIndex = count;
+                Plugin.Spam($"initialIndex is 0, setting it to {initialIndex}");
             }
 
             // Iterate through the list of targets
@@ -749,9 +790,11 @@ namespace TerminalStuff
                 // Calculate the index of the previous target
                 int num = (initialIndex - i) % count;
 
+                Plugin.Spam($"{num} = {initialIndex} - {i} % {count}");
+                Plugin.Spam($"{num} + {count} % {count}");
                 // Ensure num is non-negative
                 num = (num + count) % count;
-
+                Plugin.Spam($"= {num}");
                 // Check if the target at the calculated index is valid
                 if (TargetIsValid(targets[num]?.transform))
                 {

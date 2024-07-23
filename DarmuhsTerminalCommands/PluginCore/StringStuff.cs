@@ -69,7 +69,7 @@ namespace TerminalStuff
                     numbersList.Add(number);
                 }
                 else
-                    Plugin.ERROR($"Could not parse {item} to integer");
+                    Plugin.WARNING($"Could not parse {item} to integer");
             }
 
             return numbersList;

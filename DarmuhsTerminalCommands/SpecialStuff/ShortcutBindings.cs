@@ -8,7 +8,9 @@ using UnityEngine.InputSystem;
 using static TerminalStuff.BoolStuff;
 using static TerminalStuff.DynamicCommands;
 using OpenLib.CoreMethods;
+using static OpenLib.ConfigManager.ConfigSetup;
 using Key = UnityEngine.InputSystem.Key;
+using HarmonyLib;
 
 namespace TerminalStuff
 {
@@ -43,14 +45,14 @@ namespace TerminalStuff
             if (!ConfigSettings.TerminalHistory.Value)
                 return;
 
-            if (keyActions.ContainsKey(Key.UpArrow))
+            if (keyActions.GetValueSafe<Key, string>(Key.UpArrow) != "[historyPrevious]")
             {
-                Plugin.ERROR($"TerminalHistory Enabled. Removing shortcut for Up Arrow");
+                Plugin.WARNING($"TerminalHistory is Enabled and unrelated shortcut detected on key: UpArrow. Removing shortcut for UpArrow to assign to historyPrev action");
                 keyActions.Remove(Key.UpArrow);
             }
-            if (keyActions.ContainsKey(Key.DownArrow))
+            if (keyActions.GetValueSafe<Key,string>(Key.DownArrow) != "[historyNext]")
             {
-                Plugin.ERROR($"TerminalHistory Enabled. Removing shortcut for Down Arrow");
+                Plugin.WARNING($"TerminalHistory is Enabled and unrelated shortcut detected on key: DownArrow. Removing shortcut for DownArrow to assign to historyNext action");
                 keyActions.Remove(Key.DownArrow);
             }
 
@@ -78,7 +80,7 @@ namespace TerminalStuff
                 if (keyActions.ContainsKey(keyFromString))
                 {
                     keyActions.Remove(keyFromString);
-                    Plugin.ERROR($"Key {ConfigSettings.TerminalAutoCompleteKey.Value} had an active shortcut bind that has now been removed!");
+                    Plugin.WARNING($"Key: {ConfigSettings.TerminalAutoCompleteKey.Value} had an active shortcut bind that has now been removed!");
                 }
                     
 
@@ -278,7 +280,11 @@ namespace TerminalStuff
                 if (keyword.word == input && !skipAllKeywords.Contains(input))
                 {
                     Plugin.MoreLogs("Loading node from Terminal Keywords");
-                    Func<string> displayTextSupplier = TerminalEvents.GetCommandDisplayTextSupplier(keyword.specialKeywordResult);
+                    List<MainListing> fullListings =
+                    [
+                        defaultListing, ConfigSettings.TerminalStuffMain
+                    ];
+                    Func<string> displayTextSupplier = LogicHandling.GetFuncFromNode(fullListings, ref keyword.specialKeywordResult);
 
                     if (displayTextSupplier != null)
                     {
@@ -295,7 +301,7 @@ namespace TerminalStuff
             }
 
             string[] words = [input];
-            StartofHandling.HandleParsed(Plugin.instance.Terminal, Plugin.instance.Terminal.currentNode, words, out TerminalNode resultNode);
+            StartofHandling.HandleShortcut(Plugin.instance.Terminal, Plugin.instance.Terminal.currentNode, words, out TerminalNode resultNode);
 
             if (resultNode != null)
             {

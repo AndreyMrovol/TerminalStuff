@@ -1,16 +1,16 @@
 ﻿using BepInEx.Configuration;
 using static OpenLib.ConfigManager.ConfigSetup;
 using static OpenLib.Common.CommonTerminal;
-using static TerminalStuff.StringStuff;
 using OpenLib.ConfigManager;
 using System.Collections.Generic;
 using OpenLib.CoreMethods;
+using System;
 
 namespace TerminalStuff
 {
     public static class ConfigSettings
     {
-        public static List<ManagedBool> TerminalStuffBools = [];
+        public static List<ManagedConfig> TerminalStuffBools = [];
         public static MainListing TerminalStuffMain;
 
         //keybinds
@@ -70,6 +70,11 @@ namespace TerminalStuff
         public static ConfigEntry<bool> terminalRestart { get; internal set; } //restart command
         public static ConfigEntry<bool> terminalPrevious { get; internal set; } //previous switch command
         public static ConfigEntry<bool> terminalRouteRandom { get; internal set; } // route random command
+        public static ConfigEntry<bool> terminalRefreshCustomization { get; internal set; } //refresh customization command
+        public static ConfigEntry<bool> terminalRadarZoom { get; internal set; }
+
+
+        //features
         public static ConfigEntry<bool> terminalPurchasePacks { get; internal set; } // purchase packs feature
 
 
@@ -160,6 +165,8 @@ namespace TerminalStuff
         public static ConfigEntry<string> ListScrapKeywords { get; internal set; } //List Scrap Command
         public static ConfigEntry<string> randomRouteKeywords { get; internal set; }
         public static ConfigEntry<string> lobbyKeywords { get; internal set; } //show lobby name keywords
+        public static ConfigEntry<string> refreshcustomizationKWs { get; internal set; }
+        public static ConfigEntry<string> radarZoomKWs { get; internal set; }
 
 
         //terminal patcher keywords
@@ -178,20 +185,26 @@ namespace TerminalStuff
         public static ConfigEntry<int> TerminalAutoCompleteMaxCount { get; internal set; }
         public static ConfigEntry<bool> TerminalHistory {  get; internal set; }
         public static ConfigEntry<int> TerminalHistoryMaxCount { get; internal set; }
+        public static ConfigEntry<bool> TerminalConflictResolution { get; internal set; }
+        public static ConfigEntry<float> TerminalRadarDefaultZoom { get; internal set; }
 
         //Terminal Customization
         public static ConfigEntry<bool> TerminalCustomization { get; internal set; }
         public static ConfigEntry<string> TerminalColor { get; internal set; }
+        public static ConfigEntry<string> TerminalButtonsColor { get; internal set; }
+        public static ConfigEntry<string> TerminalKeyboardColor { get; internal set; }
         public static ConfigEntry<string> TerminalTextColor { get; internal set; }
         public static ConfigEntry<string> TerminalMoneyColor { get; internal set; }
+        public static ConfigEntry<string> TerminalMoneyBGColor { get; internal set; }
+        public static ConfigEntry<float> TerminalMoneyBGAlpha { get; internal set; }
         public static ConfigEntry<string> TerminalCaretColor { get; internal set; }
         public static ConfigEntry<string> TerminalScrollbarColor { get; internal set; }
         public static ConfigEntry<string> TerminalScrollBGColor { get; internal set; }
         public static ConfigEntry<string> TerminalClockColor { get; internal set; }
         public static ConfigEntry<string> TerminalLightColor { get; internal set; }
-
-
-
+        public static ConfigEntry<bool> TerminalCustomBG { get; internal set; }
+        public static ConfigEntry<string> TerminalCustomBGColor { get; internal set; }
+        public static ConfigEntry<float> TerminalCustomBGAlpha { get; internal set; }
 
         //terminal patcher words 
         //"lobby", "home", "more", "next", "comfort", "controls", "extras", "fun", "kick",
@@ -201,7 +214,10 @@ namespace TerminalStuff
         {
             //Network Configs
             ModNetworking = MakeBool(Plugin.instance.Config, "Networking", "ModNetworking", true, "Disable this if you want to disable networking and use this mod as a Client-sided mod");
-            networkedNodes = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Networking", "networkedNodes", false, "Enable networked Always-On Display & displaying synced terminal nodes", true);
+            networkedNodes = MakeBool(Plugin.instance.Config, "Networking", "networkedNodes", false, "Enable networked Always-On Display & displaying synced terminal nodes");
+
+            AddManagedBool(networkedNodes, defaultManaged, true, "", "");
+
             terminalClock = MakeBool(Plugin.instance.Config, "Quality of Life", "terminalClock", false, "Enable or Disable the terminalClock feature in it's entirety");
             walkieTerm = MakeBool(Plugin.instance.Config, "Quality of Life", "walkieTerm", true, "Enable or Disable the ability to use a walkie from your inventory at the terminal (vanilla method still works)");
             terminalShortcuts = MakeBool(Plugin.instance.Config, "Quality of Life", "terminalShortcuts", true, "Enable this for the ability to bind commands to any valid key (also enables the \"bind\" keyword.");
@@ -248,8 +264,10 @@ namespace TerminalStuff
             clockKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "clockKeywords", "clock; show clock; time; show time", "This semi-colon separated list is all keywords that can be used in terminal to toggle Terminal Clock display");
             ListItemsKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "ListItemsKeywords", "show items; get items; listitem", "This semi-colon separated list is all keywords that can be used in terminal to return <itemlist> command");
             ListScrapKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "ListScrapKeywords", "loot detail; listloost", "This semi-colon separated list is all keywords that can be used in terminal to return <lootlist> command");
-            randomRouteKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "randomRouteKeywords", "route random; random moon", "This semi-colon separated list is all keywords that can be used in terminal to return <lootlist> command");
+            randomRouteKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "randomRouteKeywords", "route random; random moon", "This semi-colon separated list is all keywords that can be used in terminal to return <randomRoute> command");
             lobbyKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "lobbyKeywords", "lobby; show lobby; lobby name; show lobby name", "This semi-colon separated list is all keywords that can be used in terminal to return <lobby> command");
+            refreshcustomizationKWs = MakeString(Plugin.instance.Config, "Custom Keywords", "refreshcustomizationKWs", "refresh colors; paintme; customize", "This semi-colon separated list is all keywords that can be used to run the terminalRefreshCustomization command");
+            radarZoomKWs = MakeString(Plugin.instance.Config, "Custom Keywords", "radarZoomKWs", "zoom; enhance; radar zoom", "This semi-colon separated list is all keywords that can be used in terminal to return <lootlist> command");
 
             Plugin.Spam("keyword configs section done");
 
@@ -263,7 +281,7 @@ namespace TerminalStuff
 
             Plugin.Spam("special keyword configs section done");
 
-            routeRandomBannedWeather = MakeString(Plugin.instance.Config, "Fun Configuration", "routeRandomBannedWeather", "Eclipsed;Flooded;Foggy", "This semi-colon separated list is all keywords that can be used in terminal to return <alwayson> command");
+            routeRandomBannedWeather = MakeString(Plugin.instance.Config, "Fun Configuration", "routeRandomBannedWeather", "Eclipsed;Flooded;Foggy", "This semi-colon separated list will be used to exclude moons from the route random command");
             routeRandomCost = MakeClampedInt(Plugin.instance.Config, "Fun Configuration", "routeRandomCost", 100, "Flat rate for running the route random command to get a random moon...", 0, 99999);
 
 
@@ -277,94 +295,151 @@ namespace TerminalStuff
 
             //------------------------------------------------MANAGED BOOLS START------------------------------------------------//
 
-            terminalLobby = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Comfort Commands (On/Off)", "terminalLobby", true, "Check for the current lobby name", false, "COMFORT", GetKeywordsPerConfigItem(lobbyKeywords.Value), MoreCommands.GetLobbyName);
+            terminalLobby = MakeBool(Plugin.instance.Config, "Comfort Commands (On/Off)", "terminalLobby", true, "Check for the current lobby name");
+            AddManagedBool(terminalLobby, defaultManaged, false, "COMFORT", lobbyKeywords, MoreCommands.GetLobbyName);
+
+            terminalQuit = MakeBool(Plugin.instance.Config, "Comfort Commands (On/Off)", "terminalQuit", true, "Command to quit terminal");
             
-            terminalQuit = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Comfort Commands (On/Off)", "terminalQuit", true, "Command to quit terminal", false, "COMFORT", GetKeywordsPerConfigItem(quitKeywords.Value), TerminalEvents.QuitTerminalCommand);
-            
-            terminalClear = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Comfort Commands (On/Off)", "terminalClear", true, "Command to clear terminal text", false, "COMFORT", GetKeywordsPerConfigItem(clearKeywords.Value), ClearText);
-            
-            terminalLoot = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalLoot", true, "Command to show total onboard loot value", false, "EXTRAS", GetKeywordsPerConfigItem(lootKeywords.Value), AllTheLootStuff.GetLootSimple, 0, false);
-            
-            terminalHeal = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Comfort Commands (On/Off)", "terminalHeal", true, "Command to heal yourself", false, "COMFORT", GetKeywordsPerConfigItem(healKeywords.Value), MoreCommands.HealCommand);
-            
-            terminalFov = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Comfort Commands (On/Off)", "terminalFov", true, "Command to change your FOV", false, "COMFORT", GetKeywordsPerConfigItem("fov"), DynamicCommands.FovPrompt, 1, true, DynamicCommands.FovConfirm, DynamicCommands.FovDeny, "", "", "fov");
-            
-            terminalGamble = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Fun Commands (On/Off)", "terminalGamble", true, "Command to gamble your credits, by percentage", true, "FUN", GetKeywordsPerConfigItem(gambleKeyword.Value), GambaCommands.Ask2Gamble, 1, true, GambaCommands.GambleConfirm, GambaCommands.GambleDeny, "", "", gambleKeyword.Value);
+            AddManagedBool(terminalQuit, defaultManaged, false, "COMFORT", quitKeywords, TerminalEvents.QuitTerminalCommand);
+
+            terminalClear = MakeBool(Plugin.instance.Config, "Comfort Commands (On/Off)", "terminalClear", true, "Command to clear terminal text");
+
+            AddManagedBool(terminalClear, defaultManaged, false, "COMFORT", clearKeywords, ClearText);
+
+            terminalLoot = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalLoot", true, "Command to show total onboard loot value"); 
+            AddManagedBool(terminalLoot, defaultManaged, false, "EXTRAS", lootKeywords, AllTheLootStuff.GetLootSimple, 0, false);
+
+            terminalHeal = MakeBool(Plugin.instance.Config, "Comfort Commands (On/Off)", "terminalHeal", true, "Command to heal yourself");
+            AddManagedBool(terminalHeal, defaultManaged, false, "COMFORT", healKeywords, MoreCommands.HealCommand);
+
+            terminalFov = MakeBool(Plugin.instance.Config, "Comfort Commands (On/Off)", "terminalFov", true, "Command to change your FOV");
+            AddManagedBool(terminalFov, defaultManaged, false, "COMFORT", "fov", DynamicCommands.FovPrompt, 1, true, DynamicCommands.FovConfirm, DynamicCommands.FovDeny, "", "", "fov");
+
+            terminalGamble = MakeBool(Plugin.instance.Config, "Fun Commands (On/Off)", "terminalGamble", true, "Command to gamble your credits, by percentage"); 
+            AddManagedBool(terminalGamble, defaultManaged, true, "FUN", gambleKeyword, GambaCommands.Ask2Gamble, 1, true, GambaCommands.GambleConfirm, GambaCommands.GambleDeny, "", "", gambleKeyword.Value);
 
             if (leverConfirmOverride.Value)
-                terminalLever = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Controls Commands (On/Off)", "terminalLever", true, "Pull the lever from terminal", false, "CONTROLS", GetKeywordsPerConfigItem(leverKeywords.Value), ShipControls.LeverControlCommand);
+            {
+                terminalLever = MakeBool(Plugin.instance.Config, "Controls Commands (On/Off)", "terminalLever", true, "Pull the lever from terminal");
+                AddManagedBool(terminalLever, defaultManaged, false, "CONTROLS", leverKeywords, ShipControls.LeverControlCommand);
+            }
             else
-                terminalLever = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Controls Commands (On/Off)", "terminalLever", true, "Pull the lever from terminal", false, "CONTROLS", GetKeywordsPerConfigItem(leverKeywords.Value), ShipControls.AskLever, 1, true, ShipControls.LeverControlCommand, ShipControls.DenyLever);
+            {
+                terminalLever = MakeBool(Plugin.instance.Config, "Controls Commands (On/Off)", "terminalLever", true, "Pull the lever from terminal");
+                AddManagedBool(terminalLever, defaultManaged, false, "CONTROLS", leverKeywords, ShipControls.AskLever, 1, true, ShipControls.LeverControlCommand, ShipControls.DenyLever);
+            }
 
             if (restartConfirmOverride.Value)
-                terminalRestart = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Controls Commands (On/Off)", "terminalRestart", true, "Command to restart the lobby (skips firing sequence)", false, "CONTROLS", GetKeywordsPerConfigItem("restart"), SpecialConfirmationLogic.RestartAction);
+            {
+                terminalRestart = MakeBool(Plugin.instance.Config, "Controls Commands (On/Off)", "terminalRestart", true, "Command to restart the lobby (skips firing sequence)");
+                AddManagedBool(terminalRestart, defaultManaged, true, "CONTROLS", "restart", SpecialConfirmationLogic.RestartAction);
+            }
             else
-                terminalRestart = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Controls Commands (On/Off)", "terminalRestart", true, "Command to restart the lobby (skips firing sequence)", false, "CONTROLS", GetKeywordsPerConfigItem("restart"), SpecialConfirmationLogic.RestartAsk, 1, true, SpecialConfirmationLogic.RestartAction, SpecialConfirmationLogic.RestartDeny);
+            {
+                terminalRestart = MakeBool(Plugin.instance.Config, "Controls Commands (On/Off)", "terminalRestart", true, "Command to restart the lobby (skips firing sequence)");
+                AddManagedBool(terminalRestart, defaultManaged, true, "CONTROLS", "restart", SpecialConfirmationLogic.RestartAsk, 1, true, SpecialConfirmationLogic.RestartAction, SpecialConfirmationLogic.RestartDeny);
+            }
 
-            terminalDanger = AddManagedBool(Plugin.instance.Config,defaultManagedBools, "Controls Commands (On/Off)", "terminalDanger", true, "Check moon danger level", false, "CONTROLS", GetKeywordsPerConfigItem(dangerKeywords.Value), MoreCommands.DangerCommand);
+            terminalDanger = MakeBool(Plugin.instance.Config, "Controls Commands (On/Off)", "terminalDanger", true, "Check moon danger level");
+            AddManagedBool(terminalDanger, defaultManaged, false, "CONTROLS", dangerKeywords, MoreCommands.DangerCommand);
 
-            terminalVitals = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalVitals", true, "Scan player being monitored for their vitals", true, "EXTRAS", GetKeywordsPerConfigItem("vitals"), CostCommands.VitalsCommand);
+            terminalVitals = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalVitals", true, "Scan player being monitored for their vitals");
+            AddManagedBool(terminalVitals, defaultManaged, true, "EXTRAS", "vitals", CostCommands.VitalsCommand);
 
-            terminalBioScan = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalBioScan", true, "Scan for \"non-employee\" lifeforms.", true, "EXTRAS", GetKeywordsPerConfigItem("bioscan"), CostCommands.BioscanCommand);
+            terminalBioScan = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalBioScan", true, "Scan for \"non-employee\" lifeforms.");
+            AddManagedBool(terminalBioScan, defaultManaged, true, "EXTRAS", "bioscan", CostCommands.BioscanCommand);
 
             //----------------------------------upgrade managed bools----------------------------------//
 
-            terminalBioScanPatch = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalBioScanPatch", true, "Purchase-able upgrade patch to bioscan command. The command will provide more precise information after the upgrade.", true, "EXTRAS", GetKeywordsPerConfigItem("bioscanpatch"), CostCommands.AskBioscanUpgrade, 2, true, CostCommands.PerformBioscanUpgrade, null, "", "You have opted out of purchasing the BioScanner 2.0 Upgrade Patch.\n\n", "", -1, "", "", bioScanUpgradeCost.Value, "BioscanPatch", true, 1);
+            terminalBioScanPatch = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalBioScanPatch", true, "Purchase-able upgrade patch to bioscan command. The command will provide more precise information after the upgrade.");
+            AddManagedBool(terminalBioScanPatch, defaultManaged, true, "EXTRAS", "bioscanpatch", CostCommands.AskBioscanUpgrade, 2, true, CostCommands.PerformBioscanUpgrade, null, "", "You have opted out of purchasing the BioScanner 2.0 Upgrade Patch.\n\n", "", -1, "", "", bioScanUpgradeCost.Value, "BioscanPatch", true, 1);
 
-            terminalVitalsUpgrade = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalVitalsUpgrade", true, "Purchase-able upgrade to vitals command to make the cost of each vitaals scan free!", true, "EXTRAS", GetKeywordsPerConfigItem("vitalspatch"), CostCommands.AskVitalsUpgrade, 2, true, CostCommands.PerformVitalsUpgrade, null, "", "You have opted out of purchasing the Vitals Scanner Upgrade.\n\n", "", -1, "   ", "", vitalsUpgradeCost.Value, "VitalsPatch", true, 1);
+            terminalVitalsUpgrade = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalVitalsUpgrade", true, "Purchase-able upgrade to vitals command to make the cost of each vitals scan free!");
+            AddManagedBool(terminalVitalsUpgrade, defaultManaged, true, "EXTRAS", "vitalspatch", CostCommands.AskVitalsUpgrade, 2, true, CostCommands.PerformVitalsUpgrade, null, "", "You have opted out of purchasing the Vitals Scanner Upgrade.\n\n", "", -1, "   ", "", vitalsUpgradeCost.Value, "VitalsPatch", true, 1);
 
             //----------------------------------upgrade managed bools----------------------------------//
 
-            terminalMods = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Comfort Commands (On/Off)", "terminalMods", true, "Command to see your active mods", false, "COMFORT", GetKeywordsPerConfigItem(modsKeywords.Value), MoreCommands.ModListCommand);
 
-            terminalKick = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Comfort Commands (On/Off)", "terminalKick", false, "Enables kick command for host.", false, "COMFORT", GetKeywordsPerConfigItem("kick"), AdminCommands.KickPlayersAsk, 1, true, AdminCommands.KickPlayerConfirm, AdminCommands.KickPlayerDeny);
+            terminalMods = MakeBool(Plugin.instance.Config, "Comfort Commands (On/Off)", "terminalMods", true, "Command to see your active mods");
+            AddManagedBool(terminalMods, defaultManaged, false, "COMFORT", modsKeywords, MoreCommands.ModListCommand);
 
-            terminalFcolor = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Fun Commands (On/Off)", "terminalFcolor", true, "Command to change flashlight color.", true, "FUN", GetKeywordsPerConfigItem(fcolorKeyword.Value), ColorCommands.FlashColorBase, 0, true, null, null, "", "", fcolorKeyword.Value);
+            terminalKick = MakeBool(Plugin.instance.Config, "Comfort Commands (On/Off)", "terminalKick", false, "Enables kick command for host.");
+            AddManagedBool(terminalKick, defaultManaged, false, "COMFORT", "kick", AdminCommands.KickPlayersAsk, 1, true, AdminCommands.KickPlayerConfirm, AdminCommands.KickPlayerDeny);
 
-            terminalScolor = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Fun Commands (On/Off)", "terminalScolor", true, "Command to change ship lights colors.", true, "FUN", GetKeywordsPerConfigItem(scolorKeyword.Value), ColorCommands.ShipColorBase, 0, true, null, null, "", "", scolorKeyword.Value);
+            terminalFcolor = MakeBool(Plugin.instance.Config, "Fun Commands (On/Off)", "terminalFcolor", true, "Command to change flashlight color.");
+            AddManagedBool(terminalFcolor, defaultManaged, true, "FUN", fcolorKeyword, ColorCommands.FlashColorBase, 0, true, null, null, "", "", fcolorKeyword.Value);
 
-            terminalDoor = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Controls Commands (On/Off)", "terminalDoor", true, "Command to open/close the ship door.", false, "CONTROLS", GetKeywordsPerConfigItem(doorKeywords.Value), ShipControls.BasicDoorCommand);
+            terminalScolor = MakeBool(Plugin.instance.Config, "Fun Commands (On/Off)", "terminalScolor", true, "Command to change ship lights colors.");
+            AddManagedBool(terminalScolor, defaultManaged, true, "FUN", scolorKeyword, ColorCommands.ShipColorBase, 0, true, null, null, "", "", scolorKeyword.Value);
 
-            terminalLights = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Controls Commands (On/Off)", "terminalLights", true, "Command to toggle the ship lights", false, "CONTROLS", GetKeywordsPerConfigItem(lightsKeywords.Value), ShipControls.BasicLightsCommand);
+            terminalDoor = MakeBool(Plugin.instance.Config, "Controls Commands (On/Off)", "terminalDoor", true, "Command to open/close the ship door.");
+            AddManagedBool(terminalDoor, defaultManaged, false, "CONTROLS", doorKeywords, ShipControls.BasicDoorCommand);
 
-                //----------------------------------termview managed bools----------------------------------//
-
-            terminalCams = AddManagedBool(Plugin.instance.Config, TerminalStuffBools, "Extras Commands (On/Off)", "terminalCams", true, "Command to toggle displaying cameras in terminal", false, "EXTRAS", GetKeywordsPerConfigItem(camsKeywords.Value), ViewCommands.TermCamsEvent, 0, true, null, null, "", "", "cams", 1, "ViewInsideShipCam 1");
-
-            terminalVideo = AddManagedBool(Plugin.instance.Config, TerminalStuffBools, "Fun Commands (On/Off)", "terminalVideo", true, "Play a video from the videoFolderPath folder <video>", false, "FUN", GetKeywordsPerConfigItem(videoKeywords.Value), ViewCommands.LolVideoPlayerEvent, 0, true, null, null, "", "", "lol", 0, "darmuh's videoPlayer");
-
-            terminalMap = AddManagedBool(Plugin.instance.Config, TerminalStuffBools, "Extras Commands (On/Off)", "terminalMap", true, "Command to toggle displaying radar in the terminal", false, "EXTRAS", GetKeywordsPerConfigItem(mapKeywords.Value), ViewCommands.TermMapEvent, 0, true, null, null, "", "", "map", 5, "ViewInsideShipCam 1");
-
-            terminalMinimap = AddManagedBool(Plugin.instance.Config, TerminalStuffBools, "Extras Commands (On/Off)", "terminalMinimap", true, "Command to toggle displaying radar/cam minimap view in the terminal", false, "EXTRAS", GetKeywordsPerConfigItem(minimapKeywords.Value), ViewCommands.MiniMapTermEvent, 0, true, null, null, "", "", "minimap", 3, "ViewInsideShipCam 1");
-
-            terminalMinicams = AddManagedBool(Plugin.instance.Config, TerminalStuffBools, "Extras Commands (On/Off)", "terminalMinicams", true, "Command to toggle displaying radar/cam minicams view in the terminal", false, "EXTRAS", GetKeywordsPerConfigItem(minicamsKeywords.Value), ViewCommands.MiniCamsTermEvent, 0, true, null, null, "", "", "minicams", 4, "ViewInsideShipCam 1");
-
-            terminalOverlay = AddManagedBool(Plugin.instance.Config, TerminalStuffBools, "Extras Commands (On/Off)", "terminalOverlay", true, "Command to toggle displaying radar/cam overlay view in the terminal", false, "EXTRAS", GetKeywordsPerConfigItem(overlayKeywords.Value), ViewCommands.OverlayTermEvent, 0, true, null, null, "", "", "overlay", 2, "ViewInsideShipCam 1");
-
-            terminalMirror = AddManagedBool(Plugin.instance.Config, TerminalStuffBools, "Extras Commands (On/Off)", "terminalMirror", true, "Command to toggle displaying a Mirror Cam in the terminal <Mirror>", false, "EXTRAS", GetKeywordsPerConfigItem(mirrorKeywords.Value), ViewCommands.MirrorEvent, 0, true, null, null, "", "", "mirror", 6, "terminalStuff Mirror");
+            terminalLights = MakeBool(Plugin.instance.Config, "Controls Commands (On/Off)", "terminalLights", true, "Command to toggle the ship lights");
+            AddManagedBool(terminalLights, defaultManaged, false, "CONTROLS", lightsKeywords, ShipControls.BasicLightsCommand);
 
             //----------------------------------termview managed bools----------------------------------//
 
-            terminalAlwaysOn = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Comfort Commands (On/Off)", "terminalAlwaysOn", true, $"Command to toggle Always-On Display", false, "COMFORT", GetKeywordsPerConfigItem(alwaysOnKeywords.Value), MoreCommands.AlwaysOnDisplay);
+            terminalCams = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalCams", true, "Command to toggle displaying cameras in terminal");
+            AddManagedBool(terminalCams, TerminalStuffBools, false, "EXTRAS", camsKeywords, ViewCommands.TermCamsEvent, 0, true, null, null, "", "", "cams", 1, "ViewInsideShipCam 1");
 
-            terminalLink = AddManagedBool(Plugin.instance.Config,defaultManagedBools, "Extras Commands (On/Off)", "terminalLink", true, "Command to link to an external web-page", false, "EXTRAS", GetKeywordsPerConfigItem(linkKeyword.Value), MoreCommands.FirstLinkAsk, 1, true, MoreCommands.FirstLinkDo, MoreCommands.FirstLinkDeny);
+            terminalVideo = MakeBool(Plugin.instance.Config, "Fun Commands (On/Off)", "terminalVideo", true, "Play a video from the videoFolderPath folder <video>");
+            AddManagedBool(terminalVideo, TerminalStuffBools, false, "FUN", videoKeywords, ViewCommands.LolVideoPlayerEvent, 0, true, null, null, "", "", "lol", 0, "darmuh's videoPlayer");
 
-            terminalLink2 = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalLink2", false, "Command to link to a second external web-page", false, "EXTRAS", GetKeywordsPerConfigItem(link2Keyword.Value), MoreCommands.SecondLinkAsk, 1, true, MoreCommands.SecondLinkDo, MoreCommands.SecondLinkDeny);
+            terminalMap = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalMap", true, "Command to toggle displaying radar in the terminal");
+            AddManagedBool(terminalMap, TerminalStuffBools, false, "EXTRAS", mapKeywords, ViewCommands.TermMapEvent, 0, true, null, null, "", "", "map", 5, "ViewInsideShipCam 1");
 
-            terminalRandomSuit = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Fun Commands (On/Off)", "terminalRandomSuit", true, "Command to switch your suit from a random one off the rack", false, "FUN", GetKeywordsPerConfigItem(randomSuitKeywords.Value), TerminalEvents.RandomSuit);
+            terminalMinimap = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalMinimap", true, "Command to toggle displaying radar/cam minimap view in the terminal");
+            AddManagedBool(terminalMinimap, TerminalStuffBools, false, "EXTRAS", minimapKeywords, ViewCommands.MiniMapTermEvent, 0, true, null, null, "", "", "minimap", 3, "ViewInsideShipCam 1");
 
-            terminalClockCommand = AddManagedBool(Plugin.instance.Config,defaultManagedBools, "Controls Commands (On/Off)", "terminalClockCommand", false, "Command to toggle the Terminal Clock off/on", false, "CONTROLS", GetKeywordsPerConfigItem(clockKeywords.Value), TerminalEvents.ClockToggle);
+            terminalMinicams = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalMinicams", true, "Command to toggle displaying radar/cam minicams view in the terminal");
+            AddManagedBool(terminalMinicams, TerminalStuffBools, false, "EXTRAS", minicamsKeywords, ViewCommands.MiniCamsTermEvent, 0, true, null, null, "", "", "minicams", 4, "ViewInsideShipCam 1");
 
-            terminalListItems = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalListItems", true, "Command to list all non-scrap & not currently held items on the ship", false, "EXTRAS", GetKeywordsPerConfigItem(ListItemsKeywords.Value), MoreCommands.GetItemsOnShip);
+            terminalOverlay = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalOverlay", true, "Command to toggle displaying radar/cam overlay view in the terminal");
+            AddManagedBool(terminalOverlay, TerminalStuffBools, false, "EXTRAS", overlayKeywords, ViewCommands.OverlayTermEvent, 0, true, null, null, "", "", "overlay", 2, "ViewInsideShipCam 1");
 
-            terminalLootDetail = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalLootDetail", true, "Command to display an extensive list of all scrap on the ship", false, "EXTRAS", GetKeywordsPerConfigItem(ListScrapKeywords.Value), AllTheLootStuff.DetailedLootCommand);
-            
-            terminalRefund = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalRefund", true, "Command to cancel an undelivered order and get your credits back", true, "EXTRAS", GetKeywordsPerConfigItem("refund"), CostCommands.GetRefund);
+            terminalMirror = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalMirror", true, "Command to toggle displaying a Mirror Cam in the terminal");
+            AddManagedBool(terminalMirror, TerminalStuffBools, false, "EXTRAS", mirrorKeywords, ViewCommands.MirrorEvent, 0, true, null, null, "", "", "mirror", 6, "terminalStuff Mirror");
 
-            
-            terminalPrevious = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Extras Commands (On/Off)", "terminalPrevious", true, "Command to switch back to previous radar target", false, "EXTRAS", GetKeywordsPerConfigItem("previous"), ViewCommands.HandlePreviousSwitchEvent);
-            
-            terminalRouteRandom = AddManagedBool(Plugin.instance.Config, defaultManagedBools, "Fun Commands (On/Off)", "terminalRouteRandom", true, "Command to route to a random planet", true, "FUN", GetKeywordsPerConfigItem(randomRouteKeywords.Value), LevelCommands.RouteRandomCommand);
+            //----------------------------------termview managed bools----------------------------------//
+
+            terminalAlwaysOn = MakeBool(Plugin.instance.Config, "Comfort Commands (On/Off)", "terminalAlwaysOn", true, $"Command to toggle Always-On Display");
+            AddManagedBool(terminalAlwaysOn, defaultManaged, false, "COMFORT", alwaysOnKeywords, MoreCommands.AlwaysOnDisplay);
+
+            terminalLink = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalLink", true, "Command to link to an external web-page");
+            AddManagedBool(terminalLink, defaultManaged, false, "EXTRAS", linkKeyword, MoreCommands.FirstLinkAsk, 1, true, MoreCommands.FirstLinkDo, MoreCommands.FirstLinkDeny);
+
+            terminalLink2 = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalLink2", false, "Command to link to a second external web-page");
+            AddManagedBool(terminalLink2, defaultManaged, false, "EXTRAS", link2Keyword, MoreCommands.SecondLinkAsk, 1, true, MoreCommands.SecondLinkDo, MoreCommands.SecondLinkDeny);
+
+            terminalRandomSuit = MakeBool(Plugin.instance.Config, "Fun Commands (On/Off)", "terminalRandomSuit", true, "Command to switch your suit from a random one off the rack");
+            AddManagedBool(terminalRandomSuit, defaultManaged, false, "FUN", randomSuitKeywords, TerminalEvents.RandomSuit);
+
+            terminalClockCommand = MakeBool(Plugin.instance.Config, "Controls Commands (On/Off)", "terminalClockCommand", false, "Command to toggle the Terminal Clock off/on");
+            AddManagedBool(terminalClockCommand, defaultManaged, false, "CONTROLS", clockKeywords, TerminalEvents.ClockToggle);
+
+            terminalListItems = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalListItems", true, "Command to list all non-scrap & not currently held items on the ship");
+            AddManagedBool(terminalListItems, defaultManaged, false, "EXTRAS", ListItemsKeywords, MoreCommands.GetItemsOnShip);
+
+            terminalLootDetail = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalLootDetail", true, "Command to display an extensive list of all scrap on the ship");
+            AddManagedBool(terminalLootDetail, defaultManaged, false, "EXTRAS", ListScrapKeywords, AllTheLootStuff.DetailedLootCommand);
+
+            terminalRefund = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalRefund", true, "Command to cancel an undelivered order and get your credits back");
+            AddManagedBool(terminalRefund, defaultManaged, true, "EXTRAS", "refund", CostCommands.GetRefund);
+
+            terminalPrevious = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalPrevious", true, "Command to switch back to previous radar target");
+            AddManagedBool(terminalPrevious, defaultManaged, false, "EXTRAS", "previous", ViewCommands.HandlePreviousSwitchEvent);
+
+            terminalRouteRandom = MakeBool(Plugin.instance.Config, "Fun Commands (On/Off)", "terminalRouteRandom", true, "Command to route to a random planet");
+            AddManagedBool(terminalRouteRandom, defaultManaged, true, "FUN", randomRouteKeywords, LevelCommands.RouteRandomCommand);
+
+            terminalRouteRandom = MakeBool(Plugin.instance.Config, "Fun Commands (On/Off)", "terminalRouteRandom", true, "Command to route to a random planet");
+            AddManagedBool(terminalRouteRandom, defaultManaged, true, "FUN", randomRouteKeywords, LevelCommands.RouteRandomCommand);
+
+            terminalRefreshCustomization = MakeBool(Plugin.instance.Config, "Fun Commands (On/Off)", "terminalRefreshCustomization", false, "Command to reload the Terminal Customization settings (this will not disable any already applied customizations)");
+            AddManagedBool(terminalRefreshCustomization, defaultManaged, false, "FUN", refreshcustomizationKWs, TerminalEvents.RefreshCustomizationCommand);
+            terminalRadarZoom = MakeBool(Plugin.instance.Config, "Controls Commands (On/Off)", "terminalRadarZoom", true, "Command to cycle through various radar zoom levels.");
+            AddManagedBool(terminalRadarZoom, defaultManaged, false, "CONTROLS", radarZoomKWs, ViewCommands.RadarZoomEvent);
 
             //------------------------------------------------MANAGED BOOLS END------------------------------------------------//
 
@@ -438,27 +513,34 @@ namespace TerminalStuff
             TerminalAutoComplete = MakeBool(Plugin.instance.Config,"Quality of Life", "TerminalAutoComplete", false, "(Requires terminalShortcuts feature to function) With this feature enabled, tab key will cycle through a list of matching commands to the current input.");
             TerminalAutoCompleteKey = MakeString(Plugin.instance.Config, "Quality of Life", "TerminalAutoCompleteKey", "Tab", "Key used to activate TerminalAutoComplete feature https://docs.unity3d.com/Packages/com.unity.inputsystem@1.0/api/UnityEngine.InputSystem.Key.html");
             TerminalAutoCompleteMaxCount = MakeClampedInt(Plugin.instance.Config, "Quality of Life", "TerminalAutoCompleteMaxCount", 5, "Max amount of matching commands to store before disabling autocomplete.", 3, 50);
+            TerminalConflictResolution = MakeBool(Plugin.instance.Config, "Quality of Life", "TerminalConflictResolution", false, "With this feature enabled, terminal command input will be weighted for conflict resolution using the Levenshtein algorithm.");
+            TerminalRadarDefaultZoom = MakeClampedFloat(Plugin.instance.Config, "Quality of Life", "TerminalRadarDefaultZoom", 20f, "The default level zoom for the radar. The lower the number the more zoomed in you'll be.", 5f, 30f);
 
 
             //Terminal Customization
             TerminalCustomization = MakeBool(Plugin.instance.Config, "Terminal Customization", "TerminalCustomization", false, "Enable or Disable terminal color customizations");
             TerminalColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalColor", "#666633", "This changes the color of the physical terminal");
+            TerminalButtonsColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalButtonsColor", "#9900ff", "This changes the color of the physical terminal");
+            TerminalKeyboardColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalKeyboardColor", "#9900ff", "This changes the color of the physical terminal");
             TerminalTextColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalTextColor", "#ffffb3", "This changes the color of the main text in the terminal");
             TerminalMoneyColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalMoneyColor", "#ccffcc", "This changes the color of the current credits text in the top left of the terminal");
+            TerminalMoneyBGColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalMoneyBGColor", "#ccffcc", "This changes the color of the current credits text in the top left of the terminal");
+            TerminalMoneyBGAlpha = MakeClampedFloat(Plugin.instance.Config, "Terminal Customization", "TerminalMoneyBGAlpha", 0.1f, "This changes the transparency of the money background color.", 0f, 1f);
             TerminalCaretColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalCaretColor", "#9900ff", "This changes the color of the text caret in the terminal");
             TerminalScrollbarColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalScrollbarColor", "#9900ff", "This changes the color of the scrollbar in the terminal");
             TerminalScrollBGColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalScrollBGColor", "#ffffb3", "This changes the color of the background box of the scrollbar in the terminal");
             TerminalClockColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalClockColor", "#ccffcc", "This changes the color of the clock element that is added to the terminal");
             TerminalLightColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalLightColor", "#9900ff", "This changes the color of the light that shines from the terminal");
+            TerminalCustomBG = MakeBool(Plugin.instance.Config, "Terminal Customization", "TerminalCustomBG", false, "Enable or Disable custom background for the terminal screen");
+            TerminalCustomBGColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalCustomBGColor", "#9900ff", "This changes the color of the custom background for the terminal screen");
+            TerminalCustomBGAlpha = MakeClampedFloat(Plugin.instance.Config, "Terminal Customization", "TerminalCustomBGAlpha", 0.08f, "This changes the transparency of the custom background for the terminal screen", 0f, 1f);
 
             PluginCore.StuffForLibrary.ManualCommands(); //add more managedbools that dont come from a specific config item
 
-            Plugin.Log.LogInfo("end of config setup");
+            Plugin.MoreLogs("end of config setup");
 
             RemoveOrphanedEntries(Plugin.instance.Config);
-            ReadConfigAndAssignValues(Plugin.instance.Config, defaultManagedBools);
-            ReadConfigAndAssignValues(Plugin.instance.Config, TerminalStuffBools);
-            NetworkingCheck(ModNetworking.Value, Plugin.instance.Config, defaultManagedBools);
+            NetworkingCheck(ModNetworking.Value, Plugin.instance.Config, defaultManaged);
         }
 
     }

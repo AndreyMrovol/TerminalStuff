@@ -1,7 +1,11 @@
-﻿using OpenLib.ConfigManager;
+﻿using OpenLib.Common;
+using OpenLib.ConfigManager;
 using OpenLib.CoreMethods;
 using OpenLib.Events;
 using System.Collections.Generic;
+using TerminalStuff.SpecialStuff;
+using Unity.Collections.LowLevel.Unsafe;
+using UnityEngine.Windows;
 using static OpenLib.Menus.MenuBuild;
 
 namespace TerminalStuff.EventSub
@@ -11,24 +15,37 @@ namespace TerminalStuff.EventSub
 
         internal static TerminalNode OnParseSent(ref TerminalNode node)
         {
-            if (ConfigSettings.networkedNodes.Value)
-                NetHandler.NetNodeReset(false);
-
             StartofHandling.FirstCheck(node);
 
             if (node.name.Equals("0_StoreHub") && ConfigSettings.TerminalStuffMain.storePacks.Count > 0)
                 GetDynamicCost();
 
             if (InMainMenu(node, MenuBuild.myMenu))
-                return node;
+                Plugin.Spam("got node from menus");
 
-            if (LogicHandling.GetNewDisplayText(ConfigSettings.TerminalStuffMain, ref node))
+            string[] words = CommonStringStuff.GetWords();
+            StartofHandling.HandleParsed(Plugin.instance.Terminal, node, words, out TerminalNode resultNode);
+            
+            if (resultNode != null)
             {
-                Plugin.MoreLogs($"node found: {node.name}");
+                node = resultNode;
+                NetSync(node);
+                return node;
             }
 
+            NetSync(node);
             return node;
 
+        }
+
+        internal static void NetSync(TerminalNode node)
+        {
+            if (!ConfigSettings.networkedNodes.Value)
+                return;
+
+            NetHandler.NetNodeReset(false);
+            StartofHandling.CheckNetNode(node);
+            Plugin.Spam("attempting to sync node with other clients over the network");
         }
 
         internal static void GetDynamicCost()

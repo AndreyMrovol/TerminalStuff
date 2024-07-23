@@ -101,7 +101,7 @@ namespace TerminalStuff
             if (words.Length < 2)
             {
                 string message = ShipColorList();
-                Plugin.ERROR("not enough words for the command!");
+                Plugin.WARNING("not enough words for the command!");
                 return message;
             }
             else if (words[1].Contains("list"))
@@ -137,7 +137,7 @@ namespace TerminalStuff
             }
             else
             {
-                Plugin.ERROR("failed to grab specific part of ship lights to change");
+                Plugin.WARNING("failed to grab specific part of ship lights to change");
                 string listContents = ShipColorList();
                 return listContents;
             }
@@ -168,7 +168,7 @@ namespace TerminalStuff
                 targetColor = "";
                 newColor = Color.white;
                 displayText = $"Unable to set {words[1]} ship light color...\r\n\tInvalid color [{targetColor}] detected!\r\n\r\n";
-                Plugin.ERROR("invalid color for the color command!");
+                Plugin.WARNING("invalid color for the color command!");
                 return false;
             }
         }
@@ -187,7 +187,7 @@ namespace TerminalStuff
             if (words.Length < 2)
             {
                 message = FlashColorList();
-                Plugin.ERROR("getting list, not enough words for color command!");
+                Plugin.WARNING("getting list, not enough words for color command!");
                 return message;
             }
 
@@ -220,7 +220,7 @@ namespace TerminalStuff
             else
             {
                 string displayText = $"Unable to set flashlight color...\r\n\tInvalid color: [{targetColor}] detected!\r\n\r\n";
-                Plugin.ERROR("invalid color for the color command!");
+                Plugin.WARNING("invalid color for the color command!");
                 return displayText;
             }
         }

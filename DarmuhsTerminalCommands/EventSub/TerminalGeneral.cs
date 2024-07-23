@@ -12,6 +12,7 @@ namespace TerminalStuff.EventSub
             if (Plugin.instance.OpenBodyCamsMod)
                 OpenBodyCamsCompatibility.ResidualCamsCheck();
 
+            //Plugin.instance.Config.Reload();
             MenuBuild.ClearMyMenustuff();
             ConfigSettings.TerminalStuffMain.DeleteAll();
             //Plugin.ClearLists();

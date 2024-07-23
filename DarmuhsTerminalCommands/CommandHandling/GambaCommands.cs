@@ -17,7 +17,7 @@ namespace TerminalStuff
             {
                 validGambleValue = false;
                 string displayText = "Unable to gamble at this time...\r\n\tInvalid input detected, no digits were provided!\r\n\r\n";
-                Plugin.ERROR("not enough words for the gamble command!");
+                Plugin.WARNING("not enough words for the gamble command!");
                 return displayText;
             }
 
@@ -35,7 +35,7 @@ namespace TerminalStuff
             {
                 validGambleValue = false;
                 string displayText = "Unable to gamble at this time...\r\n\tInvalid input detected, digits were provided!\r\n\r\n";
-                Plugin.ERROR("there are no digits for the gamble command!");
+                Plugin.WARNING("there are no digits for the gamble command!");
                 return displayText;
             }
         }

@@ -12,6 +12,7 @@ namespace TerminalStuff
                 //stuff that should not disable cams
                 [
                     "ViewInsideShipCam 1",
+                    "terminalRadarZoom",
                     "terminalStuff Mirror",
                     "terminalDoor",
                     "terminalLights",
@@ -60,7 +61,7 @@ namespace TerminalStuff
             PlayerControllerB playerUsingTerminal = Misc.GetPlayerUsingTerminal();
             if(playerUsingTerminal == null)
             {
-                Plugin.ERROR("playerUsingTerminal returned NULL");
+                Plugin.WARNING("playerUsingTerminal returned NULL");
                 return;
             }
             Transform playerTransform = playerUsingTerminal.transform;

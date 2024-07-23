@@ -79,7 +79,7 @@ namespace TerminalStuff
             Plugin.MoreLogs("Start of MakeTimeText");
             // Create a new TextMeshProUGUI GameObject
             GameObject textGO = new("TimeTextAddon");
-            Terminal terminal = FindObjectOfType<Terminal>();
+            Terminal terminal = Plugin.instance.Terminal;
 
             // Attach the TextMeshProUGUI component to the GameObject
             textComponent = textGO.AddComponent<TextMeshProUGUI>();
@@ -107,7 +107,7 @@ namespace TerminalStuff
             textComponent.alignment = TextAlignmentOptions.Top;
 
             // Attach the TextMeshProUGUI to the Canvas
-            Canvas canvas = GameObject.Find("Environment/HangarShip/Terminal/Canvas")?.GetComponent<Canvas>();
+            Canvas canvas = Plugin.instance.Terminal.terminalUIScreen;
             if (canvas != null)
             {
                 textGO.transform.SetParent(canvas.transform, false);

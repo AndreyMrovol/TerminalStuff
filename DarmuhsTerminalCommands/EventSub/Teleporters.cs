@@ -14,9 +14,8 @@ namespace TerminalStuff.EventSub
                 return;
 
             Plugin.MoreLogs("InverseTP instance detected, adding keyword");
-            List<string> getKeywords = GetKeywordsPerConfigItem(ConfigSettings.itpKeywords.Value);
 
-            AddNodeManual("Use Inverse Teleporter", getKeywords, ShipControls.InverseTeleporterCommand, true, 0, defaultListing, defaultManagedBools, "CONTROLS", "Active the Inverse Teleporter");
+            AddNodeManual("Use Inverse Teleporter", ConfigSettings.itpKeywords, ShipControls.InverseTeleporterCommand, true, 0, defaultListing, defaultManaged, "CONTROLS", "Active the Inverse Teleporter");
             if(MenuBuild.myMenuItems.Count > 0)
                 MenuBuild.RefreshMyMenu(); //refresh menu items
         }
@@ -27,9 +26,8 @@ namespace TerminalStuff.EventSub
                 return;
 
             Plugin.MoreLogs("NormalTP instance detected, adding keyword");
-            List<string> getKeywords = GetKeywordsPerConfigItem(ConfigSettings.tpKeywords.Value);
 
-            AddNodeManual("Use Teleporter", getKeywords, ShipControls.RegularTeleporterCommand, true, 0, defaultListing, defaultManagedBools, "CONTROLS", "Activate the Teleporter. Type a crewmate's name after the command to target them");
+            AddNodeManual("Use Teleporter", ConfigSettings.tpKeywords, ShipControls.RegularTeleporterCommand, true, 0, defaultListing, defaultManaged, "CONTROLS", "Activate the Teleporter. Type a crewmate's name after the command to target them");
             if(MenuBuild.myMenuItems.Count > 0)
                 MenuBuild.RefreshMyMenu(); //refresh menu items
         }

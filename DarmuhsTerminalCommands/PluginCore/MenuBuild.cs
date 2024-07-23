@@ -29,25 +29,25 @@ namespace TerminalStuff
         internal static void CreateDarmuhsTerminalStuffMenus()
         {
             Plugin.Spam("START CreateDarmuhsTerminalStuffMenus");
-            myMenuItems = TerminalMenuItems(defaultManagedBools);
+            myMenuItems = TerminalMenuItems(defaultManaged);
             AddMenuItems(ConfigSettings.TerminalStuffBools, myMenuItems);
 
-            myMenu = AssembleMainMenu("darmuhsTerminalStuff", "more", "Welcome to darmuh's Terminal Upgrade!\r\n\tSee below Categories for new stuff :)", myMenuCategories, myMenuItems);
+            myMenu = AssembleMainMenu("darmuhsTerminalStuff", "more", "Welcome to darmuh's Terminal Upgrade!\r\n\tSee below Categories for new stuff :)", myMenuCategories, myMenuItems, true, "\n<color=#b300b3>>MORE</color>\nTo open a menu of darmuh\'s commands.\r\n");
 
             Plugin.Spam($"myMenu info:\nMenuName: {myMenu.MenuName}\nmyMenu.Categories.Count: {myMenu.Categories.Count}\n");
 
-            CreateCategoryCommands(myMenu, defaultListing);
+            CreateCategoryCommands(myMenu, ConfigSettings.TerminalStuffMain);
 
             Plugin.Spam("END CreateDarmuhsTerminalStuffMenus");
 
         }
 
-        internal static void AddMenuItems(List<ManagedBool> managedBools, TerminalMenu myMenu)
+        internal static void AddMenuItems(List<ManagedConfig> managedItems, TerminalMenu myMenu)
         {
             if (myMenu.menuItems.Count == 0)
                 return;
 
-            foreach(ManagedBool item in managedBools)
+            foreach(ManagedConfig item in managedItems)
             {
                 if (item.menuItem == null)
                     continue;
@@ -57,12 +57,12 @@ namespace TerminalStuff
             }
         }
 
-        internal static void AddMenuItems(List<ManagedBool> managedBools, List<TerminalMenuItem> myMenuItems)
+        internal static void AddMenuItems(List<ManagedConfig> managedItems, List<TerminalMenuItem> myMenuItems)
         {
             if (myMenuItems.Count == 0)
                 return;
 
-            foreach (ManagedBool item in managedBools)
+            foreach (ManagedConfig item in managedItems)
             {
                 if (item.menuItem == null)
                     continue;
@@ -76,7 +76,7 @@ namespace TerminalStuff
         {
             myMenu.menuItems.Clear();
             myMenuItems.Clear();
-            myMenuItems = TerminalMenuItems(defaultManagedBools);
+            myMenuItems = TerminalMenuItems(defaultManaged);
             myMenu.menuItems = myMenuItems;
             AddMenuItems(ConfigSettings.TerminalStuffBools, myMenu);
             UpdateCategories(myMenu);

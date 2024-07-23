@@ -67,7 +67,7 @@ namespace TerminalStuff
         {
             if (StartOfRound.Instance.mapScreen == null || StartOfRound.Instance.mapScreen.radarTargets == null || StartOfRound.Instance.mapScreen.radarTargets[setRadarTargetIndex] == null)
             {
-                Plugin.ERROR("Postfix failed, StartOfRound.Instance.mapScreen has null variables");
+                Plugin.ERROR("ERROR: Postfix failed, StartOfRound.Instance.mapScreen has null variables");
                 return;
             }
 

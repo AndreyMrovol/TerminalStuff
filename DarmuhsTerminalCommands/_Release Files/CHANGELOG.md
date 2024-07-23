@@ -5,7 +5,53 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
-## [3.2.5] **CURRENT VERISON**
+## [3.3.0] **CURRENT VERSION**
+ ### Added
+ - More Customization!
+	- Added configuration options for:
+		- Money background color/alpha
+		- A new custom screen background, color/alpha
+		- Terminal Buttons Color
+		- Terminal Keyboard Color
+ - New Quality of Life Feature, Conflict Resolution
+	- Similar to TerminalConflictFix, will use string comparison to provide the best matching keyword
+	- Uses the Fastenshtein implementation of the Levenshtein algorithm for fast/efficient string comparison.
+ - Added More command information to "other" command output.
+ - Added customization refresh command to the terminal. Run this command after you modify any of the customization settings in your config.
+ - Added radarZoom command to change the zoom level of the terminal radar.
+	- Built-in compatibility with tworadarmaps
+	- currently rotates through a range of possible zoom levels, each time you run the command.
+	- may add further configurables to this in the future.
+	- zoom levels will be synced with the rest of the lobby if networkedNodes is enabled.
+		- Without tworadarmaps this WILL affect the mapscreen in the terminal.
+ - Also added [TerminalRadarDefaultZoom] as a quality of life config setting to change the default radarzoom.
+	- This will be synced at each client load-in if networkedNodes are enabled.
+	- While the radarZoom command is recommended to be used alongside this feature, it is not required.
+	
+
+ ### Fixed/Changed
+ - Command creation/deletion system has been offloaded to my new library "OpenLib"
+	- This will allow my other mods to quickly utilize the same system without the need for continuous porting.
+	- OpenLib will be open to anyone to utilize/contribute to. My only request is that it continues to support my own mods.
+	- OpenLib adds new backend features such as
+		- Config watching with the ManagedConfig class.
+			- Allows for easily checking networking required config items, checking for features being disabled/enabled between lobbies, and associating separate config items to eachother.
+		- Event system which allows my mods to not require patching into the game.
+			- The library will do the patching and create events for my mods to subscribe to.
+		- Extensive Terminal Keyword/Node/Store/etc. system.
+			- Will ensure no conflicting keywords exist, utilize similar terminalNodes whenever possible, and clear any items added utilizing this library on lobby close.
+	- While I have extensively tested the move to OpenLib, there may be some new bugs introduced with this move. If you experience any issues please let me know.
+ - Fixed issue with return to cams that would throw null errors and break the terminal if only certain cams types were enabled.
+	- Thank you to mmiinnaa11 on discord for the report and assistance in troubleshooting.
+ - Fixed issue of throwing LogError messages when the message was more suited to be a warning or below level log message.
+ - Fixed issue of not syncing cams views between players with TwoRadarMaps present.
+	- while this added a networking method for switch/previous, this new method will only run when networkedNodes are enabled.
+ - Fixed issue of previous not being able to cycle to the end of the player list with TwoRadarMaps present
+ - Adjusted binding logic for TerminalHistory/TerminalAutocomplete binds to not throw a log error message at each load-in
+ - Cleaned TerminalClock creation method up a bit
+ - Adjusted restart command to sync between players. This feature will now require networking.
+
+## [3.2.5]
  ### Added
  - New Quality of Life feature which will keep the terminalLight on whenever the screen is on.
 	- This has been added as an option for the [TerminalLightBehaviour] configuration option.

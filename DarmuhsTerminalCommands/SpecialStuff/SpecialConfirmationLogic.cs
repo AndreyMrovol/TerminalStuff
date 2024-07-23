@@ -33,13 +33,12 @@ namespace TerminalStuff
             else
             {
                 string displayText = "Restart lobby confirmed, getting new ship...\n\n";
-                StartOfRound.Instance.ResetShip();
-                Object.FindObjectOfType<Terminal>().SetItemSales();
-                GameNetworkManager.Instance.SaveGameValues();
+                NetHandler.Instance.QuickRestartServerRpc();
                 Plugin.MoreLogs("restarting lobby");
                 return displayText;
             }
 
         }
+
     }
 }

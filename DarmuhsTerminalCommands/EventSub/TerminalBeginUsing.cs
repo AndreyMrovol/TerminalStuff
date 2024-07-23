@@ -87,6 +87,10 @@ namespace TerminalStuff.EventSub
                         return;
 
                     TerminalNode returnNode = StartofHandling.FindViewNode(nodeNum);
+                    
+                    if (returnNode == null)
+                        return;
+
                     instance.LoadNewNode(returnNode);
                     Plugin.MoreLogs($"[returning to camera-type node during AOD]\nMap: {Plugin.instance.isOnMap} \nCams: {Plugin.instance.isOnCamera} \nMiniMap: {Plugin.instance.isOnMiniMap} \nMiniCams: {Plugin.instance.isOnMiniCams} \nOverlay: {Plugin.instance.isOnOverlay}\nMirror: {Plugin.instance.isOnMirror}");
                     return;

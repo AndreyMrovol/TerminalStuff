@@ -1,6 +1,8 @@
 ﻿using OpenLib.ConfigManager;
 using OpenLib.CoreMethods;
 using static OpenLib.CoreMethods.CommandRegistry;
+using static OpenLib.ConfigManager.ConfigSetup;
+using static OpenLib.Common.CommonStringStuff;
 
 namespace TerminalStuff.PluginCore
 {
@@ -19,12 +21,13 @@ namespace TerminalStuff.PluginCore
         {
             Plugin.Log.LogInfo("AddCommands called for TerminalStuffMain listing");
             GetCommandsToAdd(ConfigSettings.TerminalStuffBools, ConfigSettings.TerminalStuffMain);
+            TerminalEvents.StorePacks();
         }
 
-        internal static void ManualCommands() //for any commands that can be added at awake that are not managed by one config item per command
+        internal static void ManualCommands() //for any commands that can be added before awake that are not managed by one config item per command
         {
-            TerminalEvents.StorePacks();
-            TerminalEvents.ShortcutCommands();
+            NewManagedBool(ref defaultManaged, "bindCommand", true, "Use this command to bind new shortcuts", false, "COMFORT", GetKeywordsPerConfigItem("bind"), DynamicCommands.BindKeyToCommand, 0, true, null, null, "", "", "bind");
+            NewManagedBool(ref defaultManaged, "unbindCommand", true, "Use this command to unbind a terminal shortcut from a key", false, "COMFORT", GetKeywordsPerConfigItem("unbind"), DynamicCommands.UnBindKeyToCommand, 0, true, null, null, "", "", "unbind");
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using OpenLib.Events;
 using TerminalStuff.PluginCore;
-using static OpenLib.CoreMethods.LogicHandling;
 using static TerminalStuff.EventSub.TerminalStart;
 
 namespace TerminalStuff.EventSub

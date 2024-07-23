@@ -50,9 +50,9 @@ namespace TerminalStuff.EventSub
                 startNode = Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[1];
                 helpNode = Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[13];
                 string original = helpNode.displayText;
-                Plugin.Spam(original);
+                //Plugin.Spam(original);
                 string replacement = original.Replace("To see the list of moons the autopilot can route to.", "List of moons the autopilot can route to.").Replace("To see the company store's selection of useful items.", "Company store's selection of useful items.").Replace("[numberOfItemsOnRoute]", ">MORE\r\nTo see a list of commands added via darmuhsTerminalStuff\r\n\r\n[numberOfItemsOnRoute]");
-                Plugin.Spam($"{replacement}");
+                //Plugin.Spam($"{replacement}");
 
                 Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[13].displayText = replacement;
                 Plugin.Spam("~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HELP MODIFIED ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -66,6 +66,7 @@ namespace TerminalStuff.EventSub
                 GameStartPatch.oneTimeOnly = true;
             }
 
+            OpenLib.CoreMethods.AddingThings.AddKeywordToExistingNode("home", Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[1], true); //startNode
             //StopPersistingKeywords();
             ChangeVanillaKeywords();
         }
@@ -140,6 +141,8 @@ namespace TerminalStuff.EventSub
                 return;
             }
 
+            NetHandler.Instance.SyncRadarZoomServerRpc(ConfigSettings.TerminalRadarDefaultZoom.Value); //sync config at load-in
+
             if (GameNetworkManager.Instance.localPlayerController.IsHost)
             {
                 thisterm.LoadNewNode(startNode);
@@ -163,15 +166,18 @@ namespace TerminalStuff.EventSub
             //deletes keywords at game start if they exist from previous plays
 
             CheckForAndDeleteKeyWord("view monitor");
+
             //MakeCommand("ViewInsideShipCam 1", "view monitor", "view monitor", false, true, ViewCommands.TermMapEvent, darmuhsTerminalStuff, 5, "map", ViewCommands.termViewNodes, ViewCommands.termViewNodeNums);
             //AddCommand(string textFail, bool clearText, List<TerminalNode> nodeGroup, string keyWord, bool isVerb, string nodeName, string category, string description, CommandDelegate methodName)
         }
         private static void DebugShowInfo()
         {
-            Plugin.Spam($"darmuhsTerminalStuff Count: {darmuhsTerminalStuff.Count}");
-            Plugin.Spam($"darmuhsKeywords Count: {darmuhsKeywords.Count}");
             Plugin.Spam($"Terminal Keywords Count: {Plugin.instance.Terminal.terminalNodes.allKeywords.Length}");
             Plugin.Spam($"Plugin.Allnodes: {Plugin.Allnodes.Count}");
+            Plugin.Spam($"TerminalStuffBools.Count: {ConfigSettings.TerminalStuffBools.Count}");
+            Plugin.Spam($"TerminalStuffMain.Listing.Count: {ConfigSettings.TerminalStuffMain.Listing.Count}");
+            Plugin.Spam($"defaultListing.Listing.Count: {defaultListing.Listing.Count}");
+            Plugin.Spam($"defaultManaged.Count: {defaultManaged.Count}");
 
             Plugin.Spam("------------------------ end of darmuh's debug info ------------------------");
 

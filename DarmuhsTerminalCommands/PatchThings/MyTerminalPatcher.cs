@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using TerminalStuff.SpecialStuff;
 using UnityEngine;
 using UnityEngine.Video;
 
@@ -7,6 +8,17 @@ namespace TerminalStuff
 {
     public class AllMyTerminalPatches : MonoBehaviour
     {
+        [HarmonyPatch(typeof(Terminal), "ParseWord")]
+        public class ConflictResolution : Terminal
+        {
+            static void Postfix(ref TerminalKeyword __result)
+            {
+                if (!ConfigSettings.TerminalConflictResolution.Value)
+                    return;
+
+                ConflictRes.InitRes(ref __result); //should modify the keyword to whatever resolution finds as the best match
+            }
+        }
 
         [HarmonyPatch(typeof(Terminal), "LoadTerminalImage")]
         public class FixVideoPatch : Terminal

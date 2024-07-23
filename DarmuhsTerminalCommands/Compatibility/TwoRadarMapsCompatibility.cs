@@ -13,6 +13,7 @@ namespace TerminalStuff
         internal static Texture RadarCamTexture()
         {
             Plugin.MoreLogs("Getting Radar texture for Zaggy's Unique Radar from TwoRadarMaps");
+            radarZoom = TerminalMapRenderer.cam.orthographicSize;
             Texture ZaggyRadarTexture = TerminalMapRenderer.cam.targetTexture;
             return ZaggyRadarTexture;
         }
@@ -42,22 +43,49 @@ namespace TerminalStuff
             {
                 int next = GetNextValidTarget(TerminalMapRenderer.radarTargets, TerminalMapRenderer.targetTransformIndex);
                 StartTargetTransition(TerminalMapRenderer, next);
-                Plugin.MoreLogs("Setting to next player");
+                NetCheck(next);
+                Plugin.Spam("Setting to next player");
                 StartofHandling.DelayedUpdateText(terminal);
             }
             else if (playerNum == -2)
             {
                 int prev = GetPrevValidTarget(TerminalMapRenderer.radarTargets, TerminalMapRenderer.targetTransformIndex);
                 StartTargetTransition(TerminalMapRenderer, prev);
-                Plugin.MoreLogs("Setting to next player");
+                NetCheck(prev);
+                Plugin.Spam("Setting to prev player");
                 StartofHandling.DelayedUpdateText(terminal);
             }
             else
             {
                 StartTargetTransition(TerminalMapRenderer, playerNum);
-                Plugin.MoreLogs("Setting to specific player");
+                NetCheck(playerNum);
+                Plugin.Spam("Setting to specific player");
                 StartofHandling.DelayedUpdateText(terminal);
             }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static void ChangeMapZoom(float newOrtho)
+        {
+            if (TerminalMapRenderer.cam.orthographicSize == newOrtho)
+                return;
+
+            TerminalMapRenderer.cam.orthographicSize = newOrtho;
+        }
+
+        internal static void NetCheck(int playerNum)
+        {
+            if (!ConfigSettings.networkedNodes.Value)
+                return;
+
+            NetHandler.Instance.SyncTwoRadarMapsServerRpc(((int)StartOfRound.Instance.localPlayerController.playerClientId), playerNum);
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static void SyncTarget(int playerNum)
+        {
+            StartTargetTransition(TerminalMapRenderer, playerNum);
+            Plugin.MoreLogs("Syncing radar to specific player");
         }
 
         internal static void UpdateCamsTarget()

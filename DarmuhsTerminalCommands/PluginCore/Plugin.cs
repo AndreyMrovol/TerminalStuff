@@ -1,6 +1,8 @@
 ﻿using BepInEx;
+using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
+using OpenLib.ConfigManager;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -8,12 +10,13 @@ using TerminalStuff.EventSub;
 using TerminalStuff.PluginCore;
 using UnityEngine;
 using UnityEngine.UI;
+using static OpenLib.ConfigManager.ConfigSetup;
 
 
 namespace TerminalStuff
 {
     [BepInPlugin("darmuh.TerminalStuff", "darmuhsTerminalStuff", (PluginInfo.PLUGIN_VERSION))]
-    [BepInDependency("darmuh.OpenLib", "0.0.1")] //hard dependency for my library
+    [BepInDependency("darmuh.OpenLib", "0.1.0")] //hard dependency for my library
     [BepInDependency("Rozebud.FovAdjust", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("Zaggy1024.OpenBodyCams", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("Zaggy1024.TwoRadarMaps", BepInDependency.DependencyFlags.SoftDependency)]
@@ -90,10 +93,11 @@ namespace TerminalStuff
             StuffForLibrary.Init();
             ConfigSettings.BindConfigSettings();
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
-            //LeaveTerminal.AddTest(); //this command is only for devtesting
             //Addkeywords used to be here
             VideoManager.Load();
             Subscribers.Subscribe();
+            Config.ConfigReloaded += OnConfigReloaded;
+            Config.SettingChanged += OnSettingChanged;
 
             //start of networking stuff
 
@@ -114,6 +118,28 @@ namespace TerminalStuff
             //end of networking stuff
         }
 
+        internal void OnSettingChanged(object sender, SettingChangedEventArgs settingChangedArg)
+        {
+            Spam("CONFIG SETTING CHANGE EVENT");
+
+            if (settingChangedArg.ChangedSetting == null)
+                return;
+
+            if( ConfigMisc.CheckChangedConfigSetting(defaultManaged, settingChangedArg.ChangedSetting) || ConfigMisc.CheckChangedConfigSetting(ConfigSettings.TerminalStuffBools, settingChangedArg.ChangedSetting))
+            {
+                Spam("managed bools have been modified!!");
+            }
+        }
+
+        internal void OnConfigReloaded(object sender, EventArgs e)
+        {
+            Spam("Config has been reloaded!");
+            StuffForLibrary.ManualCommands();
+            NetworkingCheck(ConfigSettings.ModNetworking.Value, instance.Config, defaultManaged);
+            ReadConfigAndAssignValues(instance.Config, defaultManaged);
+            ReadConfigAndAssignValues(instance.Config, ConfigSettings.TerminalStuffBools);
+        }
+
         internal static void MoreLogs(string message)
         {
             if (ConfigSettings.extensiveLogging.Value)
@@ -125,7 +151,7 @@ namespace TerminalStuff
         internal static void Spam(string message)
         {
             if (ConfigSettings.developerLogging.Value)
-                Log.LogInfo(message);
+                Log.LogDebug(message);
             else
                 return;
         }
@@ -133,6 +159,11 @@ namespace TerminalStuff
         internal static void ERROR(string message)
         {
             Log.LogError(message);
+        }
+
+        internal static void WARNING(string message)
+        {
+            Log.LogWarning(message);
         }
     }
 

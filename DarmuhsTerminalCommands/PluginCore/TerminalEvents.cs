@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using static TerminalStuff.StringStuff;
 using static OpenLib.CoreMethods.AddingThings;
 using static OpenLib.ConfigManager.ConfigSetup;
+using OpenLib.ConfigManager;
 using Steamworks.Ugc;
 
 namespace TerminalStuff
@@ -15,8 +16,8 @@ namespace TerminalStuff
 
     public static class TerminalEvents
     {
-        public static Dictionary<TerminalNode, Func<string>> darmuhsTerminalStuff = [];
-        internal static List<TerminalKeyword> darmuhsKeywords = [];
+        //public static Dictionary<TerminalNode, Func<string>> darmuhsTerminalStuff = [];
+        //internal static List<TerminalKeyword> darmuhsKeywords = [];
         internal static string TotalValueFormat = "";
         internal static string VideoErrorMessage = "";
         public static bool clockDisabledByCommand = false;
@@ -24,7 +25,7 @@ namespace TerminalStuff
         internal static bool quitTerminalEnum = false;
 
 
-        internal static GameObject dummyObject;
+        //internal static GameObject dummyObject;
         internal static TerminalNode switchNode = CreateDummyNode("switchDummy", true, "this should not display, switch command");
 
         internal static void StorePacks()
@@ -43,32 +44,10 @@ namespace TerminalStuff
             foreach (KeyValuePair<string, string> item in keywordAndItems)
             {
                 Plugin.Spam($"setting {item.Key} keyword to purchase pack with items: {item.Value}");
-                NewManagedBool(ref ConfigSettings.TerminalStuffBools, $"{item.Key}_PP", true, "", false, "", GetKeywordsPerConfigItem(item.Key), CostCommands.AskPurchasePack, 2, true, CostCommands.CompletePurchasePack, null, "", $"You have cancelled the purchase of Purchase Pack [{item.Key}.]\r\n\r\n", "", -1, $"{item.Key}", $"{item.Value}", 0, $"{item.Key}", true, 0, true);
+                AddNodeManual($"{item.Key}_PP", item.Key, CostCommands.AskPurchasePack, true, 2, ConfigSettings.TerminalStuffMain, 0, CostCommands.CompletePurchasePack, null, "", $"You have cancelled the purchase of Purchase Pack [{item.Key}].\r\n\r\n", true, 0, item.Key, true, item.Value);
             }
         }
 
-        internal static void ShortcutCommands()
-        {
-            if (!ConfigSettings.terminalShortcuts.Value)
-                return;
-            Plugin.Spam("adding bindCommand managedbool");
-            NewManagedBool(ref defaultManagedBools, "bindCommand", true, "Use this command to bind new shortcuts", false, "COMFORT", GetKeywordsPerConfigItem("bind"), DynamicCommands.BindKeyToCommand, 0, true, null, null, "", "", "bind");
-
-            Plugin.Spam("adding unbindCommand managedbool");
-            NewManagedBool(ref defaultManagedBools, "unbindCommand", true, "Use this command to unbind a terminal shortcut from a key", false, "COMFORT", GetKeywordsPerConfigItem("unbind"), DynamicCommands.UnBindKeyToCommand, 0, true, null, null, "", "", "unbind");
-
-        }
-        internal static Func<string> GetCommandDisplayTextSupplier(TerminalNode query)
-        {
-            foreach (KeyValuePair<TerminalNode, Func<string>> pairValue in darmuhsTerminalStuff)
-            {
-                if (pairValue.Key == query)
-                {
-                    return pairValue.Value;
-                }
-            }
-            return null; // No matching command found for the given query
-        }
         internal static TerminalNode GetNodeFromList(string query, Dictionary<string, TerminalNode> nodeListing)
         {
             foreach (KeyValuePair<string, TerminalNode> pairValue in nodeListing)
@@ -168,7 +147,14 @@ namespace TerminalStuff
 
         }
 
-        internal static void TerminalCustomization()
+        internal static string RefreshCustomizationCommand()
+        {
+            string text = $"Refreshing TerminalCustomization from config.\n\n";
+            TerminalCustomization();
+            return text;
+        }
+
+        private static void TerminalBodyColors()
         {
             if (!ConfigSettings.TerminalCustomization.Value)
                 return;
@@ -177,14 +163,51 @@ namespace TerminalStuff
 
             if (termMesh != null)
             {
-                termMesh.material.color = ColorCommands.HexToColor(ConfigSettings.TerminalColor.Value);
+                if (termMesh.materials.Length <= 3)
+                {
+                    termMesh.materials[0].color = ColorCommands.HexToColor(ConfigSettings.TerminalColor.Value); //body
+                    termMesh.materials[1].color = ColorCommands.HexToColor(ConfigSettings.TerminalButtonsColor.Value); //glass buttons
+                    //2 = warning sticker
+                }
+                else
+                {
+                    Plugin.WARNING("termMesh does not have expected number of materials, only setting terminal body color");
+                    termMesh.material.color = ColorCommands.HexToColor(ConfigSettings.TerminalColor.Value);
+                }
             }
             else
-                Plugin.MoreLogs("termMesh is null");
+                Plugin.WARNING("customization failure: termMesh is null");
+        }
 
+        private static void TerminalKeyboardColors()
+        {
+            if (!ConfigSettings.TerminalCustomization.Value)
+                return;
+
+            MeshRenderer kbMesh = GameObject.Find("Environment/HangarShip/Terminal/Terminal.003").GetComponent<MeshRenderer>();
+
+            if (kbMesh != null)
+            {
+                kbMesh.material.color = ColorCommands.HexToColor(ConfigSettings.TerminalKeyboardColor.Value);
+            }
+            else
+                Plugin.WARNING("customization failure: kbMesh is null");
+        }
+
+        internal static void TerminalCustomization()
+        {
+            if (!ConfigSettings.TerminalCustomization.Value)
+                return;
+
+            TerminalBodyColors();
+            TerminalKeyboardColors();
+
+            Color moneyBG = ColorCommands.HexToColor(ConfigSettings.TerminalMoneyBGColor.Value);
+            moneyBG.a = ConfigSettings.TerminalMoneyBGAlpha.Value;
 
             Plugin.instance.Terminal.screenText.textComponent.color = ColorCommands.HexToColor(ConfigSettings.TerminalTextColor.Value);
             Plugin.instance.Terminal.topRightText.color = ColorCommands.HexToColor(ConfigSettings.TerminalMoneyColor.Value);
+            Plugin.instance.Terminal.terminalUIScreen.gameObject.transform.GetChild(0).GetChild(5).gameObject.GetComponent<Image>().color = moneyBG;
             Plugin.instance.Terminal.screenText.caretColor = ColorCommands.HexToColor(ConfigSettings.TerminalCaretColor.Value);
             Plugin.instance.Terminal.scrollBarVertical.image.color = ColorCommands.HexToColor(ConfigSettings.TerminalScrollbarColor.Value);
             Plugin.instance.Terminal.scrollBarVertical.gameObject.GetComponent<Image>().color = ColorCommands.HexToColor(ConfigSettings.TerminalScrollBGColor.Value);
@@ -192,8 +215,18 @@ namespace TerminalStuff
 
             if (TerminalClockStuff.textComponent != null)
             {
-                Plugin.MoreLogs("setting clock color to: {}");
+                Plugin.MoreLogs($"setting clock color to: {ConfigSettings.TerminalClockColor.Value}");
                 TerminalClockStuff.textComponent.color = ColorCommands.HexToColor(ConfigSettings.TerminalClockColor.Value);
+            }
+
+            Image bgImage = GameObject.Find("Environment/HangarShip/Terminal/Canvas/MainContainer/Scroll View/Viewport/InputField (TMP)").GetComponent<Image>();
+
+            if (bgImage != null)
+            {
+                bgImage.enabled = ConfigSettings.TerminalCustomBG.Value;
+                Color newColor = ColorCommands.HexToColor(ConfigSettings.TerminalCustomBGColor.Value);
+                newColor.a = ConfigSettings.TerminalCustomBGAlpha.Value;
+                bgImage.color = newColor;
             }
         }
     }
