@@ -50,6 +50,7 @@ This project does NOT adhere to perfect Semantic Versioning. Mostly because I do
  - Adjusted binding logic for TerminalHistory/TerminalAutocomplete binds to not throw a log error message at each load-in
  - Cleaned TerminalClock creation method up a bit
  - Adjusted restart command to sync between players. This feature will now require networking.
+ - Fixed issue with StorePacks returning a null node if you could not afford them and use any keyword besides deny/confirm
 
 ## [3.2.5]
  ### Added

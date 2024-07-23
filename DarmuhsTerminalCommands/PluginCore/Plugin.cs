@@ -59,6 +59,7 @@ namespace TerminalStuff
         public bool isOnMiniCams = false;
         public bool activeCam = false;
         public bool splitViewCreated = false;
+        public bool escapeConfirmation = false;
 
         //flashlight stuff
         public bool fSuccess = false;

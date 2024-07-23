@@ -18,6 +18,8 @@
  - [**NEW IN 3.2.2**] Client-side Terminal Customization, change the color of the terminal and the different text types!
  - [**NEW IN 3.2.2**] Client-side Quality of Life features, make the terminal experience how you want it to be!
  - [**NEW IN 3.2.3**] Terminal Autocomplete and History features to make typing in the terminal feel more like a real terminal!
+ - [**NEW IN 3.3.0**] Terminal Conflict Resolution will compare your input to all keywords to give you the best result.
+	- Using the [Fastenshtein string comparison algorithm](https://github.com/DanHarltey/Fastenshtein)
  - Cams commands can now show player povs even without a separate bodycam mod present.
 	- Still compatibile with every major bodycam mod; OpenBodyCams, Helmet Cameras, and Solos Bodycams are all compatible!
  - Expanded compatibility with LethalLevelLoader, OpenBodyCams, and TwoRadarMaps!
@@ -40,7 +42,8 @@
  - Door: Control ship doors (open/closed) from terminal
  - Lights: Control ship lights (on/off) from terminal
  - Clock: Toggle Custom Terminal Clock display on/off
- - (BETA) Restart: Reset lobby without triggering firing sequence 
+ - (BETA) Restart: Reset lobby without triggering firing sequence (networking required)
+ - Radar Zoom: Change zoom level of the map from view monitor (will affect Map on the monitor if not using TwoRadarMaps)
 
 ### Extras Commands:
  - Loot: Scans ship for all loot and gives you the total value.
@@ -68,6 +71,7 @@
  - Scolor: Change the color of the lights inside the ship (networking required)
  - RandomSuit: Change your suit to a random suit from all suits available.
  - Route Random: Route to a random moon for a flat rate! Completely configurable.
+ - Refresh Customization: Refresh terminal customizations from config settings.
 
 ### Information Commands:
  - More: main menu of darmuhsTerminalStuff
@@ -86,6 +90,7 @@
  - Also please report any bugs you find there (or on the modding discord) as well.
  - If you're not a fan of GitHub, I'm also fairly active on the LethalCompany Modding Discord managed by Thunderstore. I post updates on WIP features there whenever i'm messing with something new.
  - Please report compatibility issues when you find them, it's not difficult for me to resolve these issues but I have to know about them.
+ - This is the first of many of my mods to start using my Open-Source libary: OpenLib. This will be a dependency for version 3.3.0 and forward.
 
 ### Work for future updates & Requested Features from Community
  - Find an up-to-date listing [here](https://thunderstore.io/c/lethal-company/p/darmuh/darmuhsTerminalStuff/wiki/1277-planned-work-community-suggestions/)

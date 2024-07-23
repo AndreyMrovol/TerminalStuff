@@ -37,7 +37,29 @@ namespace TerminalStuff
 
             if (GetNewDisplayText(ConfigSettings.TerminalStuffMain, ref resultNode))
                 Plugin.MoreLogs("command found in special terminalStuff listing");
+
+            if (ConfigSettings.TerminalStuffMain.storePacks.ContainsKey(resultNode))
+            {
+                EscapeConfirmCheck(ref resultNode);
+            }
+
+
             return resultNode;
+        }
+
+        internal static void EscapeConfirmCheck(ref TerminalNode resultNode)
+        {
+            if(Plugin.instance.escapeConfirmation)
+            {
+                Plugin.Spam("escape confirmation detected");
+                resultNode.overrideOptions = false;
+                Plugin.instance.escapeConfirmation = false;
+            }
+            else
+            {
+                Plugin.Spam("escape confirmation is false");
+                resultNode.overrideOptions = true;
+            }
         }
 
         internal static int FindViewInt(TerminalNode givenNode)
