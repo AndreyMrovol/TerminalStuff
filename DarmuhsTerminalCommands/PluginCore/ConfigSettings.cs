@@ -24,6 +24,7 @@ namespace TerminalStuff
         public static ConfigEntry<string> obcResolutionBodyCam { get; internal set; }
 
         //establish commands that can be turned on or off here
+        public static ConfigEntry<bool> terminalShortcutCommands { get; internal set; }
         public static ConfigEntry<bool> ModNetworking { get; internal set; }
         public static ConfigEntry<bool> networkedNodes { get; internal set; } //enable or disable networked terminal nodes (beta)
         public static ConfigEntry<bool> terminalClock { get; internal set; } //Clock object itself
@@ -294,6 +295,8 @@ namespace TerminalStuff
             Plugin.Spam("cost configs section done");
 
             //------------------------------------------------MANAGED BOOLS START------------------------------------------------//
+
+            terminalShortcutCommands = MakeBool(Plugin.instance.Config, "Comfort Commands (On/Off)", "terminalShortcutCommands", true, "Enable or disable shortCut commands (dependent on terminalShortcuts)");
 
             terminalLobby = MakeBool(Plugin.instance.Config, "Comfort Commands (On/Off)", "terminalLobby", true, "Check for the current lobby name");
             AddManagedBool(terminalLobby, defaultManaged, false, "COMFORT", lobbyKeywords, MoreCommands.GetLobbyName);

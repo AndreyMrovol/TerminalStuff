@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.3.4]
+ - Updated mod to use OpenLib version 0.1.4
+	- This should fix the issue of the NetworkingCheck failing, causing vanilla compatibility to fail.
+ - Added configuration item - terminalShortcutCommands to allow for disabling the bind/unbind keywords while keeping shortcut functionality.
+	- You will only be able to modify shortcuts via the configuration item, and they will only refresh between lobby loads.
+ - Fixed issue where bind/unbind was getting created regardless of whether or not the terminalShortcuts feature was enabled.
+
+## [3.3.3]
+ - Fixed Manifest to target correct version of OpenLib
+
 ## [3.3.2]
  ### Fixed/Changed
  - Fixed newly introduced issue for TerminalHistory in version 3.3.0 which caused the feature to not work at all.

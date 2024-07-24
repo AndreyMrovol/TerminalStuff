@@ -16,7 +16,7 @@ using static OpenLib.ConfigManager.ConfigSetup;
 namespace TerminalStuff
 {
     [BepInPlugin("darmuh.TerminalStuff", "darmuhsTerminalStuff", (PluginInfo.PLUGIN_VERSION))]
-    [BepInDependency("darmuh.OpenLib", "0.1.3")] //hard dependency for my library
+    [BepInDependency("darmuh.OpenLib", "0.1.4")] //hard dependency for my library
     [BepInDependency("Rozebud.FovAdjust", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("Zaggy1024.OpenBodyCams", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("Zaggy1024.TwoRadarMaps", BepInDependency.DependencyFlags.SoftDependency)]
@@ -32,7 +32,7 @@ namespace TerminalStuff
         {
             public const string PLUGIN_GUID = "darmuh.TerminalStuff";
             public const string PLUGIN_NAME = "darmuhsTerminalStuff";
-            public const string PLUGIN_VERSION = "3.3.2";
+            public const string PLUGIN_VERSION = "3.3.4";
         }
 
         internal static ManualLogSource Log;
@@ -122,6 +122,7 @@ namespace TerminalStuff
         internal void OnSettingChanged(object sender, SettingChangedEventArgs settingChangedArg)
         {
             Spam("CONFIG SETTING CHANGE EVENT");
+            StuffForLibrary.ManualCommands();
 
             if (settingChangedArg.ChangedSetting == null)
                 return;
@@ -135,7 +136,6 @@ namespace TerminalStuff
         internal void OnConfigReloaded(object sender, EventArgs e)
         {
             Spam("Config has been reloaded!");
-            StuffForLibrary.ManualCommands();
             NetworkingCheck(ConfigSettings.ModNetworking.Value, instance.Config, defaultManaged);
             ReadConfigAndAssignValues(instance.Config, defaultManaged);
             ReadConfigAndAssignValues(instance.Config, ConfigSettings.TerminalStuffBools);

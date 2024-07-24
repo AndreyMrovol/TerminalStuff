@@ -14,6 +14,7 @@
  - Configurable Terminal Clock feature that will always be displayed alongside credits!
  - Configurable Use-Walkie at Terminal feature that will allow you to bind one key and one mousebutton to use any powered walkie from your inventory!
  - Terminal Shortcuts can be set using the bind command and removed using the unbind command! These binds will be saved in the config for continued use.
+	- Bind/Unbind commands can be disabled via terminalShortcutCommands
  - [**NEW IN 3.2.0**] Configurable "Purchase Packs" that let you buy multiple items from the store with one command!
  - [**NEW IN 3.2.2**] Client-side Terminal Customization, change the color of the terminal and the different text types!
  - [**NEW IN 3.2.2**] Client-side Quality of Life features, make the terminal experience how you want it to be!

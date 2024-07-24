@@ -26,8 +26,17 @@ namespace TerminalStuff.PluginCore
 
         internal static void ManualCommands() //for any commands that can be added before awake that are not managed by one config item per command
         {
-            NewManagedBool(ref defaultManaged, "bindCommand", true, "Use this command to bind new shortcuts", false, "COMFORT", GetKeywordsPerConfigItem("bind"), DynamicCommands.BindKeyToCommand, 0, true, null, null, "", "", "bind");
-            NewManagedBool(ref defaultManaged, "unbindCommand", true, "Use this command to unbind a terminal shortcut from a key", false, "COMFORT", GetKeywordsPerConfigItem("unbind"), DynamicCommands.UnBindKeyToCommand, 0, true, null, null, "", "", "unbind");
+            if (!ConfigSettings.terminalShortcuts.Value && ConfigSettings.terminalShortcutCommands.Value)
+            {
+                ConfigSettings.terminalShortcutCommands.Value = false;
+                Plugin.WARNING("terminalShortcutCommands was enabled while feature, terminalShortcuts, was disabled. Setting to FALSE");
+                Plugin.instance.Config.Save();
+            }
+
+            Plugin.Spam($"terminalShortcutCommands Value: {ConfigSettings.terminalShortcutCommands.Value}");
+
+            NewManagedBool(ref defaultManaged, "bindCommand", ConfigSettings.terminalShortcutCommands.Value, "Use this command to bind new shortcuts", false, "COMFORT", GetKeywordsPerConfigItem("bind"), DynamicCommands.BindKeyToCommand, 0, true, null, null, "", "", "bind");
+            NewManagedBool(ref defaultManaged, "unbindCommand", ConfigSettings.terminalShortcutCommands.Value, "Use this command to unbind a terminal shortcut from a key", false, "COMFORT", GetKeywordsPerConfigItem("unbind"), DynamicCommands.UnBindKeyToCommand, 0, true, null, null, "", "", "unbind");
         }
     }
 }
