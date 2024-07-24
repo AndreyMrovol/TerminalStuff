@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.3.1] **CURRENT VERSION**
+ ### Fixed/Changed
+ - Fixed critical error that would brick the terminal with the TerminalHistory configuration item enabled.
+	- Apologies for the inconvenience and thankyou to all in the modding discord who helped troubleshoot
+ - Adjust more menu category to not display a category if no commands exist for it.
+
 ## [3.3.0] **CURRENT VERSION**
  ### Added
  - More Customization!

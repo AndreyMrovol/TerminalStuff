@@ -15,10 +15,21 @@ namespace TerminalStuff
         internal static void CategoryList()
         {
             Dictionary<string, string> myCategories = [];
-            myCategories.Add("COMFORT", "Improves the terminal user experience.");
-            myCategories.Add("EXTRAS", "Adds extra functionality to the ship terminal.");
-            myCategories.Add("CONTROLS", "Gives terminal more control of the ship's systems.");
-            myCategories.Add("FUN", "Type \"fun\" for a list of these [FUN]ctional commands.");
+            myMenuItems = TerminalMenuItems(defaultManaged);
+            AddMenuItems(ConfigSettings.TerminalStuffBools, myMenuItems);
+            if(ShouldAddCategoryNameToMainMenu(myMenuItems, "COMFORT"))
+                myCategories.Add("COMFORT", "Improves the terminal user experience.");
+            if (ShouldAddCategoryNameToMainMenu(myMenuItems, "EXTRAS"))
+                myCategories.Add("EXTRAS", "Adds extra functionality to the ship terminal.");
+            if (ShouldAddCategoryNameToMainMenu(myMenuItems, "CONTROLS"))
+                myCategories.Add("CONTROLS", "Gives terminal more control of the ship's systems.");
+            if (ShouldAddCategoryNameToMainMenu(myMenuItems, "FUN"))
+                myCategories.Add("FUN", "Type \"fun\" for a list of these [FUN]ctional commands.");
+
+            if(myCategories.Count == 0)
+            {
+                Plugin.WARNING("No enabled commands? ending menu creation");
+            }
             myMenuCategories = InitCategories(myCategories);
 
             //CatName = item.Key,
@@ -29,8 +40,6 @@ namespace TerminalStuff
         internal static void CreateDarmuhsTerminalStuffMenus()
         {
             Plugin.Spam("START CreateDarmuhsTerminalStuffMenus");
-            myMenuItems = TerminalMenuItems(defaultManaged);
-            AddMenuItems(ConfigSettings.TerminalStuffBools, myMenuItems);
 
             myMenu = AssembleMainMenu("darmuhsTerminalStuff", "more", "Welcome to darmuh's Terminal Upgrade!\r\n\tSee below Categories for new stuff :)", myMenuCategories, myMenuItems, true, "\n<color=#b300b3>>MORE</color>\nTo open a menu of darmuh\'s commands.\r\n");
 
