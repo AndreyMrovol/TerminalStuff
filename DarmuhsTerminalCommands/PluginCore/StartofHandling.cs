@@ -1,4 +1,5 @@
-﻿using OpenLib.CoreMethods;
+﻿using OpenLib.Common;
+using OpenLib.CoreMethods;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -35,8 +36,13 @@ namespace TerminalStuff
             string firstWord = words[0].ToLower();
             HandleAnyNode(terminal, currentNode, words, firstWord, out resultNode);
 
+            if (resultNode == null)
+                Plugin.WARNING("resultNode is null in HandleParsed");
+
             if (GetNewDisplayText(ConfigSettings.TerminalStuffMain, ref resultNode))
                 Plugin.MoreLogs("command found in special terminalStuff listing");
+            else
+                Plugin.MoreLogs($"{ConfigSettings.TerminalStuffMain.Listing.Count} - listing count did not find node");
 
             if (ConfigSettings.TerminalStuffMain.storePacks.ContainsKey(resultNode))
             {
@@ -289,6 +295,12 @@ namespace TerminalStuff
 
         internal static void FirstCheck(TerminalNode initialResult)
         {
+            if (ConfigSettings.TerminalHistory.Value)
+            {
+                string s = CommonStringStuff.GetCleanedScreenText(Plugin.instance.Terminal);
+                TerminalHistory.AddToCommandHistory(CommonStringStuff.RemovePunctuation(s));
+            }
+                
             if (initialResult == null)
                 return;
 

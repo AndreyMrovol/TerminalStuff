@@ -5,7 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
-## [3.3.1] **CURRENT VERSION**
+## [3.3.2]
+ ### Fixed/Changed
+ - Fixed newly introduced issue for TerminalHistory in version 3.3.0 which caused the feature to not work at all.
+	- Commands were not being added to the command history list so the keybinds were not doing anything in particular.
+ - Fixed issue where, with certain config files, the category menus would not update their displayText properly.
+	- This issue was resolved by updating OpenLib to 0.1.3
+
+## [3.3.1]
  ### Fixed/Changed
  - Fixed critical error that would brick the terminal with the TerminalHistory configuration item enabled.
 	- Apologies for the inconvenience and thankyou to all in the modding discord who helped troubleshoot
@@ -123,14 +130,6 @@ This project does NOT adhere to perfect Semantic Versioning. Mostly because I do
  - Clients were having their commands deleted when joining. This made the mod basically un-usable for any clients.
 	- Fixed this by moving the command deletion method so that commands are only deleted when you leave a game, not when you are first loading in.
 	- Thank you to @_rafael_barreto_ for the report on the discord thread for this mod.
-
- ### Known issues/bugs
- - (1) If another mod has a function that keeps the terminal screen enabled, alwayson will not always work as expected.
-	- It is generally preferred to use this mod's Always-On function compared to another mod keeping the terminal screen on.
- - (2) Picking up eachother's flashlights with modified colors will not automatically change any colors for the player picking it up. 
-	- So your helmetlight will stay as-is and the flashlight you pick up will keep whatever color it was before you picked it up.
- - (3) If another mod dev wishes to access any of my commands, I suggest taking a look at "GetCommandDisplayTextSupplier(TerminalNode query)" in TerminalEvents.cs and how it is used in ShortcutBindings.cs
-	- If you have any specific ideas I am always willing to collaborate on that effort.
 
 ## [3.2.0] 
  ### Added

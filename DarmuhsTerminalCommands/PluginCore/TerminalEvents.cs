@@ -102,9 +102,6 @@ namespace TerminalStuff
         {
             string s = __instance.screenText.text.Substring(__instance.screenText.text.Length - __instance.textAdded);
 
-            if (ConfigSettings.TerminalHistory.Value)
-                TerminalHistory.AddToCommandHistory(RemovePunctuation(s));
-
             return RemovePunctuation(s);
         }
 

@@ -45,29 +45,18 @@ namespace TerminalStuff
             if (!ConfigSettings.TerminalHistory.Value)
                 return;
 
-            if (keyActions.GetValueSafe<Key, string>(Key.UpArrow) != "[historyPrevious]")
-            {
-                Plugin.WARNING($"TerminalHistory is Enabled and unrelated shortcut detected on key: UpArrow. Removing shortcut for UpArrow to assign to historyPrev action");
-                keyActions.Remove(Key.UpArrow);
-            }
-
-            if (keyActions.GetValueSafe<Key,string>(Key.DownArrow) != "[historyNext]")
-            {
-                Plugin.WARNING($"TerminalHistory is Enabled and unrelated shortcut detected on key: DownArrow. Removing shortcut for DownArrow to assign to historyNext action");
-                keyActions.Remove(Key.DownArrow);
-            }
             if (keyActions.ContainsKey(Key.UpArrow))
             {
                 keyActions.Remove(Key.UpArrow);
                 keyActions.Add(Key.UpArrow, "[historyPrevious]");
-                Plugin.Spam("historyPrevious bind set");
+                Plugin.Spam("historyPrevious bind set to Key: UpArrow");
             }
 
             if (keyActions.ContainsKey(Key.DownArrow))
             {
                 keyActions.Remove(Key.DownArrow);
                 keyActions.Add(Key.DownArrow, "[historyNext]");
-                Plugin.Spam("historyNext bind set");
+                Plugin.Spam("historyNext bind set to Key: UpArrow");
             }
             
         }
