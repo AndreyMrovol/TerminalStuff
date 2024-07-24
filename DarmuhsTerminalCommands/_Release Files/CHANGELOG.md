@@ -11,7 +11,7 @@ This project does NOT adhere to perfect Semantic Versioning. Mostly because I do
 	- Apologies for the inconvenience and thankyou to all in the modding discord who helped troubleshoot
  - Adjust more menu category to not display a category if no commands exist for it.
 
-## [3.3.0] **CURRENT VERSION**
+## [3.3.0]
  ### Added
  - More Customization!
 	- Added configuration options for:
