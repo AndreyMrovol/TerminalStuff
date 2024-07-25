@@ -16,6 +16,7 @@ namespace TerminalStuff.EventSub
                 Plugin.ERROR("FATAL ERROR: Terminal Instance is NULL");
                 return;
             }
+
                 
             StartUsingTerminalCheck(Plugin.instance.Terminal);
 
@@ -23,7 +24,11 @@ namespace TerminalStuff.EventSub
                 ShouldLockPlayerCamera(false, StartOfRound.Instance.localPlayerController);
 
             if (Plugin.instance.Terminal.currentNode == null)
-                return;
+            {
+                Plugin.WARNING("WARNING: currentNode is NULL, loading home page node");
+                Plugin.instance.Terminal.LoadNewNode(Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[1]);
+            }
+                
 
             if (ConfigSettings.TerminalStuffMain.specialListNum.ContainsKey(Plugin.instance.Terminal.currentNode))
                 return;
@@ -70,7 +75,7 @@ namespace TerminalStuff.EventSub
             //AlwaysOn Functions
             if (!alwaysOnDisplay)
             {
-                Plugin.MoreLogs("disabling cams views");
+                Plugin.Spam("disabling cams views");
                 SplitViewChecks.DisableSplitView("neither");
                 ViewCommands.isVideoPlaying = false;
 
@@ -92,12 +97,12 @@ namespace TerminalStuff.EventSub
                         return;
 
                     instance.LoadNewNode(returnNode);
-                    Plugin.MoreLogs($"[returning to camera-type node during AOD]\nMap: {Plugin.instance.isOnMap} \nCams: {Plugin.instance.isOnCamera} \nMiniMap: {Plugin.instance.isOnMiniMap} \nMiniCams: {Plugin.instance.isOnMiniCams} \nOverlay: {Plugin.instance.isOnOverlay}\nMirror: {Plugin.instance.isOnMirror}");
+                    Plugin.Spam($"[returning to camera-type node during AOD]\nMap: {Plugin.instance.isOnMap} \nCams: {Plugin.instance.isOnCamera} \nMiniMap: {Plugin.instance.isOnMiniMap} \nMiniCams: {Plugin.instance.isOnMiniCams} \nOverlay: {Plugin.instance.isOnOverlay}\nMirror: {Plugin.instance.isOnMirror}");
                     return;
                 }
                 else
                 {
-                    Plugin.MoreLogs($"[no matching camera-type nodes during AOD]\nMap: {Plugin.instance.isOnMap} \nCams: {Plugin.instance.isOnCamera} \nMiniMap: {Plugin.instance.isOnMiniMap} \nMiniCams: {Plugin.instance.isOnMiniCams} \nOverlay: {Plugin.instance.isOnOverlay}\nMirror: {Plugin.instance.isOnMirror}");
+                    Plugin.Spam($"[no matching camera-type nodes during AOD]\nMap: {Plugin.instance.isOnMap} \nCams: {Plugin.instance.isOnCamera} \nMiniMap: {Plugin.instance.isOnMiniMap} \nMiniCams: {Plugin.instance.isOnMiniCams} \nOverlay: {Plugin.instance.isOnOverlay}\nMirror: {Plugin.instance.isOnMirror}");
                     instance.LoadNewNode(instance.terminalNodes.specialNodes.ToArray()[1]);
                     return;
                 }

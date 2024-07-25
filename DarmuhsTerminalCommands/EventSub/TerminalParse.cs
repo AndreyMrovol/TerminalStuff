@@ -15,6 +15,9 @@ namespace TerminalStuff.EventSub
 
         internal static TerminalNode OnParseSent(ref TerminalNode node)
         {
+            if(node == null) // handling cases where node is null for some reason
+                return Plugin.instance.Terminal.currentNode;
+
             StartofHandling.FirstCheck(node);
 
             if (node.name.Equals("0_StoreHub") && ConfigSettings.TerminalStuffMain.storePacks.Count > 0)

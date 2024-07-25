@@ -21,7 +21,7 @@ namespace TerminalStuff.EventSub
 
         internal static void OnLoadNode(TerminalNode node)
         {
-            Plugin.Spam($"LoadNewNode patch, nNS: {NetHandler.netNodeSet}");
+            Plugin.MoreLogs($"LoadNewNode patch, nNS: {NetHandler.netNodeSet}");
 
             if (node != null && node.name != null)
                 Plugin.Spam($"{node.name} has been loaded");
@@ -33,8 +33,14 @@ namespace TerminalStuff.EventSub
 
         internal static void OnLoadAffordable(TerminalNode node)
         {
-            if (!ConfigSettings.terminalRefund.Value || !ConfigSettings.ModNetworking.Value || node == null)
+            if (!ConfigSettings.terminalRefund.Value || !ConfigSettings.ModNetworking.Value)
                 return;
+
+            if(node == null)
+            {
+                Plugin.WARNING("WARNING: node is null at OnLoadAffordable, using early return & dropship will not be synced!");
+                return;
+            }
 
             NetHandler.Instance.SyncDropShipServerRpc();
             Plugin.Spam($"items: {Plugin.instance.Terminal.orderedItemsFromTerminal.Count}");

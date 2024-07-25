@@ -40,7 +40,7 @@ namespace TerminalStuff.SpecialStuff
                 {
                     foreach(CompatibleNoun noun in word.compatibleNouns)
                     {
-                        if (input.Contains(noun.noun.word))
+                        if (input.Contains(noun.noun.word) && !matching.ContainsKey(noun.noun))
                         {
                             Plugin.Spam($"{word.word} has compatible noun: {noun.noun.word} which is in {input}");
                             int score = Levenshtein.Distance(noun.noun.word, input);

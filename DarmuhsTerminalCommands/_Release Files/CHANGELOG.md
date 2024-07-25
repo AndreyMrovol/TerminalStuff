@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.3.6]
+ - Fixed issue with conflict resolution trying to add the same terminalKeyword causing keyword matching to break
+	- Thanks mina for the report and steps to reproduce!
+ - Added more visible logging statements to players by default.
+ - Added more null reference handling with better log messaging explaining what is happening
+	- Attempting to load home page now if a node is detected null when starting to use the terminal
+
 ## [3.3.5]
  - Updated mod to use OpenLib version 0.1.5
 	- Offloaded more game patches to OpenLib events

@@ -354,6 +354,7 @@ namespace TerminalStuff
                 if (value.Contains(" "))
                 {
                     LogicHandling.SetTerminalInput(value);
+                    Plugin.Log.LogDebug($"Terminal Input set to:{value}");
                     Plugin.instance.Terminal.OnSubmit();
                     return;
                 }
@@ -362,6 +363,7 @@ namespace TerminalStuff
                     Plugin.Spam("terminalhistory [previous] bind detected and feature is enabled");
                     TerminalHistory.historyIndex = TerminalHistory.PreviousIndex();
                     LogicHandling.SetTerminalInput(TerminalHistory.GetFromCommandHistory(ref TerminalHistory.historyIndex));
+                    Plugin.Log.LogDebug($"Terminal Input set to:{TerminalHistory.GetFromCommandHistory(ref TerminalHistory.historyIndex)}");
                     return;
 
                 }
@@ -370,6 +372,7 @@ namespace TerminalStuff
                     Plugin.Spam("terminalhistory [next] bind detected and feature is enabled");
                     TerminalHistory.historyIndex = TerminalHistory.NextIndex();
                     LogicHandling.SetTerminalInput(TerminalHistory.GetFromCommandHistory(ref TerminalHistory.historyIndex));
+                    Plugin.Log.LogDebug($"Terminal Input set to:{TerminalHistory.GetFromCommandHistory(ref TerminalHistory.historyIndex)}");
                     return;
                 }
                 else if(value.Equals("[autocomplete]") && ConfigSettings.TerminalAutoComplete.Value)
@@ -377,12 +380,17 @@ namespace TerminalStuff
                     Plugin.Spam("autocomplete key detected");
 
                     if(AutoComplete.CheckCurrentInput(AutoComplete.AutoCompleteResults, TerminalEvents.GetCleanedScreenText(Plugin.instance.Terminal)))
+                    {
                         LogicHandling.SetTerminalInput(AutoComplete.ShowMatchingKeywords(AutoComplete.AutoCompleteResults, ref AutoComplete.AutoCompleteIndex));
+                        Plugin.Log.LogDebug($"Terminal Input set to:{AutoComplete.ShowMatchingKeywords(AutoComplete.AutoCompleteResults, ref AutoComplete.AutoCompleteIndex)}");
+                    }
+                        
                     else
                     {
                         AutoComplete.AutoCompleteResults = AutoComplete.GetMatchingKeywords(TerminalEvents.GetCleanedScreenText(Plugin.instance.Terminal));
                         Plugin.Spam("setting AutoCompleteResults");
                         LogicHandling.SetTerminalInput(AutoComplete.ShowMatchingKeywords(AutoComplete.AutoCompleteResults, ref AutoComplete.AutoCompleteIndex));
+                        Plugin.Log.LogDebug($"Terminal Input set to:{AutoComplete.ShowMatchingKeywords(AutoComplete.AutoCompleteResults, ref AutoComplete.AutoCompleteIndex)}");
                     }
                     return;
                 }
