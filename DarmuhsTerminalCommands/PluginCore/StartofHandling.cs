@@ -40,9 +40,9 @@ namespace TerminalStuff
                 Plugin.WARNING("resultNode is null in HandleParsed");
 
             if (GetNewDisplayText(ConfigSettings.TerminalStuffMain, ref resultNode))
-                Plugin.MoreLogs("command found in special terminalStuff listing");
+                Plugin.Spam("command found in special terminalStuff listing");
             else
-                Plugin.MoreLogs($"{ConfigSettings.TerminalStuffMain.Listing.Count} - listing count did not find node");
+                Plugin.Spam($"terminalstuffmain listing count: {ConfigSettings.TerminalStuffMain.Listing.Count} - listing count did not find node");
 
             if (ConfigSettings.TerminalStuffMain.storePacks.ContainsKey(resultNode))
             {

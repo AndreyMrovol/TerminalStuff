@@ -523,8 +523,8 @@ namespace TerminalStuff
             //Terminal Customization
             TerminalCustomization = MakeBool(Plugin.instance.Config, "Terminal Customization", "TerminalCustomization", false, "Enable or Disable terminal color customizations");
             TerminalColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalColor", "#666633", "This changes the color of the physical terminal");
-            TerminalButtonsColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalButtonsColor", "#9900ff", "This changes the color of the physical terminal");
-            TerminalKeyboardColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalKeyboardColor", "#9900ff", "This changes the color of the physical terminal");
+            TerminalButtonsColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalButtonsColor", "#9900ff", "This changes the color of the physical buttons on the terminal");
+            TerminalKeyboardColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalKeyboardColor", "#9900ff", "This changes the color of the keyboard on the terminal");
             TerminalTextColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalTextColor", "#ffffb3", "This changes the color of the main text in the terminal");
             TerminalMoneyColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalMoneyColor", "#ccffcc", "This changes the color of the current credits text in the top left of the terminal");
             TerminalMoneyBGColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalMoneyBGColor", "#ccffcc", "This changes the color of the current credits text in the top left of the terminal");

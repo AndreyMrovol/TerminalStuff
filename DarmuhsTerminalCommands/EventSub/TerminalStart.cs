@@ -45,7 +45,7 @@ namespace TerminalStuff.EventSub
         private static void OverWriteTextNodes()
         {
             Plugin.MoreLogs("updating displaytext for help and home");
-            if (!GameStartPatch.oneTimeOnly)
+            if (!GameStuff.oneTimeOnly)
             {
                 startNode = Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[1];
                 helpNode = Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[13];
@@ -63,7 +63,7 @@ namespace TerminalStuff.EventSub
                 asciiArt = asciiArt.Replace("[leadingSpacex4]", "    ");
                 //no known compatibility issues with home screen
                 startNode.displayText = $"{ConfigSettings.homeLine1.Value}\r\n{ConfigSettings.homeLine2.Value}\r\n\r\n{ConfigSettings.homeHelpLines.Value}\r\n{asciiArt}\r\n\r\n{ConfigSettings.homeLine3.Value}\r\n\r\n";
-                GameStartPatch.oneTimeOnly = true;
+                GameStuff.oneTimeOnly = true;
             }
 
             OpenLib.CoreMethods.AddingThings.AddKeywordToExistingNode("home", Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[1], true); //startNode

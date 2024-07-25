@@ -1,35 +1,68 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
+using UnityEngine.Windows;
+using UnityEngine;
+using Unity.Collections.LowLevel.Unsafe;
 
 namespace TerminalStuff.SpecialStuff
 {
     internal class ConflictRes
     {
-        internal static void InitRes(ref TerminalKeyword word)
+        internal static void InitRes(string playerWord, ref TerminalKeyword word)
         {
             if (word == null || !ConfigSettings.TerminalConflictResolution.Value)
                 return;
 
-            if(TryGetBestMatchingKeyword(TerminalEvents.GetCleanedScreenText(Plugin.instance.Terminal), out TerminalKeyword returnWord))
+            if (playerWord.Length < 0)
+                return;
+
+            if (TryGetBestMatchingKeyword(playerWord, out TerminalKeyword returnWord))
             {
                 word = returnWord;
                 Plugin.Spam("returning conflictresolution word");
             }
         }
 
-        internal static bool TryGetBestMatchingKeyword(string input, out TerminalKeyword returnWord)
+        internal static void QueryKeywords(ref Dictionary<TerminalKeyword, int> matching, string input)
         {
-            Dictionary<TerminalKeyword, int> matching = [];
             foreach (TerminalKeyword word in Plugin.instance.Terminal.terminalNodes.allKeywords)
             {
-                if (word.word.ToLower().Contains(input) && !matching.ContainsKey(word))
+                if ((word.word.ToLower().Contains(input) && !matching.ContainsKey(word)))
                 {
-                    string wordNoSpace = Regex.Replace(word.word, @"\s", "");
-                    int score = Levenshtein.Distance(wordNoSpace, input);
+                    int score = Levenshtein.Distance(word.word, input);
                     Plugin.Spam($"Word {word.word} noted with score {score} for input {input}");
                     matching.Add(word, score);
-                    Plugin.Spam($"adding matching word: {word.word} to conlfict resolution list");
+                    //Plugin.Spam($"adding matching word: {word.word} to conlfict resolution list");
                 }
+                else if(word.compatibleNouns != null)
+                {
+                    foreach(CompatibleNoun noun in word.compatibleNouns)
+                    {
+                        if (input.Contains(noun.noun.word))
+                        {
+                            Plugin.Spam($"{word.word} has compatible noun: {noun.noun.word} which is in {input}");
+                            int score = Levenshtein.Distance(noun.noun.word, input);
+                            Plugin.Spam($"score: {score}");
+                            matching.Add(noun.noun, score);
+                        }
+                    }
+                }
+            }
+        }
+
+        internal static bool TryGetBestMatchingKeyword(string query, out TerminalKeyword returnWord)
+        {
+            Dictionary<TerminalKeyword, int> matching = [];
+
+            QueryKeywords(ref matching, query);
+
+            if (matching.Count < 1)
+            {
+                Plugin.Log.LogWarning($"No matching keywords could be found for input: {query}");
+                returnWord = null;
+                return false;
             }
 
             int pairScore = 100;
@@ -46,7 +79,7 @@ namespace TerminalStuff.SpecialStuff
 
             if (bestKeyword == null)
             {
-                Plugin.Log.LogWarning($"No matching keywords found for input: {input}");
+                Plugin.Log.LogWarning($"No matching keywords found for input: {query}");
                 returnWord = null;
                 return false;
             }

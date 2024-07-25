@@ -11,12 +11,12 @@ namespace TerminalStuff
         [HarmonyPatch(typeof(Terminal), "ParseWord")]
         public class ConflictResolution : Terminal
         {
-            static void Postfix(ref TerminalKeyword __result)
+            static void Postfix(string playerWord, ref TerminalKeyword __result)
             {
                 if (!ConfigSettings.TerminalConflictResolution.Value)
                     return;
 
-                ConflictRes.InitRes(ref __result); //should modify the keyword to whatever resolution finds as the best match
+                ConflictRes.InitRes(playerWord, ref __result); //should modify the keyword to whatever resolution finds as the best match
             }
         }
 

@@ -22,6 +22,12 @@ namespace TerminalStuff.EventSub
             EventManager.NormalTPFound.AddListener(Teleporters.OnNormalAwake);
             EventManager.InverseTPFound.AddListener(Teleporters.OnInverseAwake);
 
+            //GameStuff
+            EventManager.GameNetworkManagerStart.AddListener(GameStuff.OnGameStart);
+            EventManager.StartOfRoundStart.AddListener(GameStuff.OnStartOfRoundStart);
+            EventManager.StartOfRoundStartGame.AddListener(GameStuff.OnStartGame);
+            EventManager.PlayerSpawn.AddListener(GameStuff.OnPlayerSpawn);
+
             //Unique
             EventManager.GetNewDisplayText.AddListener(TerminalParse.OnNewDisplayText);
         }

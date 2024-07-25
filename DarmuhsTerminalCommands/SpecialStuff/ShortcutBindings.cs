@@ -46,19 +46,16 @@ namespace TerminalStuff
                 return;
 
             if (keyActions.ContainsKey(Key.UpArrow))
-            {
                 keyActions.Remove(Key.UpArrow);
-                keyActions.Add(Key.UpArrow, "[historyPrevious]");
-                Plugin.Spam("historyPrevious bind set to Key: UpArrow");
-            }
 
             if (keyActions.ContainsKey(Key.DownArrow))
-            {
                 keyActions.Remove(Key.DownArrow);
-                keyActions.Add(Key.DownArrow, "[historyNext]");
-                Plugin.Spam("historyNext bind set to Key: UpArrow");
-            }
-            
+
+            keyActions.Add(Key.UpArrow, "[historyPrevious]");
+            Plugin.Spam("historyPrevious bind set to Key: UpArrow");
+            keyActions.Add(Key.DownArrow, "[historyNext]");
+            Plugin.Spam("historyNext bind set to Key: UpArrow");
+
         }
 
         private static void InitTerminalAutoCompleteBinds()

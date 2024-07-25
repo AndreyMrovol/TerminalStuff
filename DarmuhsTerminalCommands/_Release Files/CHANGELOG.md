@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.3.5]
+ - Updated mod to use OpenLib version 0.1.5
+	- Offloaded more game patches to OpenLib events
+ - Updated incorrect config option descriptions
+ - Fixed TerminalHistory issue of not creating the history keybind shortcuts
+	- Thanks to pacoito for the report!
+ - Improved TerminalConflictResolution keyword handling
+	- Thanks again to pacoito for the reported issues!
+
 ## [3.3.4]
  - Updated mod to use OpenLib version 0.1.4
 	- This should fix the issue of the NetworkingCheck failing, causing vanilla compatibility to fail.

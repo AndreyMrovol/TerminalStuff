@@ -15,10 +15,10 @@
  - Configurable Use-Walkie at Terminal feature that will allow you to bind one key and one mousebutton to use any powered walkie from your inventory!
  - Terminal Shortcuts can be set using the bind command and removed using the unbind command! These binds will be saved in the config for continued use.
 	- Bind/Unbind commands can be disabled via terminalShortcutCommands
- - [**NEW IN 3.2.0**] Configurable "Purchase Packs" that let you buy multiple items from the store with one command!
- - [**NEW IN 3.2.2**] Client-side Terminal Customization, change the color of the terminal and the different text types!
- - [**NEW IN 3.2.2**] Client-side Quality of Life features, make the terminal experience how you want it to be!
- - [**NEW IN 3.2.3**] Terminal Autocomplete and History features to make typing in the terminal feel more like a real terminal!
+ - Configurable "Purchase Packs" that let you buy multiple items from the store with one command!
+ - Client-side Terminal Customization, change the color of the terminal and the different text types!
+ - Client-side Quality of Life features, make the terminal experience how you want it to be!
+ - Terminal Autocomplete and History features to make typing in the terminal feel more like a real terminal!
  - [**NEW IN 3.3.0**] Terminal Conflict Resolution will compare your input to all keywords to give you the best result.
 	- Using the [Fastenshtein string comparison algorithm](https://github.com/DanHarltey/Fastenshtein)
  - Cams commands can now show player povs even without a separate bodycam mod present.
@@ -36,6 +36,7 @@
  - AlwaysOn: Keep the terminal screen on at all times.
 
 ### Controls Commands:
+ - Bind/Unbind: Commands used to set terminal shortcuts (enabled/disabled by terminalShortcutCommands)
  - Lever: Pull the lever that controls the ship (take off/land).
  - Danger: Show current hazard/danger level of the moon you are on.
  - TP: Activate Teleporter, can also target a specific player by typing their name after
