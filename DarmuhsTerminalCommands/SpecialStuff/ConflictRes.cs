@@ -31,6 +31,8 @@ namespace TerminalStuff.SpecialStuff
             {
                 if ((word.word.ToLower().Contains(input) && !matching.ContainsKey(word)))
                 {
+                    if (word.word.Length < 3)
+                        continue;
                     int score = Levenshtein.Distance(word.word, input);
                     Plugin.Spam($"Word {word.word} noted with score {score} for input {input}");
                     matching.Add(word, score);
@@ -42,6 +44,8 @@ namespace TerminalStuff.SpecialStuff
                     {
                         if (input.Contains(noun.noun.word) && !matching.ContainsKey(noun.noun))
                         {
+                            if (noun.noun.word.Length < 3)
+                                continue;
                             Plugin.Spam($"{word.word} has compatible noun: {noun.noun.word} which is in {input}");
                             int score = Levenshtein.Distance(noun.noun.word, input);
                             Plugin.Spam($"score: {score}");
