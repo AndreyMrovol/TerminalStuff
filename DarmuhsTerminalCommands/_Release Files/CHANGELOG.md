@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.3.7]
+ - Fixed conflict resolution trying to return keywords with less than 3 characters.
+	- another mod was adding a blank keyword (likely for an enemy bestiary registry) that was causing the terminal to resolve most shorthand input to this keyword.
+
 ## [3.3.6]
  - Fixed issue with conflict resolution trying to add the same terminalKeyword causing keyword matching to break
 	- Thanks mina for the report and steps to reproduce!
