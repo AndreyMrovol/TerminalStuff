@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using TerminalStuff.EventSub;
 using TerminalStuff.PluginCore;
+using TerminalStuff.SpecialStuff;
 using UnityEngine;
 using UnityEngine.UI;
 using static OpenLib.ConfigManager.ConfigSetup;
@@ -16,7 +17,7 @@ using static OpenLib.ConfigManager.ConfigSetup;
 namespace TerminalStuff
 {
     [BepInPlugin("darmuh.TerminalStuff", "darmuhsTerminalStuff", (PluginInfo.PLUGIN_VERSION))]
-    [BepInDependency("darmuh.OpenLib", "0.1.5")] //hard dependency for my library
+    [BepInDependency("darmuh.OpenLib", "0.1.6")] //hard dependency for my library
     [BepInDependency("Rozebud.FovAdjust", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("Zaggy1024.OpenBodyCams", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("Zaggy1024.TwoRadarMaps", BepInDependency.DependencyFlags.SoftDependency)]
@@ -32,14 +33,13 @@ namespace TerminalStuff
         {
             public const string PLUGIN_GUID = "darmuh.TerminalStuff";
             public const string PLUGIN_NAME = "darmuhsTerminalStuff";
-            public const string PLUGIN_VERSION = "3.3.7";
+            public const string PLUGIN_VERSION = "3.4.0";
         }
 
         internal static ManualLogSource Log;
 
         //Compatibility
         public bool LobbyCompat = false;
-        public bool CompatibilityAC = false;
         public bool LateGameUpgrades = false;
         public bool FovAdjust = false;
         public bool HelmetCamsMod = false;
@@ -99,7 +99,7 @@ namespace TerminalStuff
             Subscribers.Subscribe();
             Config.ConfigReloaded += OnConfigReloaded;
             Config.SettingChanged += OnSettingChanged;
-
+            FontStuff.TestingFonts();
             //start of networking stuff
 
             var types = Assembly.GetExecutingAssembly().GetTypes();

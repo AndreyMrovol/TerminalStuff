@@ -16,6 +16,8 @@ namespace TerminalStuff
     {
         internal static bool vitalsUpgradeEnabled = false;
         internal static bool enemyScanUpgradeEnabled = false;
+        //List<int> items 
+        internal static List<int> storeCart = [];
         internal static string currentPackList;
         internal static string currentPackName;
         internal static string buyPackName;
@@ -601,17 +603,17 @@ namespace TerminalStuff
         internal static string GetRefund()
         {
             string displayText;
-            int deliverables = Plugin.instance.Terminal.numberOfItemsInDropship;
+            int deliverables = Plugin.instance.Terminal.numberOfItemsInDropship; 
             Item[] buyables = Plugin.instance.Terminal.buyableItemsList;
-            List<int> items = Plugin.instance.Terminal.orderedItemsFromTerminal;
+            //List<int> items = Plugin.instance.Terminal.orderedItemsFromTerminal; //not using this cursed list anymore
             List<string> returnlist = [];
             int refund = 0;
 
-            Plugin.MoreLogs($"buyables: {buyables.Length}, deliverables: {deliverables}, items: {items.Count}");
+            Plugin.MoreLogs($"buyables: {buyables.Length}, deliverables: {deliverables}, items: {storeCart.Count}");
 
             if (deliverables > 0)
             {
-                foreach (int num in items)
+                foreach (int num in storeCart)
                 {
                     if (num <= buyables.Length)
                     {
@@ -633,6 +635,8 @@ namespace TerminalStuff
                 Plugin.instance.Terminal.groupCredits = newCreds;
                 Plugin.Spam($"new creds: {newCreds}");
                 Plugin.instance.Terminal.orderedItemsFromTerminal.Clear();
+                storeCart.Clear();
+                NetHandler.Instance.SyncDropShipServerRpc(true);
 
                 NetHandler.Instance.SyncCreditsServerRpc(newCreds, 0);
 

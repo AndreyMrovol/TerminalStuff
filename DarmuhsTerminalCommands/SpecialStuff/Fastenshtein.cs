@@ -1,8 +1,9 @@
 ﻿//https://github.com/DanHarltey/Fastenshtein/blob/master/src/Fastenshtein/StaticLevenshtein.cs
 //algorithm used for comparing string diff distance
+//has been tweaked slightly for use in LethalCompany
 
 using System.Text.RegularExpressions;
-using Unity.Collections.LowLevel.Unsafe;
+using UnityEngine.SceneManagement;
 
 namespace TerminalStuff.SpecialStuff
 {
@@ -70,12 +71,35 @@ namespace TerminalStuff.SpecialStuff
                         * Improvement on the older versions.
                         * Swapping the variables here results in a performance improvement for modern intel CPU’s, but I have no idea why?
                         */
+
                     costs[j] = currentCost;
                     previousCost = currentCost;
                 }
             }
 
-            return costs[costs.Length - 1];
+            int score = costs[costs.Length - 1];
+
+            return score;
+        }
+
+        public static int MatchingStart(string value1, string value2)
+        {
+            int bonus = 0; //distance with bonus modifier for characters that start the same
+
+            for (int i = 0; i < value2.Length; i++)
+            {
+                if (value1.Length < i)
+                    break; //catch query being longer than word
+                if (value2.Substring(i, 1).Equals(value1.Substring(i, 1)))
+                {
+                    Plugin.Spam($"({i + 1}x multiplier) - matching start character, adding to bonus modifier");
+                    bonus++;
+                    Plugin.Spam($"bonus is now {bonus}");
+                }
+                else
+                    break;
+            }
+            return bonus;
         }
     }
 }

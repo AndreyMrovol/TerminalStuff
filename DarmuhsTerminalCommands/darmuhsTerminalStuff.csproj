@@ -27,29 +27,29 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>_Package\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <DebugSymbols>true</DebugSymbols>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'steamdir|AnyCPU'">
+  <PropertyGroup>
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>C:\Program Files %28x86%29\Steam\steamapps\common\Lethal Company\BepInEx\plugins\darmuh-darmuhsTerminalStuff\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <DebugType>portable</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>latest</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
+    <DebugType>embedded</DebugType>
+    <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
   </PropertyGroup>
+  <Target Name="NetcodePatch" AfterTargets="PostBuildEvent">
+    <Exec Command="netcode-patch &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')" />
+  </Target>
   <ItemGroup>
     <None Remove="darmuhngo" />
-    <None Include="_Release Files\CHANGELOG.md" />
-    <None Include="_Release Files\manifest.json" />
-    <None Include="_Release Files\README.md" />
+    <None Include="_Package\CHANGELOG.md" />
+    <None Include="_Package\LICENSE.md" />
+    <None Include="_Package\manifest.json" />
+    <None Include="_Package\README.md" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.1" PrivateAssets="all" />
@@ -68,6 +68,7 @@
     </Reference>
     <Reference Include="BMX.LobbyCompatibility">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\BepInEx\dontloadpls\LobbyCompatibility\BMX.LobbyCompatibility.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Facepunch.Steamworks.Win64, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -82,8 +83,10 @@
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\BepInEx\dontloadpls\Zaggy1024-OpenBodyCams\OpenBodyCams.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="OpenLib">
-      <HintPath>..\..\..\publicDevLibrary\DarmuhsTerminalCommands\bin\Debug\OpenLib.dll</HintPath>
+    <Reference Include="OpenLib, Version=0.1.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\publicDevLibrary\OpenLib\bin\Debug\OpenLib.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="suitsTerminal">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\BepInEx\dontloadpls\suitsTerminal.dll</HintPath>
@@ -118,6 +121,7 @@
     <Reference Include="Unity.RenderPipelines.HighDefinition.Runtime, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Unity.RenderPipelines.HighDefinition.Runtime.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -131,6 +135,7 @@
     <Reference Include="UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -144,6 +149,16 @@
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextCoreFontEngineModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\UnityEngine.TextCoreFontEngineModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.UI">
@@ -164,7 +179,6 @@
   <ItemGroup>
     <Compile Include="CommandHandling\AdminCommands.cs" />
     <Compile Include="CommandHandling\LevelCommands.cs" />
-    <Compile Include="Compatibility\AdvancedCompanyCompat.cs" />
     <Compile Include="CommandHandling\AllTheLootStuff.cs" />
     <Compile Include="CommandHandling\ColorCommands.cs" />
     <Compile Include="CommandHandling\CostCommands.cs" />
@@ -172,6 +186,7 @@
     <Compile Include="Compatibility\BMX-LobbyCompat.cs" />
     <Compile Include="Compatibility\FovAdjustStuff.cs" />
     <Compile Include="CommandHandling\GambaCommands.cs" />
+    <Compile Include="EventSub\GameStuff.cs" />
     <Compile Include="EventSub\Subscribers.cs" />
     <Compile Include="EventSub\Teleporters.cs" />
     <Compile Include="EventSub\TerminalBeginUsing.cs" />
@@ -186,6 +201,9 @@
     <Compile Include="PluginCore\StringStuff.cs" />
     <Compile Include="PluginCore\StuffForLibrary.cs" />
     <Compile Include="SpecialStuff\AutoComplete.cs" />
+    <Compile Include="SpecialStuff\ConflictRes.cs" />
+    <Compile Include="SpecialStuff\Fastenshtein.cs" />
+    <Compile Include="SpecialStuff\FontStuff.cs" />
     <Compile Include="SpecialStuff\TerminalHistory.cs" />
     <Compile Include="VisualCore\AlwaysOnStuff.cs" />
     <Compile Include="Compatibility\PlayerCamsCompatibility.cs" />
@@ -228,6 +246,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="specialnodes.txt" />
+    <Content Include="_Package\allmyfellas.mp4" />
+    <Content Include="_Package\clapclap.mp4" />
+    <Content Include="_Package\icon.png" />
+    <Content Include="_Package\lol.mp4" />
+    <Content Include="_Package\thinkutheshit.mp4" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

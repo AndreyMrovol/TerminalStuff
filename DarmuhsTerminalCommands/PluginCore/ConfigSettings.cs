@@ -207,9 +207,13 @@ namespace TerminalStuff
         public static ConfigEntry<string> TerminalCustomBGColor { get; internal set; }
         public static ConfigEntry<float> TerminalCustomBGAlpha { get; internal set; }
 
-        //terminal patcher words 
-        //"lobby", "home", "more", "next", "comfort", "controls", "extras", "fun", "kick",
-        // "fcolor", "fov", "gamble", "lever", "vitalspatch", "bioscan", "bioscanpatch", "scolor"
+        //font stuff
+        public static ConfigEntry<string> CustomFontPath { get; internal set; }
+        public static ConfigEntry<string> CustomFontName { get; internal set; }
+        public static ConfigEntry<int> CustomFontSizeMain { get; internal set; }
+        public static ConfigEntry<int> CustomFontSizeMoney { get; internal set; }
+        public static ConfigEntry<int> CustomFontSizeClock { get; internal set; }
+
 
         public static void BindConfigSettings()
         {
@@ -537,6 +541,13 @@ namespace TerminalStuff
             TerminalCustomBG = MakeBool(Plugin.instance.Config, "Terminal Customization", "TerminalCustomBG", false, "Enable or Disable custom background for the terminal screen");
             TerminalCustomBGColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalCustomBGColor", "#9900ff", "This changes the color of the custom background for the terminal screen");
             TerminalCustomBGAlpha = MakeClampedFloat(Plugin.instance.Config, "Terminal Customization", "TerminalCustomBGAlpha", 0.08f, "This changes the transparency of the custom background for the terminal screen", 0f, 1f);
+
+            //Font Stuff
+            CustomFontPath = MakeString(Plugin.instance.Config, "Terminal Customization", "CustomFontPath", "fonts", "If you want to share a profile code that includes the font file, put it in a folder with this name in the Bepinex root folder. The default example would be \"BepInEx\\fonts\"");
+            CustomFontName = MakeString(Plugin.instance.Config, "Terminal Customization", "CustomFontName", "", "Name of the custom font you'd like to use in the terminal, leave blank if you don't want to change the terminal font");
+            CustomFontSizeMain = MakeClampedInt(Plugin.instance.Config, "Terminal Customization", "CustomFontSizeMain", -1, "Set a custom size for your custom font (main text), leave at -1 if you wish not to change it", -1, 60);
+            CustomFontSizeMoney = MakeClampedInt(Plugin.instance.Config, "Terminal Customization", "CustomFontSizeMoney", -1, "Set a custom size for your font (credits at the top left), leave at -1 if you wish not to change it", -1, 60);
+            CustomFontSizeClock = MakeClampedInt(Plugin.instance.Config, "Terminal Customization", "CustomFontSizeClock", -1, "Set a custom size for your font (terminalClock), leave at -1 if you wish not to change it", -1, 60);
 
             PluginCore.StuffForLibrary.ManualCommands(); //add more managedbools that dont come from a specific config item
 

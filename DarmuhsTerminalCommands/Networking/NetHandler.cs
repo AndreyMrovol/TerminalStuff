@@ -180,20 +180,29 @@ namespace TerminalStuff
         }
 
         [ServerRpc(RequireOwnership = false)]
-        internal void SyncDropShipServerRpc()
+        internal void SyncDropShipServerRpc(bool isRefund = false)
         {
             Plugin.MoreLogs($"Server: Attempting to sync dropship between players...");
-            SyncDropShipClientRpc();
+            SyncDropShipClientRpc(isRefund);
         }
 
         [ClientRpc]
-        internal void SyncDropShipClientRpc()
+        internal void SyncDropShipClientRpc(bool isRefund)
         {
             NetworkManager networkManager = base.NetworkManager;
             if (networkManager.IsHost || networkManager.IsServer)
             {
-                Plugin.MoreLogs("Syncing dropship from host");
+                if (isRefund)
+                {
+                    Plugin.MoreLogs("Host received refund command, clearing orderedItems list");
+                    Plugin.instance.Terminal.orderedItemsFromTerminal.Clear();
+                    CostCommands.storeCart.Clear();
+                    return;
+                }
+
+                Plugin.MoreLogs("Host syncing dropship to storeCart after purchase");
                 int[] itemsOrdered = [.. Plugin.instance.Terminal.orderedItemsFromTerminal];
+                CostCommands.storeCart = Plugin.instance.Terminal.orderedItemsFromTerminal;
                 SendItemsToAllServerRpc(itemsOrdered);
             }
         }
@@ -388,7 +397,7 @@ namespace TerminalStuff
         [ServerRpc(RequireOwnership = true)]
         internal void SendItemsToAllServerRpc(int[] itemsOrdered)
         {
-            Plugin.MoreLogs("Server: Sending items to clients...");
+            Plugin.MoreLogs("Server: Sending itemsOrdered to clients...");
             SendItemsToAllClientRpc(itemsOrdered);
         }
         [ClientRpc]
@@ -397,9 +406,9 @@ namespace TerminalStuff
             NetworkManager networkManager = base.NetworkManager;
             if (!networkManager.IsHost || !networkManager.IsServer)
             {
-                Plugin.MoreLogs("Client: Converting item list to terminal...");
+                Plugin.MoreLogs("Client: Setting storeCart value to host's orderedItemsFromTerminal list");
                 List<int> receivedList = new(itemsOrdered);
-                Plugin.instance.Terminal.orderedItemsFromTerminal = receivedList;
+                CostCommands.storeCart = receivedList;
             }
         }
 
@@ -417,6 +426,7 @@ namespace TerminalStuff
             if (networkManager.IsHost || networkManager.IsServer)
             {
                 Plugin.instance.Terminal.SyncGroupCreditsServerRpc(newCreds, items);
+                CostCommands.storeCart = Plugin.instance.Terminal.orderedItemsFromTerminal;
             }
         }
 

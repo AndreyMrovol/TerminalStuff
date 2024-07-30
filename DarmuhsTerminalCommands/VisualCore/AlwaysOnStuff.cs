@@ -10,12 +10,16 @@ namespace TerminalStuff
         internal static IEnumerator AlwaysOnDynamic(Terminal instance)
         {
             if (dynamicStatus)
+            {
+                Plugin.Log.LogInfo("AlwaysOnDynamic coroutine called again while it's still active");
                 yield break;
+            }
+                
 
             Plugin.MoreLogs("Starting AlwaysOnDynamic Coroutine");
             dynamicStatus = true;
 
-            while (instance.terminalUIScreen.gameObject != null && !MoreCommands.keepAlwaysOnDisabled)
+            while (instance.terminalUIScreen.gameObject != null && !MoreCommands.keepAlwaysOnDisabled && !DisableScreenOnDeath())
             {
                 if (!StartOfRound.Instance.localPlayerController.isInHangarShipRoom && instance.terminalUIScreen.gameObject.activeSelf)
                 {
@@ -24,7 +28,7 @@ namespace TerminalStuff
                     if (ViewCommands.externalcamsmod && Plugin.instance.OpenBodyCamsMod && ViewCommands.AnyActiveMonitoring())
                         TerminalCameraStatus(false);
 
-                    Plugin.Spam("Disabling terminal screen.");
+                    Plugin.Log.LogInfo("Disabling terminal screen.");
                     if (ConfigSettings.TerminalLightBehaviour.Value == "alwayson")
                         TerminalEvents.ShouldDisableTerminalLight(true, "alwayson");
                 }
@@ -35,7 +39,7 @@ namespace TerminalStuff
                     if (ViewCommands.externalcamsmod && Plugin.instance.OpenBodyCamsMod && ViewCommands.AnyActiveMonitoring())
                         TerminalCameraStatus(true);
 
-                    Plugin.Spam("Enabling terminal screen.");
+                    Plugin.Log.LogInfo("Enabling terminal screen.");
                     if (ConfigSettings.TerminalLightBehaviour.Value == "alwayson")
                         TerminalEvents.ShouldDisableTerminalLight(false, "alwayson");
                 }
@@ -54,7 +58,7 @@ namespace TerminalStuff
 
                 Plugin.Spam("Player detected dead, disabling terminal screen.");
                 if (ConfigSettings.TerminalLightBehaviour.Value == "alwayson")
-                    TerminalEvents.ShouldDisableTerminalLight(false, "alwayson");
+                    TerminalEvents.ShouldDisableTerminalLight(true, "alwayson");
             }
 
             dynamicStatus = false; //end of coroutine, opening this up again for another run

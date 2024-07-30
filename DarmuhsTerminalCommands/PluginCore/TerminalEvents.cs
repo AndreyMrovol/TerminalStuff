@@ -10,6 +10,7 @@ using static OpenLib.CoreMethods.AddingThings;
 using static OpenLib.ConfigManager.ConfigSetup;
 using OpenLib.ConfigManager;
 using Steamworks.Ugc;
+using TerminalStuff.SpecialStuff;
 
 namespace TerminalStuff
 {
@@ -198,6 +199,7 @@ namespace TerminalStuff
 
             TerminalBodyColors();
             TerminalKeyboardColors();
+            FontStuff.GetAndSetFont();
 
             Color moneyBG = ColorCommands.HexToColor(ConfigSettings.TerminalMoneyBGColor.Value);
             moneyBG.a = ConfigSettings.TerminalMoneyBGAlpha.Value;

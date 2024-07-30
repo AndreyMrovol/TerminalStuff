@@ -1,5 +1,6 @@
 ﻿using BepInEx.Bootstrap;
 using static TerminalStuff.AlwaysOnStuff;
+using static OpenLib.Common.StartGame;
 
 namespace TerminalStuff.EventSub
 {
@@ -47,58 +48,42 @@ namespace TerminalStuff.EventSub
 
         private static void CompatibilityCheck()
         {
-            if (Chainloader.PluginInfos.ContainsKey("BMX.LobbyCompatibility"))
+            if(SoftCompatibility("BMX.LobbyCompatibility", ref Plugin.instance.LobbyCompat))
             {
                 Plugin.MoreLogs("LobbyCompatibility detected, setting appropriate Lobby Compatibility Level depending on networking status");
-                Plugin.instance.LobbyCompat = true;
                 BMX_LobbyCompat.SetCompat(ConfigSettings.ModNetworking.Value);
             }
-            if (Chainloader.PluginInfos.ContainsKey("com.potatoepet.AdvancedCompany"))
+            if (SoftCompatibility("Rozebud.FovAdjust", ref Plugin.instance.FovAdjust))
             {
-                Plugin.MoreLogs("Advanced Company detected, setting Advanced Company Compatibility options");
-                Plugin.instance.CompatibilityAC = true;
-                //if (ConfigSettings.ModNetworking.Value)
-                //AdvancedCompanyCompat.AdvancedCompanyStuff();
+                Plugin.Spam("Rozebud's FovAdjust detected!");
             }
-            if (Chainloader.PluginInfos.ContainsKey("Rozebud.FovAdjust"))
+            if (SoftCompatibility("RickArg.lethalcompany.helmetcameras", ref Plugin.instance.HelmetCamsMod))
             {
-                Plugin.MoreLogs("Rozebud's FovAdjust detected!");
-                Plugin.instance.FovAdjust = true;
+                Plugin.Spam("Helmet Cameras by Rick Arg detected!");
             }
-            if (Chainloader.PluginInfos.ContainsKey("RickArg.lethalcompany.helmetcameras"))
+            if (SoftCompatibility("SolosBodycams", ref Plugin.instance.SolosBodyCamsMod))
             {
-                Plugin.MoreLogs("Helmet Cameras by Rick Arg detected!");
-                Plugin.instance.HelmetCamsMod = true;
+                Plugin.Spam("SolosBodyCams by CapyCat (Solo) detected!");
             }
-            if (Chainloader.PluginInfos.ContainsKey("SolosBodycams"))
+            if (SoftCompatibility("Zaggy1024.OpenBodyCams", ref Plugin.instance.OpenBodyCamsMod))
             {
-                Plugin.MoreLogs("SolosBodyCams by CapyCat (Solo) detected!");
-                Plugin.instance.SolosBodyCamsMod = true;
+                Plugin.Spam("OpenBodyCams by Zaggy1024 detected!");
             }
-            if (Chainloader.PluginInfos.ContainsKey("Zaggy1024.OpenBodyCams"))
+            if (SoftCompatibility("Zaggy1024.TwoRadarMaps", ref Plugin.instance.TwoRadarMapsMod))
             {
-                Plugin.MoreLogs("OpenBodyCams by Zaggy1024 detected!");
-                Plugin.instance.OpenBodyCamsMod = true;
+                Plugin.Spam("TwoRadarMaps by Zaggy1024 detected!");
             }
-            if (Chainloader.PluginInfos.ContainsKey("Zaggy1024.TwoRadarMaps"))
+            if (SoftCompatibility("com.malco.lethalcompany.moreshipupgrades", ref Plugin.instance.LateGameUpgrades))
             {
-                Plugin.MoreLogs("TwoRadarMaps by Zaggy1024 detected!");
-                Plugin.instance.TwoRadarMapsMod = true;
+                Plugin.Spam("Lategame Upgrades by malco detected!");
             }
-            if (Chainloader.PluginInfos.ContainsKey("com.malco.lethalcompany.moreshipupgrades")) //other mods that simply append to the help command
+            if (SoftCompatibility("darmuh.suitsTerminal", ref Plugin.instance.suitsTerminal))
             {
-                Plugin.MoreLogs("Lategame Upgrades by malco detected!");
-                Plugin.instance.LateGameUpgrades = true;
+                Plugin.Spam("suitsTerminal detected!");
             }
-            if (Chainloader.PluginInfos.ContainsKey("darmuh.suitsTerminal"))
+            if (SoftCompatibility("TerminalFormatter", ref Plugin.instance.TerminalFormatter))
             {
-                Plugin.MoreLogs("suitsTerminal detected!");
-                Plugin.instance.suitsTerminal = true;
-            }
-            if (Chainloader.PluginInfos.ContainsKey("TerminalFormatter"))
-            {
-                Plugin.MoreLogs("Terminal Formatter by mrov detected!");
-                Plugin.instance.TerminalFormatter = true;
+                Plugin.Spam("Terminal Formatter by mrov detected!");
             }
         }
     }
