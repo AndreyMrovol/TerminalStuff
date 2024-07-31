@@ -88,7 +88,7 @@ namespace TerminalStuff.SpecialStuff
 
             for (int i = 0; i < value2.Length; i++)
             {
-                if (value1.Length < i)
+                if (i > value1.Length - 1)
                     break; //catch query being longer than word
                 if (value2.Substring(i, 1).Equals(value1.Substring(i, 1)))
                 {

@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.4.1]
+ - Updated base custom font path to look for folders in the Bepinex/Config folder.
+	- This is because custom content packs cannot make folders in the base Bepinex folder.
+	- See [Minecraft TerminalFont](https://thunderstore.io/c/lethal-company/p/darmuh/Minecraft_TerminalFont/) as an example for proper folder structure for a font pack.
+ - Fixed issue with Terminal Resolution bonus calculator throwing errors due to bad math.
+	- Thanks to nickham13 for the report and sorry for the mistake :)
+ - Fixed minor visual bug with alwaysonatstart showing the incorrect credits amount until the terminal was used
+
 ## [3.4.0]
  - Updated to OpenLib v0.1.6
  - Added License file to package

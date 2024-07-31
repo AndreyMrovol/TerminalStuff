@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 using BepInEx;
+using System.Linq;
 
 namespace TerminalStuff.SpecialStuff
 {
     internal static class FontStuff
     {
+        internal static TMP_FontAsset CachedDefault;
+
         internal static void TestingFonts()
         {
             Plugin.Spam("Debug Font Stuff");
@@ -30,6 +33,12 @@ namespace TerminalStuff.SpecialStuff
                 // Create new dynamic font asset
                 //TMP_FontAsset fontAsset = TMP_FontAsset.CreateFontAsset(newFont);
             }
+        }
+
+        internal static void SetCachedDefault()
+        {
+            CachedDefault = Plugin.instance.Terminal.screenText.textComponent.font;
+            Plugin.Spam("Caching default fontasset");
         }
 
         internal static bool TryGetCustomOSFont(string fontName, out TMP_FontAsset CustomFontAsset)
@@ -56,8 +65,19 @@ namespace TerminalStuff.SpecialStuff
 
         internal static void GetAndSetFont()
         {
-            if (ConfigSettings.CustomFontName.Value.Length < 1)
+            if(ConfigSettings.CustomFontName.Value.ToLower() == "default" || ConfigSettings.CustomFontName.Value.Length < 1)
+            {
+                Plugin.Spam("assigning cached default font");
+                SetTerminalFont(CachedDefault);
                 return;
+            }
+
+            if (TryGetFontFromCustomPath(ConfigSettings.CustomFontName.Value, out TMP_FontAsset customFont))
+            {
+                Plugin.Spam($"{ConfigSettings.CustomFontName.Value} found in custom fonts path - {ConfigSettings.CustomFontPath.Value}");
+                SetTerminalFont(customFont);
+                return;
+            }
 
             if (TryGetCustomOSFont(ConfigSettings.CustomFontName.Value, out TMP_FontAsset osFont))
             {
@@ -65,18 +85,14 @@ namespace TerminalStuff.SpecialStuff
                 SetTerminalFont(osFont);
                 return;
             }
+
             if(TryGetCustomFont(ConfigSettings.CustomFontName.Value, out TMP_FontAsset newFont))
             {
                 Plugin.Spam($"{ConfigSettings.CustomFontName.Value} found in windows custom fonts path");
                 SetTerminalFont(newFont);
                 return;
             }
-            if(TryGetFontFromCustomPath(ConfigSettings.CustomFontName.Value, out TMP_FontAsset customFont))
-            {
-                Plugin.Spam($"{ConfigSettings.CustomFontName.Value} found in custom fonts path - {ConfigSettings.CustomFontPath.Value}");
-                SetTerminalFont(customFont);
-                return;
-            }
+            
             Plugin.Spam($"Unable to find {ConfigSettings.CustomFontName.Value} in system fonts, in windows fonts path, or custom fonts path {ConfigSettings.CustomFontPath.Value}");
         }
 
@@ -88,8 +104,8 @@ namespace TerminalStuff.SpecialStuff
                 return false;
             }
                 
-            //Paths.BepInExRootPath
-            string path = Path.Combine(Paths.BepInExRootPath, ConfigSettings.CustomFontPath.Value);
+            string path = Path.Combine(Paths.ConfigPath, ConfigSettings.CustomFontPath.Value);
+            Plugin.Spam($"custom path: {path}");
             if (Directory.Exists(path))
             {
                 string fullPath = Path.Combine(path, fontName);
@@ -120,9 +136,9 @@ namespace TerminalStuff.SpecialStuff
         internal static bool TryGetCustomFont(string fontName, out TMP_FontAsset CustomFontAsset)
         {
             string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            Plugin.Spam(localAppData);
+            //Plugin.Spam(localAppData);
             string fullPath = Path.Combine(localAppData, "Microsoft\\Windows\\Fonts\\");
-            Plugin.Spam(fullPath);
+            //Plugin.Spam(fullPath);
             Plugin.Spam(fullPath + fontName);
             if (Directory.Exists(fullPath) && File.Exists(Path.Combine(fullPath + fontName)))
             {

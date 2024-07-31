@@ -22,6 +22,7 @@
  - [**NEW IN 3.3.0**] Terminal Conflict Resolution will compare your input to all keywords to give you the best result.
 	- Using the [Fastenshtein string comparison algorithm](https://github.com/DanHarltey/Fastenshtein)
  - [**NEW IN 3.4.0**] Change the terminal font and font size!
+	- Added support for custom font packs
  - Cams commands can now show player povs even without a separate bodycam mod present.
 	- Still compatibile with every major bodycam mod; OpenBodyCams, Helmet Cameras, and Solos Bodycams are all compatible!
  - Expanded compatibility with LethalLevelLoader, OpenBodyCams, and TwoRadarMaps!

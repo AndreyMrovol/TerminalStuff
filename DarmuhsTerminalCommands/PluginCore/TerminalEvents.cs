@@ -7,9 +7,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using static TerminalStuff.StringStuff;
 using static OpenLib.CoreMethods.AddingThings;
-using static OpenLib.ConfigManager.ConfigSetup;
-using OpenLib.ConfigManager;
-using Steamworks.Ugc;
 using TerminalStuff.SpecialStuff;
 
 namespace TerminalStuff

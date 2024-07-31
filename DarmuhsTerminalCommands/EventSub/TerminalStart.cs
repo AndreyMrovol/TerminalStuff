@@ -6,6 +6,7 @@ using System.Collections;
 using static OpenLib.ConfigManager.ConfigSetup;
 using static OpenLib.CoreMethods.CommonThings;
 using static OpenLib.CoreMethods.LogicHandling;
+using TerminalStuff.SpecialStuff;
 
 namespace TerminalStuff.EventSub
 {
@@ -95,6 +96,7 @@ namespace TerminalStuff.EventSub
             TerminalClockStuff.StartClockCoroutine();
             AlwaysOnStart(Plugin.instance.Terminal, startNode);
             yield return new WaitForSeconds(0.1f);
+            Plugin.instance.Terminal.topRightText.text = Plugin.instance.Terminal.groupCredits.ToString(); //fix creds display for alwayson
             StartCheck(Plugin.instance.Terminal, startNode);
             DebugShowInfo();
             delayStartEnum = false;
