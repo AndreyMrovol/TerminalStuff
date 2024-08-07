@@ -176,6 +176,7 @@ namespace TerminalStuff
             MoreCamStuff.VideoPersist(nodeName);
             netNode.displayText = nodeText;
             Plugin.instance.Terminal.LoadNewNode(netNode);
+            TerminalEvents.lastNode = netNode;
             Plugin.MoreLogs($"Only displaying {nodeName} text.");
         }
 

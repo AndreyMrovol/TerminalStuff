@@ -137,6 +137,7 @@ namespace TerminalStuff
         public static ConfigEntry<bool> alwaysOnAtStart { get; internal set; }
         public static ConfigEntry<bool> alwaysOnDynamic { get; internal set; }
         public static ConfigEntry<bool> alwaysOnWhileDead { get; internal set; }
+        public static ConfigEntry<int> aodOffDelay { get; internal set; }
         public static ConfigEntry<string> routeRandomBannedWeather { get; internal set; }
         public static ConfigEntry<int> routeRandomCost { get; internal set; }
         public static ConfigEntry<string> purchasePackCommands { get; internal set; }
@@ -188,6 +189,7 @@ namespace TerminalStuff
         public static ConfigEntry<int> TerminalHistoryMaxCount { get; internal set; }
         public static ConfigEntry<bool> TerminalConflictResolution { get; internal set; }
         public static ConfigEntry<float> TerminalRadarDefaultZoom { get; internal set; }
+        public static ConfigEntry<string> TerminalFillEmptyText {  get; internal set; }  
 
         //Terminal Customization
         public static ConfigEntry<bool> TerminalCustomization { get; internal set; }
@@ -446,7 +448,7 @@ namespace TerminalStuff
             terminalRefreshCustomization = MakeBool(Plugin.instance.Config, "Fun Commands (On/Off)", "terminalRefreshCustomization", false, "Command to reload the Terminal Customization settings (this will not disable any already applied customizations)");
             AddManagedBool(terminalRefreshCustomization, defaultManaged, false, "FUN", refreshcustomizationKWs, TerminalEvents.RefreshCustomizationCommand);
             terminalRadarZoom = MakeBool(Plugin.instance.Config, "Controls Commands (On/Off)", "terminalRadarZoom", true, "Command to cycle through various radar zoom levels.");
-            AddManagedBool(terminalRadarZoom, defaultManaged, false, "CONTROLS", radarZoomKWs, ViewCommands.RadarZoomEvent);
+            AddManagedBool(terminalRadarZoom, defaultManaged, false, "CONTROLS", radarZoomKWs, ViewCommands.RadarZoomEvent, 0, true, null, null, "", "", "radarZoom");
 
             //------------------------------------------------MANAGED BOOLS END------------------------------------------------//
 
@@ -499,9 +501,10 @@ namespace TerminalStuff
             camsNeverHide = MakeBool(Plugin.instance.Config,"Extras Configuration", "camsNeverHide", false, "Setting this to true will make it so no command will ever auto-hide any cams command.");
             defaultCamsView = Plugin.instance.Config.Bind("Extras Configuration", "defaultCamsView", "cams", new ConfigDescription("Set the default view switch commands will use when nothing is active.", new AcceptableValueList<string>("map", "cams", "minimap", "minicams", "overlay")));
             ovOpacity = Plugin.instance.Config.Bind("Extras Configuration", "ovOpacity", 10, new ConfigDescription("Opacity percentage for Overlay View.", new AcceptableValueRange<int>(0, 100)));
-            alwaysOnAtStart = MakeBool(Plugin.instance.Config,"Quality of Life", "alwaysOnAtStart", true, "Setting this to true will set <alwayson> to enabled at launch.");
-            alwaysOnDynamic = MakeBool(Plugin.instance.Config,"Quality of Life", "alwaysOnDynamic", true, "Setting this to true will disable the terminal screen whenever you are not on the ship when alwayson is enabled.");
-            alwaysOnWhileDead = MakeBool(Plugin.instance.Config,"Quality of Life", "alwaysOnWhileDead", false, "Set this to true if you wish to keep the screen on after death.");
+            alwaysOnAtStart = MakeBool(Plugin.instance.Config, "Quality of Life", "alwaysOnAtStart", true, "Setting this to true will set <alwayson> to enabled at launch.");
+            alwaysOnDynamic = MakeBool(Plugin.instance.Config, "Quality of Life", "alwaysOnDynamic", true, "Setting this to true will disable the terminal screen whenever you are not on the ship when alwayson is enabled.");
+            alwaysOnWhileDead = MakeBool(Plugin.instance.Config, "Quality of Life", "alwaysOnWhileDead", false, "Set this to true if you wish to keep the screen on after death.");
+            aodOffDelay = MakeClampedInt(Plugin.instance.Config, "Quality of Life", "aodOffDelay", -1, "Set this to delay turning the terminal screen off by this many seconds after leaving the ship.", -1, 30);
 
 
             //homescreen lines
@@ -522,6 +525,7 @@ namespace TerminalStuff
             TerminalAutoCompleteMaxCount = MakeClampedInt(Plugin.instance.Config, "Quality of Life", "TerminalAutoCompleteMaxCount", 5, "Max amount of matching commands to store before disabling autocomplete.", 3, 50);
             TerminalConflictResolution = MakeBool(Plugin.instance.Config, "Quality of Life", "TerminalConflictResolution", false, "With this feature enabled, terminal command input will be weighted for conflict resolution using the Levenshtein algorithm.");
             TerminalRadarDefaultZoom = MakeClampedFloat(Plugin.instance.Config, "Quality of Life", "TerminalRadarDefaultZoom", 20f, "The default level zoom for the radar. The lower the number the more zoomed in you'll be.", 5f, 30f);
+            TerminalFillEmptyText = MakeClampedString(Plugin.instance.Config, "Quality of Life", "TerminalFillEmptyText", "nochange", "AutoFill any node with empty space depending on your desired formatting", new AcceptableValueList<string>("nochange", "fillbottom", "textmiddle", "textbottom"));
 
 
             //Terminal Customization

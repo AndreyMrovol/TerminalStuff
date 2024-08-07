@@ -17,7 +17,7 @@ using static OpenLib.ConfigManager.ConfigSetup;
 namespace TerminalStuff
 {
     [BepInPlugin("darmuh.TerminalStuff", "darmuhsTerminalStuff", (PluginInfo.PLUGIN_VERSION))]
-    [BepInDependency("darmuh.OpenLib", "0.1.6")] //hard dependency for my library
+    [BepInDependency("darmuh.OpenLib", "0.1.8")] //hard dependency for my library
     [BepInDependency("Rozebud.FovAdjust", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("Zaggy1024.OpenBodyCams", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("Zaggy1024.TwoRadarMaps", BepInDependency.DependencyFlags.SoftDependency)]
@@ -33,7 +33,7 @@ namespace TerminalStuff
         {
             public const string PLUGIN_GUID = "darmuh.TerminalStuff";
             public const string PLUGIN_NAME = "darmuhsTerminalStuff";
-            public const string PLUGIN_VERSION = "3.4.1";
+            public const string PLUGIN_VERSION = "3.5.0";
         }
 
         internal static ManualLogSource Log;
@@ -70,20 +70,6 @@ namespace TerminalStuff
 
         internal Terminal Terminal;
         internal static List<TerminalNode> Allnodes = [];
-        //internal static ShipTeleporter NormalTP;
-        //internal static ShipTeleporter InverseTP;
-        //internal ManualCameraRenderer MapScreen;
-
-
-        public RawImage rawImage1;
-        public RawImage rawImage2;
-        public RenderTexture renderTexturePub;
-        public Canvas terminalCanvas;
-        public Vector2 originalTopSize;
-        public Vector2 originalTopPosition;
-        public Vector2 originalBottomSize;
-        public Vector2 originalBottomPosition;
-        //public GameObject myNetworkPrefab;
 
         private void Awake()
         {

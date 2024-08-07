@@ -1,12 +1,11 @@
 ﻿using static TerminalStuff.TerminalEvents;
-using TerminalStuff.PluginCore;
-using OpenLib.ConfigManager;
 
 
 namespace TerminalStuff.EventSub
 {
     internal class TerminalGeneral
     {
+        internal static TerminalNode lastNodeFormatted;
         internal static void OnTerminalDisable()
         {
             if (Plugin.instance.OpenBodyCamsMod)
@@ -15,6 +14,8 @@ namespace TerminalStuff.EventSub
             //Plugin.instance.Config.Reload();
             MenuBuild.ClearMyMenustuff();
             ConfigSettings.TerminalStuffMain.DeleteAll();
+            lastNode = null; //stop persisting nodes between lobbies
+            lastText = "";
             //Plugin.ClearLists();
             //Terminal disabled, disabling ESC key listener OnDisable
         }
@@ -22,13 +23,67 @@ namespace TerminalStuff.EventSub
         internal static void OnLoadNode(TerminalNode node)
         {
             Plugin.MoreLogs($"LoadNewNode patch, nNS: {NetHandler.netNodeSet}");
+            Plugin.Spam(Plugin.instance.Terminal.screenText.textComponent.textInfo.lineCount.ToString());
 
-            if (node != null && node.name != null)
-                Plugin.Spam($"{node.name} has been loaded");
-            else if (node != null)
-                Plugin.Log.LogWarning("node loaded, name is NULL");
+            if (ConfigSettings.TerminalFillEmptyText.Value == "nochange")
+                return;
+
+            if (Plugin.instance.Terminal.currentNode == Plugin.instance.Terminal.terminalNodes.specialNodes[1])
+                return;
+
+            if(Plugin.instance.Terminal.screenText.textComponent.textInfo.lineCount < 24 && node != lastNodeFormatted)
+            {
+                int spaceToFill = 24 - Plugin.instance.Terminal.screenText.textComponent.textInfo.lineCount;
+                lastNodeFormatted = Plugin.instance.Terminal.currentNode;
+                //if configitem >= 0 < 2, filltext with configitem choice
+                FillText(ConfigSettings.TerminalFillEmptyText.Value, ref lastNodeFormatted, spaceToFill);
+            }
+        }
+
+        private static void FillText(string formatChoice, ref TerminalNode fixLength, int spaceToFill)
+        {
+
+            if(formatChoice == "fillbottom")
+            {
+                for (int i = 0; i < spaceToFill; i++)
+                {
+                    fixLength.displayText += "\n";
+                }
+                Plugin.Spam("added space to bottom only");
+                Plugin.instance.Terminal.LoadNewNode(fixLength);
+                Plugin.Spam($"added {spaceToFill} lines to displayText, reloading node");
+                return;
+            }
+            else if (formatChoice == "textmiddle")
+            {
+                for (int i = 0; i < spaceToFill; i++)
+                {
+                    if (i < spaceToFill / 2)
+                        fixLength.displayText = fixLength.displayText.Insert(0, "\n");
+                    else
+                        fixLength.displayText += "\n";
+                }
+                Plugin.Spam("pushed text to middle of screen and added space to bottom");
+                Plugin.instance.Terminal.LoadNewNode(fixLength);
+                Plugin.Spam($"added {spaceToFill} lines to displayText, reloading node");
+                return;
+            }
+            else if (formatChoice == "textbottom")
+            {
+                for (int i = 0; i < spaceToFill; i++)
+                {
+                    fixLength.displayText = fixLength.displayText.Insert(0, "\n");
+                }
+                Plugin.Spam("added space to top only");
+                Plugin.instance.Terminal.LoadNewNode(fixLength);
+                Plugin.Spam($"added {spaceToFill} lines to start of displayText, reloading node");
+                return;
+            }
             else
-                Plugin.Log.LogWarning("WARNING: TerminalNode is NULL");
+            {
+                Plugin.Spam("invalid FillText formatChoice, returning");
+                return;
+            }
         }
 
         internal static void OnLoadAffordable(TerminalNode node)

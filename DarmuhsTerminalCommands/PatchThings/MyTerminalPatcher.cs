@@ -20,6 +20,18 @@ namespace TerminalStuff
             }
         }
 
+        [HarmonyPatch(typeof(Terminal), "TextPostProcess")]
+        public class ZeekersTypo : Terminal
+        {
+            static void Postfix(ref string __result)
+            {
+                if (__result.Contains("\n\n\n\n\n\n\n\n\n\n\n\n\n\nn\n\n\n\n\n\n"))
+                {
+                    __result = __result.Replace("\n\n\n\n\n\n\n\n\n\n\n\n\n\nn\n\n\n\n\n\n", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+                }
+            }
+        }
+
         [HarmonyPatch(typeof(Terminal), "LoadTerminalImage")]
         public class FixVideoPatch : Terminal
         {
@@ -28,7 +40,6 @@ namespace TerminalStuff
             {
                 if (node.name == "darmuh's videoPlayer" && sanityCheckLOL)
                 {
-                    Plugin.Spam("testing patch");
                     if (!ViewCommands.isVideoPlaying)
                     {
                         Plugin.instance.Terminal.videoPlayer.enabled = true;
@@ -42,6 +53,16 @@ namespace TerminalStuff
                         return;
                     }
                 }
+                else
+                {
+                    if (!Plugin.instance.splitViewCreated)
+                        return;
+
+                    Plugin.instance.Terminal.terminalImage.enabled = BoolStuff.ShouldEnableImage();
+                    //full screen image should always be enabled for cam views
+                    Plugin.Spam($"full screen image set to {BoolStuff.ShouldEnableImage()}");
+                }
+
             }
 
             public static void OnVideoEnd(Terminal instance)

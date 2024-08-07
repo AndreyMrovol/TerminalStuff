@@ -19,6 +19,7 @@ namespace TerminalStuff
         internal static int cullingMaskInt;
         internal static int targetInt = 0;
         internal static float radarZoom;
+        internal static RawImage miniScreenImage;
 
         internal static void InitializeTextures()
         {
@@ -148,10 +149,10 @@ namespace TerminalStuff
             {
                 InitializeTextures();
                 SetTexturesAndVisibility(Plugin.instance.Terminal, radarTexture);
-                SetRawImageTransparency(Plugin.instance.rawImage2, 1f); // Full opacity for map
+                SetRawImageTransparency(Plugin.instance.Terminal.terminalImage, 1f); // Full opacity for map
 
                 // Set dimensions and position for radar image (rawImage2)
-                SetRawImageDimensionsAndPosition(Plugin.instance.rawImage2.rectTransform, 1f, 1f, 0f, 0f);
+                SetRawImageDimensions(Plugin.instance.Terminal.terminalImage.rectTransform, isFullScreen:true);
 
                 // Enable split view and update bools
                 SplitViewChecks.EnableSplitView("map");
@@ -215,10 +216,9 @@ namespace TerminalStuff
                 InitializeTextures4Mirror(true);
 
                 SetTexturesAndVisibility(Plugin.instance.Terminal, camsTexture);
-                SetRawImageTransparency(Plugin.instance.rawImage2, 1f); // Full opacity for cams
+                SetRawImageTransparency(Plugin.instance.Terminal.terminalImage, 1f); // Full opacity for cams
 
-                // Set dimensions and position for radar image (rawImage2)
-                SetRawImageDimensionsAndPosition(Plugin.instance.rawImage2.rectTransform, 1f, 1f, 0f, 0f);
+                SetRawImageDimensions(Plugin.instance.Terminal.terminalImage.rectTransform, isFullScreen: true);
 
                 // Enable split view and update bools
                 SplitViewChecks.EnableSplitView("mirror");
@@ -255,10 +255,9 @@ namespace TerminalStuff
                 SetAnyCamsTrue();
                 InitializeTextures();
                 SetTexturesAndVisibility(Plugin.instance.Terminal, camsTexture);
-                SetRawImageTransparency(Plugin.instance.rawImage2, 1f); // Full opacity for cams
+                SetRawImageTransparency(Plugin.instance.Terminal.terminalImage, 1f); // Full opacity for cams
 
-                // Set dimensions and position for radar image (rawImage2)
-                SetRawImageDimensionsAndPosition(Plugin.instance.rawImage2.rectTransform, 1f, 1f, 0f, 0f);
+                SetRawImageDimensions(Plugin.instance.Terminal.terminalImage.rectTransform, isFullScreen: true);
 
                 // Enable split view and update bools
                 SplitViewChecks.EnableSplitView("cams");
@@ -301,11 +300,10 @@ namespace TerminalStuff
 
                 SetTexturesAndVisibility(Plugin.instance.Terminal, radarTexture, camsTexture);
 
-                // Set transparency for rawImage1
-                SetRawImageTransparency(Plugin.instance.rawImage1, 0.7f);
+                SetRawImageTransparency(miniScreenImage, 0.7f);
 
-                // Set dimensions and position for radar image (rawImage1)
-                SetRawImageDimensionsAndPosition(Plugin.instance.rawImage1.rectTransform, 0.2f, 0.25f, 130f, 103f);
+                SetRawImageDimensions(miniScreenImage.rectTransform, isFullScreen: false);
+                SetRawImageDimensions(Plugin.instance.Terminal.terminalImage.rectTransform, isFullScreen: true);
 
                 // Enable split view and update bools
                 SplitViewChecks.EnableSplitView("minicams");
@@ -330,27 +328,66 @@ namespace TerminalStuff
 
         internal static string RadarZoomEvent()
         {
-            if (!AnyActiveMonitoring())
+            string[] words = StringStuff.GetWords();
+
+            if (!AnyActiveMonitoring() && Plugin.instance.splitViewCreated)
+            {
+                return $"No active monitoring detected, unable to change zoom.\r\n\r\n";
+            }
+            else if(!Plugin.instance.splitViewCreated && !(bool)Plugin.instance.Terminal.displayingPersistentImage)
             {
                 return $"No active monitoring detected, unable to change zoom.\r\n\r\n";
             }
             else
             {
-                if (Plugin.instance.TwoRadarMapsMod)
+                if(words.Length < 2)
                 {
-                    TwoRadarMapsCompatibility.ChangeMapZoom(GetNewZoom(ref radarZoom));
-                    Plugin.MoreLogs($"Radar Zoom for TwoRadarMaps set to {radarZoom}");
+                    if (Plugin.instance.TwoRadarMapsMod)
+                    {
+                        TwoRadarMapsCompatibility.ChangeMapZoom(GetNewZoom(ref radarZoom));
+                        Plugin.MoreLogs($"Radar Zoom for TwoRadarMaps set to {radarZoom}");
+                    }
+                    else
+                    {
+                        StartOfRound.Instance.mapScreen.cam.orthographicSize = GetNewZoom(ref radarZoom);
+                        Plugin.MoreLogs($"Radar Zoom set to {radarZoom}");
+                    }
+
+                    if (ConfigSettings.networkedNodes.Value)
+                        NetHandler.Instance.SyncRadarZoomServerRpc(radarZoom);
+
+
+                    return $"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRadar Zoom level adjusted.\r\n";
                 }
                 else
                 {
-                    StartOfRound.Instance.mapScreen.cam.orthographicSize = GetNewZoom(ref radarZoom);
-                    Plugin.MoreLogs($"Radar Zoom set to {radarZoom}");
+                    if (int.TryParse(words[1], out int newZoomVal))
+                    {
+                        if (newZoomVal >= 5 && newZoomVal <= 50)
+                        {
+                            radarZoom = newZoomVal;
+                            if (Plugin.instance.TwoRadarMapsMod)
+                            {
+                                TwoRadarMapsCompatibility.ChangeMapZoom(radarZoom);
+                                Plugin.MoreLogs($"Radar Zoom for TwoRadarMaps set to {radarZoom}");
+                            }
+                            else
+                            {
+                                StartOfRound.Instance.mapScreen.cam.orthographicSize = radarZoom;
+                                Plugin.MoreLogs($"Radar Zoom set to {radarZoom}");
+                            }
+
+                            if (ConfigSettings.networkedNodes.Value)
+                                NetHandler.Instance.SyncRadarZoomServerRpc(radarZoom);
+
+                            return $"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRadar Zoom level adjusted to new value: {words[1]}\r\n";
+                        }
+                        else
+                            return $"Cannot change zoom to value: {words[1]}.\nValue is too high or too low.\r\n\r\n";
+                    }
+                    else
+                        return $"Cannot change zoom to invalid value: {words[1]}.";
                 }
-
-                if(ConfigSettings.networkedNodes.Value)
-                    NetHandler.Instance.SyncRadarZoomServerRpc(radarZoom);
-
-                return $"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRadar Zoom level adjusted.\r\n";
             }
         }
 
@@ -382,11 +419,9 @@ namespace TerminalStuff
 
                 SetTexturesAndVisibility(Plugin.instance.Terminal, camsTexture, radarTexture);
 
-                // Set transparency for rawImage1
-                SetRawImageTransparency(Plugin.instance.rawImage1, 0.7f);
-
-                // Set dimensions and position for radar image (rawImage1)
-                SetRawImageDimensionsAndPosition(Plugin.instance.rawImage1.rectTransform, 0.2f, 0.25f, 130f, 103f);
+                SetRawImageTransparency(miniScreenImage, 0.7f);
+                SetRawImageDimensions(miniScreenImage.rectTransform, isFullScreen: false);
+                SetRawImageDimensions(Plugin.instance.Terminal.terminalImage.rectTransform, isFullScreen: true);
 
                 // Enable split view and update bools
                 SplitViewChecks.EnableSplitView("minimap");
@@ -428,10 +463,11 @@ namespace TerminalStuff
                 SetTexturesAndVisibility(Plugin.instance.Terminal, radarTexture, camsTexture);
 
                 // Set transparency for rawImage1
-                SetRawImageTransparency(Plugin.instance.rawImage1, opacityConfig);
+                SetRawImageTransparency(miniScreenImage, opacityConfig);
 
                 // Set dimensions and position for radar image (rawImage1)
-                SetRawImageDimensionsAndPosition(Plugin.instance.rawImage1.rectTransform, 1f, 1f, 0f, 0f);
+                SetRawImageDimensions(miniScreenImage.rectTransform, isFullScreen: true);
+                SetRawImageDimensions(Plugin.instance.Terminal.terminalImage.rectTransform, isFullScreen: true);
 
                 // Enable split view and update bools
                 SplitViewChecks.EnableSplitView("overlay");
@@ -597,18 +633,14 @@ namespace TerminalStuff
 
         private static void SetTexturesAndVisibility(Terminal getTerm, Texture mainTexture)
         {
-            Plugin.instance.rawImage2.texture = mainTexture;
-            getTerm.terminalImage.enabled = true;
-            Plugin.instance.rawImage2.enabled = true;
-            Plugin.instance.rawImage1.enabled = false;
+            getTerm.terminalImage.texture = mainTexture;
+            miniScreenImage.enabled = false;
         }
         private static void SetTexturesAndVisibility(Terminal getTerm, Texture mainTexture, Texture smallTexture)
         {
-            Plugin.instance.rawImage2.texture = mainTexture;
-            Plugin.instance.rawImage1.texture = smallTexture;
-            getTerm.terminalImage.enabled = true;
-            Plugin.instance.rawImage2.enabled = true;
-            Plugin.instance.rawImage1.enabled = true;
+            getTerm.terminalImage.texture = mainTexture;
+            miniScreenImage.texture = smallTexture;
+            miniScreenImage.enabled = true;
         }
 
         private static void SetRawImageTransparency(RawImage rawImage, float Opacity)
@@ -618,13 +650,18 @@ namespace TerminalStuff
             rawImage.color = newColor;
         }
 
-        private static void SetRawImageDimensionsAndPosition(RectTransform rectTransform, float heightPercentage, float widthPercentage, float anchoredPosX, float anchoredPosY)
+        private static void SetRawImageDimensions(RectTransform rectTrans, bool isFullScreen)
         {
-            RectTransform canvasRect = Plugin.instance.terminalCanvas.GetComponent<RectTransform>();
-            float height = canvasRect.rect.height * heightPercentage;
-            float width = canvasRect.rect.width * widthPercentage;
-            rectTransform.sizeDelta = new Vector2(width, height);
-            rectTransform.anchoredPosition = new Vector2(anchoredPosX, anchoredPosY);
+            if (isFullScreen)
+            {
+                rectTrans.sizeDelta = new Vector2(425, 280);
+                rectTrans.anchoredPosition = new Vector2(0, -25);
+            }
+            else
+            {
+                rectTrans.sizeDelta = new Vector2(180,100);
+                rectTrans.anchoredPosition = new Vector2(123, 90);
+            }
         }
 
         internal static string LolVideoPlayerEvent()

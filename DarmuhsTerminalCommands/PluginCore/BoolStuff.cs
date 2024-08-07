@@ -43,6 +43,31 @@ namespace TerminalStuff
             textUpdater = false;
         }
 
+        internal static bool ShouldAddCamsLogic()
+        {
+            if (ConfigSettings.terminalCams.Value)
+                return true;
+            if (ConfigSettings.terminalMap.Value)
+                return true;
+            if (ConfigSettings.terminalMinicams.Value)
+                return true;
+            if (ConfigSettings.terminalMinimap.Value)
+                return true;
+            if (ConfigSettings.terminalOverlay.Value)
+                return true;
+            if (ConfigSettings.terminalMirror.Value)
+                return true;
+            return false;
+        }
+
+        internal static bool ShouldEnableImage()
+        {
+            if (ViewCommands.AnyActiveMonitoring())
+                return true;
+            if (Plugin.instance.isOnMirror)
+                return true;
+            return false;
+        }
 
     }
 }

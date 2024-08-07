@@ -14,7 +14,6 @@ namespace TerminalStuff
                 Plugin.Log.LogInfo("AlwaysOnDynamic coroutine called again while it's still active");
                 yield break;
             }
-                
 
             Plugin.MoreLogs("Starting AlwaysOnDynamic Coroutine");
             dynamicStatus = true;
@@ -23,6 +22,12 @@ namespace TerminalStuff
             {
                 if (!StartOfRound.Instance.localPlayerController.isInHangarShipRoom && instance.terminalUIScreen.gameObject.activeSelf)
                 {
+                    if (ConfigSettings.aodOffDelay.Value >= 0)
+                        yield return new WaitForSeconds(ConfigSettings.aodOffDelay.Value);
+                    
+                    if(StartOfRound.Instance.localPlayerController.isInHangarShipRoom && instance.terminalUIScreen.gameObject.activeSelf)
+                        continue;
+                    
                     instance.terminalUIScreen.gameObject.SetActive(false);
 
                     if (ViewCommands.externalcamsmod && Plugin.instance.OpenBodyCamsMod && ViewCommands.AnyActiveMonitoring())

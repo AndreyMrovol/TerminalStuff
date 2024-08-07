@@ -19,13 +19,10 @@ namespace TerminalStuff
             {
                 foreach (string directory in Directory.GetDirectories(Paths.PluginPath))
                 {
-                    //Plugin.Log.LogInfo(")))))))))))))))))Setting directory for terminal videos");
                     string path = Path.Combine(Paths.PluginPath, directory, $"{ConfigSettings.videoFolderPath.Value}");
                     if (Directory.Exists(path))
                     {
-                        //Plugin.Log.LogInfo(")))))))))))))))))directory already exists!!!");
                         string[] files = Directory.GetFiles(path, "*.mp4");
-                        //Plugin.Log.LogInfo(")))))))))))))))))getting files");
                         Videos.AddRange((IEnumerable<string>)files);
                         Plugin.Log.LogInfo((object)string.Format("{0} has {1} videos.", (object)directory, (object)files.Length));
                     }
@@ -38,9 +35,7 @@ namespace TerminalStuff
                 }
 
                 string[] files1 = Directory.GetFiles(path1, "*.mp4");
-                //Plugin.Log.LogInfo(")))))))))))))))))getting files again");
                 Videos.AddRange((IEnumerable<string>)files1);
-                //Plugin.Log.LogInfo((object)string.Format("Global has {0} videos.", (object)files1.Length));
                 Plugin.Log.LogInfo((object)string.Format("Loaded {0} total videos.", (object)Videos.Count));
             }
         }

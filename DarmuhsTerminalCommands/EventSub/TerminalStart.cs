@@ -1,12 +1,8 @@
 ﻿using static TerminalStuff.TerminalEvents;
-using static TerminalStuff.AlwaysOnStuff;
 using UnityEngine;
-using System;
 using System.Collections;
 using static OpenLib.ConfigManager.ConfigSetup;
-using static OpenLib.CoreMethods.CommonThings;
 using static OpenLib.CoreMethods.LogicHandling;
-using TerminalStuff.SpecialStuff;
 
 namespace TerminalStuff.EventSub
 {
@@ -68,8 +64,6 @@ namespace TerminalStuff.EventSub
             }
 
             OpenLib.CoreMethods.AddingThings.AddKeywordToExistingNode("home", Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[1], true); //startNode
-            //StopPersistingKeywords();
-            ChangeVanillaKeywords();
         }
 
         internal static void TerminalStartGroupDelay()
@@ -163,15 +157,6 @@ namespace TerminalStuff.EventSub
             }
         }
 
-        private static void ChangeVanillaKeywords()
-        {
-            //deletes keywords at game start if they exist from previous plays
-
-            CheckForAndDeleteKeyWord("view monitor");
-
-            //MakeCommand("ViewInsideShipCam 1", "view monitor", "view monitor", false, true, ViewCommands.TermMapEvent, darmuhsTerminalStuff, 5, "map", ViewCommands.termViewNodes, ViewCommands.termViewNodeNums);
-            //AddCommand(string textFail, bool clearText, List<TerminalNode> nodeGroup, string keyWord, bool isVerb, string nodeName, string category, string description, CommandDelegate methodName)
-        }
         private static void DebugShowInfo()
         {
             Plugin.Spam($"Terminal Keywords Count: {Plugin.instance.Terminal.terminalNodes.allKeywords.Length}");

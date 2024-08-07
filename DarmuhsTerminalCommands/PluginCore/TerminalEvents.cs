@@ -1,5 +1,4 @@
 ﻿using GameNetcodeStuff;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -16,9 +15,12 @@ namespace TerminalStuff
     {
         //public static Dictionary<TerminalNode, Func<string>> darmuhsTerminalStuff = [];
         //internal static List<TerminalKeyword> darmuhsKeywords = [];
+        internal static TerminalNode lastNode;
+        internal static string lastText = "";
         internal static string TotalValueFormat = "";
         internal static string VideoErrorMessage = "";
         public static bool clockDisabledByCommand = false;
+        internal static Image terminalBackground;
 
         internal static bool quitTerminalEnum = false;
 
@@ -215,15 +217,20 @@ namespace TerminalStuff
                 TerminalClockStuff.textComponent.color = ColorCommands.HexToColor(ConfigSettings.TerminalClockColor.Value);
             }
 
-            Image bgImage = GameObject.Find("Environment/HangarShip/Terminal/Canvas/MainContainer/Scroll View/Viewport/InputField (TMP)").GetComponent<Image>();
+            terminalBackground = Plugin.instance.Terminal.terminalUIScreen.gameObject.GetComponentInChildren<Image>();
 
-            if (bgImage != null)
+            if (terminalBackground != null)
             {
-                bgImage.enabled = ConfigSettings.TerminalCustomBG.Value;
+                terminalBackground.enabled = ConfigSettings.TerminalCustomBG.Value;
+                terminalBackground.transform.SetParent(Plugin.instance.Terminal.terminalImage.transform);
+                terminalBackground.transform.SetAsLastSibling();
                 Color newColor = ColorCommands.HexToColor(ConfigSettings.TerminalCustomBGColor.Value);
                 newColor.a = ConfigSettings.TerminalCustomBGAlpha.Value;
-                bgImage.color = newColor;
+                terminalBackground.color = newColor;
             }
+            else
+                Plugin.Spam("terminalBackground is NULL");
+            
         }
     }
 }

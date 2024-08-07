@@ -1,7 +1,7 @@
 ﻿using static TerminalStuff.TerminalEvents;
 using static TerminalStuff.EventSub.TerminalStart;
-using static OpenLib.ConfigManager.ConfigSetup;
 using UnityEngine.InputSystem;
+using OpenLib.CoreMethods;
 
 namespace TerminalStuff.EventSub
 {
@@ -17,7 +17,6 @@ namespace TerminalStuff.EventSub
                 return;
             }
 
-                
             StartUsingTerminalCheck(Plugin.instance.Terminal);
 
             if (StartOfRound.Instance.localPlayerController != null)
@@ -49,7 +48,6 @@ namespace TerminalStuff.EventSub
                     instance.playerActions.m_Movement_OpenMenu.Enable();
                     HUDManager.Instance.ChangeControlTip(0, "Quit terminal : [Esc]", true);
                 }
-
             }
 
             //refund init
@@ -79,8 +77,14 @@ namespace TerminalStuff.EventSub
                 SplitViewChecks.DisableSplitView("neither");
                 ViewCommands.isVideoPlaying = false;
 
-                //Always load to start if alwayson disabled
-                instance.LoadNewNode(instance.terminalNodes.specialNodes.ToArray()[1]);
+                //Always load to last node or start if alwayson disabled
+                if(lastNode == null)
+                    instance.LoadNewNode(instance.terminalNodes.specialNodes.ToArray()[1]);
+                else
+                    instance.LoadNewNode(lastNode);
+
+                if (lastText.Length > 0)
+                    LogicHandling.SetTerminalInput(lastText);
             }
             else
             {
@@ -98,13 +102,32 @@ namespace TerminalStuff.EventSub
 
                     instance.LoadNewNode(returnNode);
                     Plugin.Spam($"[returning to camera-type node during AOD]\nMap: {Plugin.instance.isOnMap} \nCams: {Plugin.instance.isOnCamera} \nMiniMap: {Plugin.instance.isOnMiniMap} \nMiniCams: {Plugin.instance.isOnMiniCams} \nOverlay: {Plugin.instance.isOnOverlay}\nMirror: {Plugin.instance.isOnMirror}");
+                    if (lastText.Length > 0)
+                        LogicHandling.SetTerminalInput(lastText);
                     return;
                 }
                 else
                 {
                     Plugin.Spam($"[no matching camera-type nodes during AOD]\nMap: {Plugin.instance.isOnMap} \nCams: {Plugin.instance.isOnCamera} \nMiniMap: {Plugin.instance.isOnMiniMap} \nMiniCams: {Plugin.instance.isOnMiniCams} \nOverlay: {Plugin.instance.isOnOverlay}\nMirror: {Plugin.instance.isOnMirror}");
-                    instance.LoadNewNode(instance.terminalNodes.specialNodes.ToArray()[1]);
-                    return;
+                    if (lastNode == null)
+                        instance.LoadNewNode(instance.terminalNodes.specialNodes.ToArray()[1]);
+                    else if (!Plugin.instance.splitViewCreated && lastNode.name == "ViewInsideShipCam 1")
+                    {
+                        if (lastText.Length > 0)
+                            LogicHandling.SetTerminalInput(lastText);
+                        return;
+                    }  
+                    else
+                        instance.LoadNewNode(lastNode);
+
+                    if (ConfigSettings.networkedNodes.Value)
+                    {
+                        NetHandler.NetNodeReset(true);
+                        NetHandler.Instance.NodeLoadServerRpc(Plugin.instance.Terminal.topRightText.text, Plugin.instance.Terminal.currentNode.name, Plugin.instance.Terminal.currentNode.displayText);
+                    }
+
+                    if (lastText.Length > 0)
+                        LogicHandling.SetTerminalInput(lastText);
                 }
             }
         }

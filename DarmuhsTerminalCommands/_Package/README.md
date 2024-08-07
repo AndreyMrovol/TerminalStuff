@@ -19,10 +19,11 @@
  - Client-side Terminal Customization, change the color of the terminal and the different text types!
  - Client-side Quality of Life features, make the terminal experience how you want it to be!
  - Terminal Autocomplete and History features to make typing in the terminal feel more like a real terminal!
- - [**NEW IN 3.3.0**] Terminal Conflict Resolution will compare your input to all keywords to give you the best result.
+ - Terminal Conflict Resolution will compare your input to all keywords to give you the best result.
 	- Using the [Fastenshtein string comparison algorithm](https://github.com/DanHarltey/Fastenshtein)
- - [**NEW IN 3.4.0**] Change the terminal font and font size!
-	- Added support for custom font packs
+ - Change the terminal font and font size!
+	- Added support for custom font packs, see [Minecraft TerminalFont](https://thunderstore.io/c/lethal-company/p/darmuh/Minecraft_TerminalFont/) as an example
+ - [NEW IN 3.5.0] Your last terminal session will save the page you were on and any text you had typed in.
  - Cams commands can now show player povs even without a separate bodycam mod present.
 	- Still compatibile with every major bodycam mod; OpenBodyCams, Helmet Cameras, and Solos Bodycams are all compatible!
  - Expanded compatibility with LethalLevelLoader, OpenBodyCams, and TwoRadarMaps!

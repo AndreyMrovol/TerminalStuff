@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.5.0]
+ - Completely reworked terminal cams logic.
+	- Adding one less image object for better optimization.
+	- Disabling all cams-type commands will leave (or re-enable) the vanilla "view monitor" command
+	- overall lots of optimizations with this.
+ - Reworked custom background Terminal Customization.
+	- Will now completely fill the screen space at all times
+	- No longer covers the cams feeds from any of the cams-type commands
+ - Added return to last node handling.
+	- The terminal will now return to the last node you were viewing when you start using it.
+	- It will also save any un-submitted text for you.
+	- If another terminal user updates the terminal screen to another node your last cached node will update with it.
+ - Added new config item [TerminalFillEmptyText] which allows you to add a base level of formatting from a few options for any terminalnode with text that does not fill the screen.
+	- default value is nochange and will do nothing.
+ - Added patch to fix zeekers typo in TextPostProcess()
+ - Updated radar zoom command to allow for input. You should now be able to perform a command such as "zoom 30" to set the zoom to 30
+	- this probably wont work with a multiword keyword like "radar zoom 10", I may add a fix for this later
+ - Added some more compatibility stuff for suitsTerminal.
+ - Added new config item [aodOffDelay] to determine seconds delay after a player is detected off the ship where it will turn off the screen
+	- If a player returns to the ship within this time the screen will not turn off
+
 ## [3.4.1]
  - Updated base custom font path to look for folders in the Bepinex/Config folder.
 	- This is because custom content packs cannot make folders in the base Bepinex folder.

@@ -197,7 +197,6 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="PluginCore\BoolStuff.cs" />
     <Compile Include="PluginCore\Misc.cs" />
-    <Compile Include="PluginCore\RemoveThings.cs" />
     <Compile Include="PluginCore\StringStuff.cs" />
     <Compile Include="PluginCore\StuffForLibrary.cs" />
     <Compile Include="SpecialStuff\AutoComplete.cs" />

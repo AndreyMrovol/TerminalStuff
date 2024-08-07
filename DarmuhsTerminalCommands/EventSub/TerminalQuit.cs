@@ -3,6 +3,7 @@ using UnityEngine;
 using static TerminalStuff.TerminalEvents;
 using static TerminalStuff.AlwaysOnStuff;
 using static TerminalStuff.EventSub.TerminalStart;
+using OpenLib.Common;
 
 namespace TerminalStuff.EventSub
 {
@@ -11,6 +12,22 @@ namespace TerminalStuff.EventSub
         internal static bool videoQuitEnum = false;
         internal static void OnTerminalQuit()
         {
+            if(Plugin.instance.Terminal.currentNode != null && Plugin.instance.Terminal.currentNode.name != "terminalQuit")
+            {
+                if(Plugin.instance.suitsTerminal && SuitsTerminalCompatibility.CheckForSuitsMenu())
+                {
+                    Plugin.Spam("setting last node to help commands");
+                    lastNode = Plugin.instance.Terminal.terminalNodes.specialNodes[13];
+                }
+                else
+                {
+                    lastNode = Plugin.instance.Terminal.currentNode;
+                    Plugin.Spam("caching node from quit");
+                }
+
+                lastText = CommonStringStuff.GetCleanedScreenText(Plugin.instance.Terminal);
+                
+            }
 
             if (StartOfRound.Instance.localPlayerController != null)
                 ShouldLockPlayerCamera(true, StartOfRound.Instance.localPlayerController);
