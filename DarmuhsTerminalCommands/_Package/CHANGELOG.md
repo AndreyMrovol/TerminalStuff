@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.5.1]
+ - Hotfix for compatibility with TwoRadarMaps/OpenBodyCams removing a problem method that was added in 3.5.0
+	- This method was disabling the vanilla "view monitor" command. But in doing-so breaking the other mods in their entirety.
+	- For the best cams experience either have all cams commands disabled to use the vanilla "view monitor" 
+	- OR ensure you have the map command enabled with "view monitor" as one of it's keywords to replace the vanilla one
+
 ## [3.5.0]
  - Completely reworked terminal cams logic.
 	- Adding one less image object for better optimization.

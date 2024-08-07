@@ -10,40 +10,43 @@ namespace TerminalStuff
     internal class SplitViewChecks : MonoBehaviour
     {
         internal static bool enabledSplitObjects = false;
-        internal static CompatibleNoun[] vanillaViewNouns;
-        internal static TerminalKeyword viewKeyword;
-
+        //internal static TerminalKeyword monitorKeyword;
+        //internal static TerminalNode originalMonitor;
+        //internal static bool vanillaDisabled = false;
+        
+        //below fix did not work
+        /*
         private static void HandleVanillaMap(bool shouldRemove)
         {
             if(shouldRemove)
             {
-                if (DynamicBools.TryGetKeyword("view", out TerminalKeyword viewKW) && DynamicBools.TryGetKeyword("monitor", out TerminalKeyword monitorKW))
+                if (DynamicBools.TryGetKeyword("view", out TerminalKeyword viewKW) && DynamicBools.TryGetKeyword("monitor", out TerminalKeyword monitorKW) && vanillaDisabled == false)
                 {
-                    Plugin.Spam("removing vanilla compat noun - monitor, from view");
-                    viewKeyword = viewKW;
-                    vanillaViewNouns = viewKW.compatibleNouns;
-                    RemoveThings.RemoveCompatibleNoun(ref viewKW, monitorKW);
+                    Plugin.Spam("setting monitor result to something inaccessible");
+                    monitorKeyword = monitorKW;
+                    originalMonitor = monitorKeyword.specialKeywordResult;
+                    vanillaDisabled = true;
                 }
             }
             else
             {
-                if(vanillaViewNouns != null)
+                if(vanillaDisabled)
                 {
-                    Plugin.Spam("returning to vanilla compat nouns");
-                    viewKeyword.compatibleNouns = vanillaViewNouns;
+                    Plugin.Spam("set vanilla disabled to false");
+                    vanillaDisabled = false;
                 }
             }
         }
-
+        */
         public static void InitSplitViewObjects()
         {
             if (!ShouldAddCamsLogic())
             {
-                HandleVanillaMap(false);
+                //HandleVanillaMap(false);
                 return;
             }
-            else
-                HandleVanillaMap(true);
+            //else
+                //HandleVanillaMap(true);
                 
 
             if (Plugin.instance.Terminal.terminalImage == null || Plugin.instance.splitViewCreated)

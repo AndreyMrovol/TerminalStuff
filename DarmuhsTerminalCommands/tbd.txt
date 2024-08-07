@@ -1,0 +1,2 @@
+﻿nickham req:
+- customizable text to remove references of the mod itself (more menus and hint)

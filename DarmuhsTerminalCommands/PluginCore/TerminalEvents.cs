@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using static TerminalStuff.StringStuff;
 using static OpenLib.CoreMethods.AddingThings;
 using TerminalStuff.SpecialStuff;
+using System.Linq;
 
 namespace TerminalStuff
 {
@@ -231,6 +232,23 @@ namespace TerminalStuff
             else
                 Plugin.Spam("terminalBackground is NULL");
             
+        }
+
+        //move this to openlib at next update
+        public static void ReplaceKeywordWord(TerminalKeyword keyword, string newWord)
+        {
+            List<TerminalKeyword> allKeywords = [.. Plugin.instance.Terminal.terminalNodes.allKeywords];
+            foreach(TerminalKeyword item in allKeywords)
+            {
+                if(item == keyword)
+                {
+                    Plugin.Spam($"Replacing word {item.word} with {newWord}");
+                    item.word = newWord;
+                    break;
+                }
+            }
+
+            Plugin.instance.Terminal.terminalNodes.allKeywords = [.. allKeywords];
         }
     }
 }

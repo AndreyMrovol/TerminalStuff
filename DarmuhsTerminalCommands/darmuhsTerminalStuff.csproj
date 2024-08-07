@@ -245,6 +245,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="specialnodes.txt" />
+    <Content Include="tbd.txt" />
     <Content Include="_Package\allmyfellas.mp4" />
     <Content Include="_Package\clapclap.mp4" />
     <Content Include="_Package\icon.png" />
