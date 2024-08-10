@@ -239,7 +239,7 @@ namespace TerminalStuff
             SetMirrorCamTexture(cam.targetTexture);
 
             cam.orthographic = true;
-            cam.orthographicSize = 3.4f;
+            cam.orthographicSize = ConfigSettings.mirrorZoom.Value;
             cam.usePhysicalProperties = false;
             cam.farClipPlane = 30f;
             cam.nearClipPlane = 0.05f;

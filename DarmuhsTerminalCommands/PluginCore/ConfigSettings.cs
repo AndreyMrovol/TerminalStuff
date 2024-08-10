@@ -22,6 +22,7 @@ namespace TerminalStuff
         public static ConfigEntry<bool> camsUseDetectedMods { get; internal set; }
         public static ConfigEntry<string> obcResolutionMirror {  get; internal set; }
         public static ConfigEntry<string> obcResolutionBodyCam { get; internal set; }
+        public static ConfigEntry<float> mirrorZoom { get; internal set; }
 
         //establish commands that can be turned on or off here
         public static ConfigEntry<bool> terminalShortcutCommands { get; internal set; }
@@ -134,6 +135,8 @@ namespace TerminalStuff
         public static ConfigEntry<string> homeLine3 { get; internal set; }
         public static ConfigEntry<string> homeHelpLines { get; internal set; }
         public static ConfigEntry<string> homeTextArt { get; internal set; }
+        public static ConfigEntry<string> moreMenuText { get; internal set; }
+        public static ConfigEntry<string> moreHintText { get; internal set; }
         public static ConfigEntry<bool> alwaysOnAtStart { get; internal set; }
         public static ConfigEntry<bool> alwaysOnDynamic { get; internal set; }
         public static ConfigEntry<bool> alwaysOnWhileDead { get; internal set; }
@@ -189,7 +192,8 @@ namespace TerminalStuff
         public static ConfigEntry<int> TerminalHistoryMaxCount { get; internal set; }
         public static ConfigEntry<bool> TerminalConflictResolution { get; internal set; }
         public static ConfigEntry<float> TerminalRadarDefaultZoom { get; internal set; }
-        public static ConfigEntry<string> TerminalFillEmptyText {  get; internal set; }  
+        public static ConfigEntry<string> TerminalFillEmptyText {  get; internal set; }
+        public static ConfigEntry<bool> CacheLastTerminalPage { get; internal set; }
 
         //Terminal Customization
         public static ConfigEntry<bool> TerminalCustomization { get; internal set; }
@@ -498,6 +502,7 @@ namespace TerminalStuff
             videoSync = MakeBool(Plugin.instance.Config,"Fun Configuration", "videoSync", true, "When networking is enabled, this setting will sync videos being played on the terminal for all players whose terminal screen is on.");
             obcResolutionMirror = MakeString(Plugin.instance.Config,"Extras Configuration", "obcResolutionMirror", "1000; 700", "Set the resolution of the Mirror Camera created with OpenBodyCams for darmuhsTerminalStuff");
             obcResolutionBodyCam = MakeString(Plugin.instance.Config,"Extras Configuration", "obcResolutionBodyCam", "1000; 700", "Set the resolution of the Body Camera created with OpenBodyCams for darmuhsTerminalStuff");
+            mirrorZoom = MakeClampedFloat(Plugin.instance.Config, "Extras Configuration", "mirrorZoom", 3.4f, "Set the mirror zoom level, the higher the value the more zoomed out the mirror will be", 0.2f, 9f);
             camsNeverHide = MakeBool(Plugin.instance.Config,"Extras Configuration", "camsNeverHide", false, "Setting this to true will make it so no command will ever auto-hide any cams command.");
             defaultCamsView = Plugin.instance.Config.Bind("Extras Configuration", "defaultCamsView", "cams", new ConfigDescription("Set the default view switch commands will use when nothing is active.", new AcceptableValueList<string>("map", "cams", "minimap", "minicams", "overlay")));
             ovOpacity = Plugin.instance.Config.Bind("Extras Configuration", "ovOpacity", 10, new ConfigDescription("Opacity percentage for Overlay View.", new AcceptableValueRange<int>(0, 100)));
@@ -515,6 +520,9 @@ namespace TerminalStuff
             
             homeTextArt = MakeString(Plugin.instance.Config,"Terminal Customization", "homeTextArt", "[leadingSpacex4][leadingSpace]<color=#e6b800>^^      .-=-=-=-.  ^^\r\n ^^        (`-=-=-=-=-`)         ^^\r\n         (`-=-=-=-=-=-=-`)  ^^         ^^\r\n   ^^   (`-=-=-=-=-=-=-=-`)   ^^          \r\n       ( `-=-=-=-(@)-=-=-` )      ^^\r\n       (`-=-=-=-=-=-=-=-=-`)  ^^          \r\n       (`-=-=-=-=-=-=-=-=-`)  ^^\r\n        (`-=-=-=-=-=-=-=-`)          ^^\r\n         (`-=-=-=-=-=-=-`)  ^^            \r\n           (`-=-=-=-=-`)\r\n            `-=-=-=-=-`</color>", "ASCII Art goes here");
 
+            moreMenuText = MakeString(Plugin.instance.Config, "Terminal Customization", "moreMenuText", "Welcome to darmuh's Terminal Upgrade!\r\n\tSee below Categories for new stuff :)", "This is the header of the more command menu");
+            moreHintText = MakeString(Plugin.instance.Config, "Terminal Customization", "moreHintText", "<color=#b300b3>>MORE</color>\nTo open a menu of darmuh's commands.", "Text displayed for hints to the more command menu");
+
             //Quality of Life Stuff
             LockCameraInTerminal = MakeBool(Plugin.instance.Config,"Quality of Life", "LockCameraInTerminal", false, "Enable this to lock the player camera to the terminal when it is in use.");
             TerminalLightBehaviour = MakeClampedString(Plugin.instance.Config, "Quality of Life", "TerminalLightBehaviour", "nochange", "Use this config item to change how the terminal light behaves. Options are 'nochange' which keeps vanilla behaviour, 'disable' which disables this light whenever you use it, and 'alwayson' which will keep the light on as long as the screen is on from alwayson", new AcceptableValueList<string>("nochange", "disable", "alwayson"));
@@ -526,6 +534,7 @@ namespace TerminalStuff
             TerminalConflictResolution = MakeBool(Plugin.instance.Config, "Quality of Life", "TerminalConflictResolution", false, "With this feature enabled, terminal command input will be weighted for conflict resolution using the Levenshtein algorithm.");
             TerminalRadarDefaultZoom = MakeClampedFloat(Plugin.instance.Config, "Quality of Life", "TerminalRadarDefaultZoom", 20f, "The default level zoom for the radar. The lower the number the more zoomed in you'll be.", 5f, 30f);
             TerminalFillEmptyText = MakeClampedString(Plugin.instance.Config, "Quality of Life", "TerminalFillEmptyText", "nochange", "AutoFill any node with empty space depending on your desired formatting", new AcceptableValueList<string>("nochange", "fillbottom", "textmiddle", "textbottom"));
+            CacheLastTerminalPage = MakeBool(Plugin.instance.Config, "Quality of Life", "CacheLastTerminalPage", true, "Quality of Life feature that caches the last terminal page of the last terminal user.");
 
 
             //Terminal Customization

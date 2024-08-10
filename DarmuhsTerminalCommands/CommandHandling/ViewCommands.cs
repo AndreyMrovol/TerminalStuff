@@ -558,7 +558,7 @@ namespace TerminalStuff
                 MoreCamStuff.CamInitMirror(playerCam);
 
                 playerCam.orthographic = true;
-                playerCam.orthographicSize = 3.4f;
+                playerCam.orthographicSize = ConfigSettings.mirrorZoom.Value;
                 playerCam.usePhysicalProperties = false;
                 playerCam.farClipPlane = 30f;
                 playerCam.nearClipPlane = 0.05f;

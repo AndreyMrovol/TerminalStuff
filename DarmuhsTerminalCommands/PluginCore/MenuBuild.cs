@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using static OpenLib.Menus.MenuBuild;
 using static OpenLib.ConfigManager.ConfigSetup;
 using OpenLib.ConfigManager;
+using OpenLib.CoreMethods;
 
 namespace TerminalStuff
 {
@@ -41,7 +42,11 @@ namespace TerminalStuff
         {
             Plugin.Spam("START CreateDarmuhsTerminalStuffMenus");
 
-            myMenu = AssembleMainMenu("darmuhsTerminalStuff", "more", "Welcome to darmuh's Terminal Upgrade!\r\n\tSee below Categories for new stuff :)", myMenuCategories, myMenuItems, true, "\n<color=#b300b3>>MORE</color>\nTo open a menu of darmuh\'s commands.\r\n");
+            myMenu = AssembleMainMenu("darmuhsTerminalStuff", "more", ConfigSettings.moreMenuText.Value, myMenuCategories, myMenuItems);
+            TerminalNode otherNode = LogicHandling.GetFromAllNodes("OtherCommands");
+            AddingThings.AddToHelpCommand(ConfigSettings.moreHintText.Value);
+            if (otherNode != null)
+                AddingThings.AddToExistingNodeText($"\n{ConfigSettings.moreHintText.Value}", ref otherNode);
 
             Plugin.Spam($"myMenu info:\nMenuName: {myMenu.MenuName}\nmyMenu.Categories.Count: {myMenu.Categories.Count}\n");
 

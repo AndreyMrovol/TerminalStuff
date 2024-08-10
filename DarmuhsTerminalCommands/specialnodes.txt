@@ -82,16 +82,15 @@ enable image component from above object (prob a config bool)
 image alpha
 image color
 
-things to fix:
 
--purchase packs are registering as unlocked upgrades sometimes and idk why
-*not sure if this fixed on it's own but cant replicate it now
+from LLL:
 
-with tworadarmaps on:
-previous only cycles to the first target and does not roll back to the top
-*HOLY SHIT I THINK I FIXED IT
-
-
-bugs from previous version reported:
--disabling just cams will break all cams methods 
-*(was comparing view int to count of view ints, which would throw null when stuff was disabled)
+routeKeyword = Terminal.terminalNodes.allKeywords[27];
+routeInfoKeyword = Terminal.terminalNodes.allKeywords[6];
+routeConfirmKeyword = Terminal.terminalNodes.allKeywords[3];
+routeDenyKeyword = Terminal.terminalNodes.allKeywords[4];
+moonsKeyword = Terminal.terminalNodes.allKeywords[21];
+viewKeyword = Terminal.terminalNodes.allKeywords[19];
+buyKeyword = Terminal.terminalNodes.allKeywords[0];
+cancelRouteNode = routeKeyword.compatibleNouns[0].result.terminalOptions[0].result;
+cancelPurchaseNode = buyKeyword.compatibleNouns[0].result.terminalOptions[1].result;

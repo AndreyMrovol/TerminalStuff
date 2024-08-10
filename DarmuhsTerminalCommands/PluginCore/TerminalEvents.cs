@@ -16,7 +16,8 @@ namespace TerminalStuff
     {
         //public static Dictionary<TerminalNode, Func<string>> darmuhsTerminalStuff = [];
         //internal static List<TerminalKeyword> darmuhsKeywords = [];
-        internal static TerminalNode lastNode;
+        internal static TerminalNode lastNode = CreateDummyNode("cachedNode1", true, "");
+        internal static TerminalNode justText = CreateDummyNode("cachedNode2", true, "");
         internal static string lastText = "";
         internal static string TotalValueFormat = "";
         internal static string VideoErrorMessage = "";
@@ -225,6 +226,8 @@ namespace TerminalStuff
                 terminalBackground.enabled = ConfigSettings.TerminalCustomBG.Value;
                 terminalBackground.transform.SetParent(Plugin.instance.Terminal.terminalImage.transform);
                 terminalBackground.transform.SetAsLastSibling();
+                terminalBackground.rectTransform.anchoredPosition = new Vector2(10, 0);
+                terminalBackground.rectTransform.sizeDelta = new Vector2(-80, 20);
                 Color newColor = ColorCommands.HexToColor(ConfigSettings.TerminalCustomBGColor.Value);
                 newColor.a = ConfigSettings.TerminalCustomBGAlpha.Value;
                 terminalBackground.color = newColor;
@@ -232,23 +235,6 @@ namespace TerminalStuff
             else
                 Plugin.Spam("terminalBackground is NULL");
             
-        }
-
-        //move this to openlib at next update
-        public static void ReplaceKeywordWord(TerminalKeyword keyword, string newWord)
-        {
-            List<TerminalKeyword> allKeywords = [.. Plugin.instance.Terminal.terminalNodes.allKeywords];
-            foreach(TerminalKeyword item in allKeywords)
-            {
-                if(item == keyword)
-                {
-                    Plugin.Spam($"Replacing word {item.word} with {newWord}");
-                    item.word = newWord;
-                    break;
-                }
-            }
-
-            Plugin.instance.Terminal.terminalNodes.allKeywords = [.. allKeywords];
         }
     }
 }

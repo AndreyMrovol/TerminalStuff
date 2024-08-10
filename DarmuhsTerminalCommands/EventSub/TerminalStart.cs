@@ -48,7 +48,7 @@ namespace TerminalStuff.EventSub
                 helpNode = Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[13];
                 string original = helpNode.displayText;
                 //Plugin.Spam(original);
-                string replacement = original.Replace("To see the list of moons the autopilot can route to.", "List of moons the autopilot can route to.").Replace("To see the company store's selection of useful items.", "Company store's selection of useful items.").Replace("[numberOfItemsOnRoute]", ">MORE\r\nTo see a list of commands added via darmuhsTerminalStuff\r\n\r\n[numberOfItemsOnRoute]");
+                string replacement = original.Replace("To see the list of moons the autopilot can route to.", "List of moons the autopilot can route to.").Replace("To see the company store's selection of useful items.", "Company store's selection of useful items.");
                 //Plugin.Spam($"{replacement}");
 
                 Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[13].displayText = replacement;

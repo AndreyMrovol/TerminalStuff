@@ -10,54 +10,47 @@ namespace TerminalStuff
     internal class SplitViewChecks : MonoBehaviour
     {
         internal static bool enabledSplitObjects = false;
-        //internal static TerminalKeyword monitorKeyword;
-        //internal static TerminalNode originalMonitor;
-        //internal static bool vanillaDisabled = false;
-        
-        //below fix did not work
-        /*
+        internal static CompatibleNoun[] vanillaViewNouns;
+        internal static TerminalKeyword viewKeyword;
+
         private static void HandleVanillaMap(bool shouldRemove)
         {
-            if(shouldRemove)
+            if (shouldRemove)
             {
-                if (DynamicBools.TryGetKeyword("view", out TerminalKeyword viewKW) && DynamicBools.TryGetKeyword("monitor", out TerminalKeyword monitorKW) && vanillaDisabled == false)
+                if (DynamicBools.TryGetKeyword("view", out TerminalKeyword viewKW) && DynamicBools.TryGetKeyword("monitor", out TerminalKeyword monitorKW))
                 {
-                    Plugin.Spam("setting monitor result to something inaccessible");
-                    monitorKeyword = monitorKW;
-                    originalMonitor = monitorKeyword.specialKeywordResult;
-                    vanillaDisabled = true;
+                    Plugin.Spam("removing vanilla compat noun - monitor, from view");
+                    viewKeyword = viewKW;
+                    vanillaViewNouns = viewKW.compatibleNouns;
+                    RemoveThings.RemoveCompatibleNoun(ref viewKW, monitorKW);
                 }
             }
             else
             {
-                if(vanillaDisabled)
+                if (vanillaViewNouns != null)
                 {
-                    Plugin.Spam("set vanilla disabled to false");
-                    vanillaDisabled = false;
+                    Plugin.Spam("returning to vanilla compat nouns");
+                    viewKeyword.compatibleNouns = vanillaViewNouns;
                 }
             }
         }
-        */
+
         public static void InitSplitViewObjects()
         {
             if (!ShouldAddCamsLogic())
             {
-                //HandleVanillaMap(false);
+                HandleVanillaMap(false);
                 return;
             }
-            //else
-                //HandleVanillaMap(true);
-                
+            else
+                HandleVanillaMap(true);
+
 
             if (Plugin.instance.Terminal.terminalImage == null || Plugin.instance.splitViewCreated)
             {
                 Plugin.MoreLogs("Original terminalImage not found or split view already created");
                 return;
             }
-
-            //ViewCommands.miniScreen = Instantiate(Plugin.instance.Terminal.terminalImage.gameObject, Plugin.instance.Terminal.terminalImage.gameObject.transform);
-            //ViewCommands.miniScreen.name = "Terminal Small Screen (Clone)";
-            //ViewCommands.miniScreenImage = ViewCommands.miniScreen.GetComponent<RawImage>();
 
             ViewCommands.miniScreenImage = Instantiate(Plugin.instance.Terminal.terminalImage, Plugin.instance.Terminal.terminalImage.transform);
             
@@ -94,20 +87,17 @@ namespace TerminalStuff
             else if (whatIsIt == "neither")
             {
                 enabledSplitObjects = false;
-                //DisableVanillaViewMonitor();
                 SetMiniScreen(whatIsIt, false);
                 ResetPluginInstanceBools();
             }
             else if (enabledSplitObjects == true && (!singleViewModes.Contains(whatIsIt)))
             {
-                //DisableVanillaViewMonitor(disableImage: false);
                 SetMiniScreen(whatIsIt, true);
                 ViewCommands.SetAnyCamsTrue();
                 UpdatePluginInstanceBools(whatIsIt);
             }
             else if (enabledSplitObjects == true && (singleViewModes.Contains(whatIsIt)))
             {
-                //DisableVanillaViewMonitor(disableImage: false);
                 SetMiniScreen(whatIsIt, false);
                 UpdatePluginInstanceBools(whatIsIt);
             }
@@ -119,10 +109,8 @@ namespace TerminalStuff
 
         private static void SetMiniScreen(string whatIsIt, bool state)
         {
-            //Plugin.instance.Terminal.terminalImage.enabled = state;
             ViewCommands.miniScreenImage.enabled = state;
             Plugin.MoreLogs($"{whatIsIt} has set miniscreen to {state}");
-            //ViewCommands.miniScreen.gameObject.SetActive(state);
         }
 
         internal static void ResetPluginInstanceBools()

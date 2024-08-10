@@ -12,20 +12,35 @@ namespace TerminalStuff.EventSub
         internal static bool videoQuitEnum = false;
         internal static void OnTerminalQuit()
         {
-            if(Plugin.instance.Terminal.currentNode != null && Plugin.instance.Terminal.currentNode.name != "terminalQuit")
+            if(ConfigSettings.CacheLastTerminalPage.Value && Plugin.instance.Terminal.currentNode != null && Plugin.instance.Terminal.currentNode.name != "terminalQuit")
             {
-                if(Plugin.instance.suitsTerminal && SuitsTerminalCompatibility.CheckForSuitsMenu())
-                {
-                    Plugin.Spam("setting last node to help commands");
-                    lastNode = Plugin.instance.Terminal.terminalNodes.specialNodes[13];
-                }
-                else
-                {
-                    lastNode = Plugin.instance.Terminal.currentNode;
-                    Plugin.Spam("caching node from quit");
-                }
 
                 lastText = CommonStringStuff.GetCleanedScreenText(Plugin.instance.Terminal);
+
+                if (Plugin.instance.suitsTerminal && SuitsTerminalCompatibility.CheckForSuitsMenu())
+                {
+                    Plugin.Spam("setting last node text to empty");
+                    justText.displayText = "";
+                    lastNode = justText;
+                }
+                else if(Plugin.instance.Terminal.currentNode.playClip != null || Plugin.instance.Terminal.currentNode.playSyncedClip != -1)
+                {
+                    string cachedText = Plugin.instance.Terminal.screenText.text;
+                    Plugin.Spam(cachedText);
+                    cachedText = cachedText.TrimStart('\r', '\n');
+
+                    if (cachedText.EndsWith(lastText))
+                    {
+                        cachedText = cachedText.Substring(0, cachedText.LastIndexOf(lastText));
+                        cachedText += "\r\n";
+                    }
+
+                    justText.displayText = cachedText;
+                    lastNode = justText;
+                    Plugin.Spam("caching node from quit");
+                }
+                else
+                    lastNode = Plugin.instance.Terminal.currentNode;
                 
             }
 

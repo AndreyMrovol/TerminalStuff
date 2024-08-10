@@ -83,10 +83,8 @@
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\BepInEx\dontloadpls\Zaggy1024-OpenBodyCams\OpenBodyCams.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="OpenLib, Version=0.1.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\publicDevLibrary\OpenLib\bin\Debug\OpenLib.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="OpenLib">
+      <HintPath>..\..\..\publicDevLibrary\OpenLib\_Release Files\OpenLib.dll</HintPath>
     </Reference>
     <Reference Include="suitsTerminal">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\BepInEx\dontloadpls\suitsTerminal.dll</HintPath>

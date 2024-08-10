@@ -38,7 +38,11 @@ namespace TerminalStuff.SpecialStuff
         internal static void SetCachedDefault()
         {
             CachedDefault = Plugin.instance.Terminal.screenText.textComponent.font;
-            Plugin.Spam("Caching default fontasset");
+            Plugin.Spam($"Caching default fontasset");
+            //foreach(string font in CachedDefault.sourceFontFile.fontNames)
+            //{
+            //    Plugin.Spam(font);
+            //}
         }
 
         internal static bool TryGetCustomOSFont(string fontName, out TMP_FontAsset CustomFontAsset)

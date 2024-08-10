@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.5.4]
+ - Updated cached terminal pages for compatibility with TerminalFormatter & other mods that change text at TextPostProcess()
+
+## [3.5.3]
+ - Added config option to disable new cached terminal pages feature (CacheLastTerminalPage) per request
+ - Added config option to change Mirror zoom scale (mirrorZoom) per request
+ - Updated cached terminal pages handling to not replay any sounds that were associated with the page you left
+
+## [3.5.2]
+ - Re-added method from 3.5.0 to disable view monitor command.
+	- Thanks Zaggy for providing a fix for the issue on your end :)
+ - Added some more configurable strings per request, (moreMenuText/moreHintText)
+ - Adjusted terminal background graphic to better fill in the gaps on the screen
+
 ## [3.5.1]
  - Hotfix for compatibility with TwoRadarMaps/OpenBodyCams removing a problem method that was added in 3.5.0
 	- This method was disabling the vanilla "view monitor" command. But in doing-so breaking the other mods in their entirety.

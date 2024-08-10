@@ -78,7 +78,7 @@ namespace TerminalStuff.EventSub
                 ViewCommands.isVideoPlaying = false;
 
                 //Always load to last node or start if alwayson disabled
-                if(lastNode == null)
+                if(lastNode.displayText == "")
                     instance.LoadNewNode(instance.terminalNodes.specialNodes.ToArray()[1]);
                 else
                     instance.LoadNewNode(lastNode);
@@ -109,9 +109,9 @@ namespace TerminalStuff.EventSub
                 else
                 {
                     Plugin.Spam($"[no matching camera-type nodes during AOD]\nMap: {Plugin.instance.isOnMap} \nCams: {Plugin.instance.isOnCamera} \nMiniMap: {Plugin.instance.isOnMiniMap} \nMiniCams: {Plugin.instance.isOnMiniCams} \nOverlay: {Plugin.instance.isOnOverlay}\nMirror: {Plugin.instance.isOnMirror}");
-                    if (lastNode == null)
+                    if (lastNode.displayText.Length < 1)
                         instance.LoadNewNode(instance.terminalNodes.specialNodes.ToArray()[1]);
-                    else if (!Plugin.instance.splitViewCreated && lastNode.name == "ViewInsideShipCam 1")
+                    else if (!Plugin.instance.splitViewCreated && (bool)Plugin.instance.Terminal.displayingPersistentImage)
                     {
                         if (lastText.Length > 0)
                             LogicHandling.SetTerminalInput(lastText);
