@@ -115,7 +115,8 @@ namespace TerminalStuff.EventSub
                         Plugin.WARNING("lastNode terminalNode is null, cached pages failed!");
                         return;
                     }
-                        
+
+                    Plugin.Spam($"lastNode Length - {lastNode.displayText.Length}");
 
                     if (lastNode.displayText.Length < 1)
                         instance.LoadNewNode(instance.terminalNodes.specialNodes.ToArray()[1]);

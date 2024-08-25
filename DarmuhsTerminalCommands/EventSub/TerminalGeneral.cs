@@ -14,7 +14,8 @@ namespace TerminalStuff.EventSub
             //Plugin.instance.Config.Reload();
             MenuBuild.ClearMyMenustuff();
             ConfigSettings.TerminalStuffMain.DeleteAll();
-            lastNode.displayText = ""; //stop persisting nodes between lobbies
+            justText.displayText = ""; //reset cached terminal node on lobby disable
+            lastNode = justText; //stop persisting nodes between lobbies
             lastText = "";
             //Plugin.ClearLists();
             //Terminal disabled, disabling ESC key listener OnDisable

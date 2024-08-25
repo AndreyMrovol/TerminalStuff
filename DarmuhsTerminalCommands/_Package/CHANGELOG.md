@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.5.6]
+ - Hotfix for minor issue with cached terminal pages
+
 ## [3.5.5]
  - Added config item [routeOnlyInCurrentConstellation] for LethalConstellations support.
 	- Enabling this will make it so route random will only choose a moon from the current constellation.
