@@ -73,6 +73,25 @@ namespace TerminalStuff
         }
     }
 
+    [HarmonyPatch(typeof(TimeOfDay), "Awake")]
+    public class TimeAwakePatch
+    {
+        public static void Postfix()
+        {
+            Plugin.MoreLogs("TimeAwakePatch");
+            StartCreds();
+        }
+
+        private static void StartCreds()
+        {
+            if (TimeOfDay.Instance.quotaVariables != null && ConfigSettings.StartingCreds.Value > -1)
+            {
+                TimeOfDay.Instance.quotaVariables.startingCredits = ConfigSettings.StartingCreds.Value;
+                Plugin.Log.LogInfo($"Starting credits modified to {TimeOfDay.Instance.quotaVariables.startingCredits}");
+            }
+        }
+    }
+
     public class LoadGrabbablesOnShip
     {
         public static List<GrabbableObject> ItemsOnShip = [];

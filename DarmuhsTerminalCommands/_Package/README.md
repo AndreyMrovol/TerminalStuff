@@ -4,7 +4,7 @@
 
 ### Completely configurable Terminal expansion mod! 40+ new commands, 5+ new features, QoL fixes, and much more
 
-### Updated for Lethal Company v56 in version 3.2.4
+### Updated for Lethal Company v62 in version 3.5.5
 
 ### Features:
  - **Near infinite** customizable keywords for a majority of commands
@@ -24,6 +24,7 @@
  - Change the terminal font and font size!
 	- Added support for custom font packs, see [Minecraft TerminalFont](https://thunderstore.io/c/lethal-company/p/darmuh/Minecraft_TerminalFont/) as an example
  - [NEW IN 3.5.0] Your last terminal session will save the page you were on and any text you had typed in.
+ - [NEW IN 3.5.5] Adjust starting credits to any value from 0 to 20000! (Host Only)
  - Cams commands can now show player povs even without a separate bodycam mod present.
 	- Still compatibile with every major bodycam mod; OpenBodyCams, Helmet Cameras, and Solos Bodycams are all compatible!
  - Expanded compatibility with LethalLevelLoader, OpenBodyCams, and TwoRadarMaps!

@@ -53,7 +53,7 @@ namespace TerminalStuff
         [ClientRpc]
         internal void NodeLoadClientRpc(string topRightText, string nodeName, string nodeText, bool fromHost, int nodeNumber = -1)
         {
-            if (!Plugin.instance.Terminal.terminalUIScreen.gameObject.activeSelf && firstload)
+            if (!Plugin.instance.Terminal.terminalUIScreen.gameObject.activeSelf)
                 return;
 
             NetworkManager networkManager = base.NetworkManager;
@@ -160,7 +160,7 @@ namespace TerminalStuff
             }
             else
             {
-                DefaultSync(nodeName, nodeText);
+                DefaultSync(nodeName, nodeText, node);
                 Plugin.MoreLogs($"Non terminal user: Attempting to load {nodeName}'s displayText:\n {nodeText}");
             }
 
@@ -170,8 +170,18 @@ namespace TerminalStuff
 
         }
 
-        private void DefaultSync(string nodeName, string nodeText)
+        private void DefaultSync(string nodeName, string nodeText, TerminalNode newNode = null)
         {
+            if(newNode != null && vanillaNodes.Contains(newNode))
+            {
+                MoreCamStuff.CamPersistance(nodeName);
+                MoreCamStuff.VideoPersist(nodeName);
+                netNode = newNode;
+                Plugin.instance.Terminal.LoadNewNode(netNode);
+                TerminalEvents.lastNode = newNode;
+                return;
+            }
+
             MoreCamStuff.CamPersistance(nodeName);
             MoreCamStuff.VideoPersist(nodeName);
             netNode.displayText = nodeText;

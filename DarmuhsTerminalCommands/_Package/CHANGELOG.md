@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.5.5]
+ - Added config item [routeOnlyInCurrentConstellation] for LethalConstellations support.
+	- Enabling this will make it so route random will only choose a moon from the current constellation.
+ - Fixed Lever command only ever working once.
+	- Thanks @slonzyjr on discord for the report.
+ - Hopefully fixed cached terminal pages issues such as
+	- blank page on lobby reload
+	- incorrect moons/store pages when other mods modify the text in post process
+ - Updated networked nodes to hopefully better handle when other mods modify a terminal page's text in post process
+ - Added [StartingCreds] configuration item to modify a new game's starting credits.
+	- leave at -1 to leave the game untouched, will not revert any changes that were already made.
+ - Updated default TerminalCustomization colors to use the game's default values.
+	- You can either revert to the default config item, leave it blank, or type "default" to revert any changes on next customization refresh.
+ - Updated conflict resolution to prioritize moon/store items over any other keyword.
+	- This will mean if you want to access a bestiary item or any other non-store/moon word it will likely require a more precise query.
+	- If you are having any further issues with conflict resolution after this update please report them to me with logs (enable all logging configuration options and reproduce the issue)
+ - Compiled for the latest version of LethalCompany.
+
+ 
 ## [3.5.4]
  - Updated cached terminal pages for compatibility with TerminalFormatter & other mods that change text at TextPostProcess()
 

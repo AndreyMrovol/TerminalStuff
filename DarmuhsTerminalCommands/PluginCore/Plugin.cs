@@ -10,7 +10,6 @@ using TerminalStuff.EventSub;
 using TerminalStuff.PluginCore;
 using TerminalStuff.SpecialStuff;
 using UnityEngine;
-using UnityEngine.UI;
 using static OpenLib.ConfigManager.ConfigSetup;
 
 
@@ -33,7 +32,7 @@ namespace TerminalStuff
         {
             public const string PLUGIN_GUID = "darmuh.TerminalStuff";
             public const string PLUGIN_NAME = "darmuhsTerminalStuff";
-            public const string PLUGIN_VERSION = "3.5.4";
+            public const string PLUGIN_VERSION = "3.5.5";
         }
 
         internal static ManualLogSource Log;
@@ -48,6 +47,7 @@ namespace TerminalStuff
         public bool TwoRadarMapsMod = false;
         public bool suitsTerminal = false;
         public bool TerminalFormatter = false;
+        public bool Constellations = false;
 
         //public stuff for instance
         public bool radarNonPlayer = false;

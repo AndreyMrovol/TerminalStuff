@@ -109,6 +109,14 @@ namespace TerminalStuff.EventSub
                 else
                 {
                     Plugin.Spam($"[no matching camera-type nodes during AOD]\nMap: {Plugin.instance.isOnMap} \nCams: {Plugin.instance.isOnCamera} \nMiniMap: {Plugin.instance.isOnMiniMap} \nMiniCams: {Plugin.instance.isOnMiniCams} \nOverlay: {Plugin.instance.isOnOverlay}\nMirror: {Plugin.instance.isOnMirror}");
+
+                    if (lastNode == null)
+                    {
+                        Plugin.WARNING("lastNode terminalNode is null, cached pages failed!");
+                        return;
+                    }
+                        
+
                     if (lastNode.displayText.Length < 1)
                         instance.LoadNewNode(instance.terminalNodes.specialNodes.ToArray()[1]);
                     else if (!Plugin.instance.splitViewCreated && (bool)Plugin.instance.Terminal.displayingPersistentImage)

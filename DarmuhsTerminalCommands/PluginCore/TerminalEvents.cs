@@ -3,11 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
-using UnityEngine.UI;
 using static TerminalStuff.StringStuff;
+using static TerminalStuff.PluginCore.TerminalCustomizer;
 using static OpenLib.CoreMethods.AddingThings;
-using TerminalStuff.SpecialStuff;
-using System.Linq;
 
 namespace TerminalStuff
 {
@@ -22,7 +20,6 @@ namespace TerminalStuff
         internal static string TotalValueFormat = "";
         internal static string VideoErrorMessage = "";
         public static bool clockDisabledByCommand = false;
-        internal static Image terminalBackground;
 
         internal static bool quitTerminalEnum = false;
 
@@ -151,90 +148,6 @@ namespace TerminalStuff
             string text = $"Refreshing TerminalCustomization from config.\n\n";
             TerminalCustomization();
             return text;
-        }
-
-        private static void TerminalBodyColors()
-        {
-            if (!ConfigSettings.TerminalCustomization.Value)
-                return;
-
-            MeshRenderer termMesh = GameObject.Find("Environment/HangarShip/Terminal").GetComponent<MeshRenderer>();
-
-            if (termMesh != null)
-            {
-                if (termMesh.materials.Length <= 3)
-                {
-                    termMesh.materials[0].color = ColorCommands.HexToColor(ConfigSettings.TerminalColor.Value); //body
-                    termMesh.materials[1].color = ColorCommands.HexToColor(ConfigSettings.TerminalButtonsColor.Value); //glass buttons
-                    //2 = warning sticker
-                }
-                else
-                {
-                    Plugin.WARNING("termMesh does not have expected number of materials, only setting terminal body color");
-                    termMesh.material.color = ColorCommands.HexToColor(ConfigSettings.TerminalColor.Value);
-                }
-            }
-            else
-                Plugin.WARNING("customization failure: termMesh is null");
-        }
-
-        private static void TerminalKeyboardColors()
-        {
-            if (!ConfigSettings.TerminalCustomization.Value)
-                return;
-
-            MeshRenderer kbMesh = GameObject.Find("Environment/HangarShip/Terminal/Terminal.003").GetComponent<MeshRenderer>();
-
-            if (kbMesh != null)
-            {
-                kbMesh.material.color = ColorCommands.HexToColor(ConfigSettings.TerminalKeyboardColor.Value);
-            }
-            else
-                Plugin.WARNING("customization failure: kbMesh is null");
-        }
-
-        internal static void TerminalCustomization()
-        {
-            if (!ConfigSettings.TerminalCustomization.Value)
-                return;
-
-            TerminalBodyColors();
-            TerminalKeyboardColors();
-            FontStuff.GetAndSetFont();
-
-            Color moneyBG = ColorCommands.HexToColor(ConfigSettings.TerminalMoneyBGColor.Value);
-            moneyBG.a = ConfigSettings.TerminalMoneyBGAlpha.Value;
-
-            Plugin.instance.Terminal.screenText.textComponent.color = ColorCommands.HexToColor(ConfigSettings.TerminalTextColor.Value);
-            Plugin.instance.Terminal.topRightText.color = ColorCommands.HexToColor(ConfigSettings.TerminalMoneyColor.Value);
-            Plugin.instance.Terminal.terminalUIScreen.gameObject.transform.GetChild(0).GetChild(5).gameObject.GetComponent<Image>().color = moneyBG;
-            Plugin.instance.Terminal.screenText.caretColor = ColorCommands.HexToColor(ConfigSettings.TerminalCaretColor.Value);
-            Plugin.instance.Terminal.scrollBarVertical.image.color = ColorCommands.HexToColor(ConfigSettings.TerminalScrollbarColor.Value);
-            Plugin.instance.Terminal.scrollBarVertical.gameObject.GetComponent<Image>().color = ColorCommands.HexToColor(ConfigSettings.TerminalScrollBGColor.Value);
-            Plugin.instance.Terminal.terminalLight.color = ColorCommands.HexToColor(ConfigSettings.TerminalLightColor.Value);
-
-            if (TerminalClockStuff.textComponent != null)
-            {
-                Plugin.MoreLogs($"setting clock color to: {ConfigSettings.TerminalClockColor.Value}");
-                TerminalClockStuff.textComponent.color = ColorCommands.HexToColor(ConfigSettings.TerminalClockColor.Value);
-            }
-
-            terminalBackground = Plugin.instance.Terminal.terminalUIScreen.gameObject.GetComponentInChildren<Image>();
-
-            if (terminalBackground != null)
-            {
-                terminalBackground.enabled = ConfigSettings.TerminalCustomBG.Value;
-                terminalBackground.transform.SetParent(Plugin.instance.Terminal.terminalImage.transform);
-                terminalBackground.transform.SetAsLastSibling();
-                terminalBackground.rectTransform.anchoredPosition = new Vector2(10, 0);
-                terminalBackground.rectTransform.sizeDelta = new Vector2(-80, 20);
-                Color newColor = ColorCommands.HexToColor(ConfigSettings.TerminalCustomBGColor.Value);
-                newColor.a = ConfigSettings.TerminalCustomBGAlpha.Value;
-                terminalBackground.color = newColor;
-            }
-            else
-                Plugin.Spam("terminalBackground is NULL");
-            
         }
     }
 }

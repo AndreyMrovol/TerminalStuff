@@ -14,12 +14,14 @@ namespace TerminalStuff.SpecialStuff
         TerminalKeyword word;
         int distance;
         int bonus;
+        bool highPri = false;
 
-        internal ConflictRes(TerminalKeyword word, int distance, int bonus)
+        internal ConflictRes(TerminalKeyword word, int distance, int bonus, bool priority = false)
         {
             this.word = word;
             this.distance = distance;
             this.bonus = bonus;
+            this.highPri = priority;
         }
 
         internal static bool ContainsWord(List<ConflictRes> conflictList, TerminalKeyword query)
@@ -50,6 +52,7 @@ namespace TerminalStuff.SpecialStuff
 
         internal static void QueryKeywords(ref List<ConflictRes> matching, string input)
         {
+            List<string> highPriorityVerbs = new List<string>() { "buy", "route" };
             foreach (TerminalKeyword word in Plugin.instance.Terminal.terminalNodes.allKeywords)
             {
                 if ((word.word.ToLower().Contains(input) && !ContainsWord(matching, word)))
@@ -58,10 +61,21 @@ namespace TerminalStuff.SpecialStuff
                         continue;
                     int bonus = Levenshtein.MatchingStart(word.word, input);
                     int score = Levenshtein.Distance(word.word, input);
-                    
+                   
                     Plugin.Spam($"Word {word.word} noted with score {score} for input {input} with bonus {bonus}");
-                    matching.Add(new(word,score,bonus));
-                    //Plugin.Spam($"adding matching word: {word.word} to conlfict resolution list");
+                    if(word.defaultVerb == null)
+                    {
+                        matching.Add(new(word, score, bonus));
+                        continue;
+                    }
+                        
+                    if (highPriorityVerbs.Contains(word.defaultVerb.word.ToLower()))
+                    {
+                        Plugin.Spam($"Word - {word.word} given high priority attribute due to matching high priority verb: {word.defaultVerb.word}");
+                        matching.Add(new(word, score, bonus, true));
+                    }
+                    else
+                        matching.Add(new(word, score, bonus));
                 }
                 else if(word.compatibleNouns != null)
                 {
@@ -75,7 +89,14 @@ namespace TerminalStuff.SpecialStuff
                             int bonus = Levenshtein.MatchingStart(noun.noun.word, input);
                             int score = Levenshtein.Distance(noun.noun.word, input);
                             Plugin.Spam($"score: {score}");
-                            matching.Add(new(noun.noun, score, bonus));
+
+                            if (highPriorityVerbs.Contains(noun.noun.defaultVerb.word.ToLower()))
+                            {
+                                Plugin.Spam($"Word - {noun.noun.word} given high priority attribute due to matching high priority verb: {noun.noun.defaultVerb.word}");
+                                matching.Add(new(noun.noun, score, bonus, true));
+                            }
+                            else
+                                matching.Add(new(noun.noun, score, bonus));
                         }
                     }
                 }
@@ -86,6 +107,7 @@ namespace TerminalStuff.SpecialStuff
         {
             //Dictionary<TerminalKeyword, int> matching = [];
             List<ConflictRes> resolutionList = [];
+            List<ConflictRes> highPri = [];
 
             QueryKeywords(ref resolutionList, query);
 
@@ -96,26 +118,21 @@ namespace TerminalStuff.SpecialStuff
                 return false;
             }
 
-            int highestBonus = 0;
-            ConflictRes bestMatch = null;
-            foreach(ConflictRes resolution in resolutionList)
+            foreach (ConflictRes resolution in resolutionList)
             {
-                if(resolution.bonus > highestBonus)
-                {
-                    bestMatch = resolution;
-                    highestBonus = resolution.bonus;
-                    Plugin.Spam($"highestBonus updated to {highestBonus} - from {bestMatch.word}");
-                }
-                else if(resolution.bonus == highestBonus && bestMatch != null)
-                {
-                    Plugin.Spam($"matching highestBonus found for word {resolution.word.word}");
-                    if (resolution.distance < bestMatch.distance)
-                    {
-                        Plugin.Spam($"distance for {resolution.word.word} is lower than {bestMatch.word.word}");
-                        Plugin.Spam($"setting bestMatch to {resolution.word.word}");
-                        bestMatch = resolution;
-                    }
-                }
+                if(resolution.highPri)
+                    highPri.Add(resolution);
+            }
+
+            ConflictRes bestMatch = null;
+
+            if (highPri.Count > 0)
+            {
+                GetResolution(highPri, ref bestMatch);
+            }
+            else
+            {
+                GetResolution(resolutionList, ref bestMatch);
             }
 
             if (bestMatch.word == null)
@@ -131,6 +148,31 @@ namespace TerminalStuff.SpecialStuff
                 return true;
             }
                 
+        }
+
+        internal static void GetResolution(List<ConflictRes> resolutionList, ref ConflictRes bestMatch)
+        {
+            int highestBonus = 0;
+
+            foreach (ConflictRes resolution in resolutionList)
+            {
+                if (resolution.bonus > highestBonus)
+                {
+                    bestMatch = resolution;
+                    highestBonus = resolution.bonus;
+                    Plugin.Spam($"highestBonus updated to {highestBonus} - from {bestMatch.word}");
+                }
+                else if (resolution.bonus == highestBonus && bestMatch != null)
+                {
+                    Plugin.Spam($"matching highestBonus found for word {resolution.word.word}");
+                    if (resolution.distance < bestMatch.distance)
+                    {
+                        Plugin.Spam($"distance for {resolution.word.word} is lower than {bestMatch.word.word}");
+                        Plugin.Spam($"setting bestMatch to {resolution.word.word}");
+                        bestMatch = resolution;
+                    }
+                }
+            }
         }
     }
 }

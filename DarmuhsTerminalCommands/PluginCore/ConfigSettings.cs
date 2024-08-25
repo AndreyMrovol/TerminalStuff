@@ -143,6 +143,7 @@ namespace TerminalStuff
         public static ConfigEntry<int> aodOffDelay { get; internal set; }
         public static ConfigEntry<string> routeRandomBannedWeather { get; internal set; }
         public static ConfigEntry<int> routeRandomCost { get; internal set; }
+        public static ConfigEntry<bool> routeOnlyInCurrentConstellation { get; internal set; }
         public static ConfigEntry<string> purchasePackCommands { get; internal set; }
 
         //keyword strings (terminalapi)
@@ -194,6 +195,8 @@ namespace TerminalStuff
         public static ConfigEntry<float> TerminalRadarDefaultZoom { get; internal set; }
         public static ConfigEntry<string> TerminalFillEmptyText {  get; internal set; }
         public static ConfigEntry<bool> CacheLastTerminalPage { get; internal set; }
+
+        public static ConfigEntry<int> StartingCreds { get; internal set; }
 
         //Terminal Customization
         public static ConfigEntry<bool> TerminalCustomization { get; internal set; }
@@ -294,7 +297,7 @@ namespace TerminalStuff
 
             routeRandomBannedWeather = MakeString(Plugin.instance.Config, "Fun Configuration", "routeRandomBannedWeather", "Eclipsed;Flooded;Foggy", "This semi-colon separated list will be used to exclude moons from the route random command");
             routeRandomCost = MakeClampedInt(Plugin.instance.Config, "Fun Configuration", "routeRandomCost", 100, "Flat rate for running the route random command to get a random moon...", 0, 99999);
-
+            routeOnlyInCurrentConstellation = MakeBool(Plugin.instance.Config, "Fun Configuration", "routeOnlyInCurrentConstellation", false, "When LethalConstellations mod is present, setting this to true will only choose a random moon within the current constellation");
 
             //Cost configs
             vitalsCost = MakeInt(Plugin.instance.Config, "Upgrades", "vitalsCost", 10, "Credits cost to run Vitals Command each time it's run.");
@@ -535,24 +538,25 @@ namespace TerminalStuff
             TerminalRadarDefaultZoom = MakeClampedFloat(Plugin.instance.Config, "Quality of Life", "TerminalRadarDefaultZoom", 20f, "The default level zoom for the radar. The lower the number the more zoomed in you'll be.", 5f, 30f);
             TerminalFillEmptyText = MakeClampedString(Plugin.instance.Config, "Quality of Life", "TerminalFillEmptyText", "nochange", "AutoFill any node with empty space depending on your desired formatting", new AcceptableValueList<string>("nochange", "fillbottom", "textmiddle", "textbottom"));
             CacheLastTerminalPage = MakeBool(Plugin.instance.Config, "Quality of Life", "CacheLastTerminalPage", true, "Quality of Life feature that caches the last terminal page of the last terminal user.");
+            StartingCreds = MakeClampedInt(Plugin.instance.Config, "Quality of Life", "StartingCreds", -1, "Change this Quality of Life feature from -1 to set your desired starting credits amount\n-1 will leave starting credits unchanged by this mod.\nCapped at 20K, you shouldn't need more than this", -1, 20000);
 
 
             //Terminal Customization
             TerminalCustomization = MakeBool(Plugin.instance.Config, "Terminal Customization", "TerminalCustomization", false, "Enable or Disable terminal color customizations");
-            TerminalColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalColor", "#666633", "This changes the color of the physical terminal");
-            TerminalButtonsColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalButtonsColor", "#9900ff", "This changes the color of the physical buttons on the terminal");
-            TerminalKeyboardColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalKeyboardColor", "#9900ff", "This changes the color of the keyboard on the terminal");
-            TerminalTextColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalTextColor", "#ffffb3", "This changes the color of the main text in the terminal");
-            TerminalMoneyColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalMoneyColor", "#ccffcc", "This changes the color of the current credits text in the top left of the terminal");
-            TerminalMoneyBGColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalMoneyBGColor", "#ccffcc", "This changes the color of the current credits text in the top left of the terminal");
+            TerminalColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalColor", "#CFCFCF", "This changes the color of the physical terminal");
+            TerminalButtonsColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalButtonsColor", "#B1D2FF", "This changes the color of the physical buttons on the terminal");
+            TerminalKeyboardColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalKeyboardColor", "#878787", "This changes the color of the keyboard on the terminal");
+            TerminalTextColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalTextColor", "#03E715", "This changes the color of the main text in the terminal");
+            TerminalMoneyColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalMoneyColor", "#03E715", "This changes the color of the current credits text in the top left of the terminal");
+            TerminalMoneyBGColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalMoneyBGColor", "#064F00", "This changes the color of the current credits text in the top left of the terminal");
             TerminalMoneyBGAlpha = MakeClampedFloat(Plugin.instance.Config, "Terminal Customization", "TerminalMoneyBGAlpha", 0.1f, "This changes the transparency of the money background color.", 0f, 1f);
-            TerminalCaretColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalCaretColor", "#9900ff", "This changes the color of the text caret in the terminal");
-            TerminalScrollbarColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalScrollbarColor", "#9900ff", "This changes the color of the scrollbar in the terminal");
-            TerminalScrollBGColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalScrollBGColor", "#ffffb3", "This changes the color of the background box of the scrollbar in the terminal");
-            TerminalClockColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalClockColor", "#ccffcc", "This changes the color of the clock element that is added to the terminal");
-            TerminalLightColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalLightColor", "#9900ff", "This changes the color of the light that shines from the terminal");
+            TerminalCaretColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalCaretColor", "#00BC0F", "This changes the color of the text caret in the terminal");
+            TerminalScrollbarColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalScrollbarColor", "#075200", "This changes the color of the scrollbar in the terminal");
+            TerminalScrollBGColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalScrollBGColor", "#075200", "This changes the color of the background box of the scrollbar in the terminal");
+            TerminalClockColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalClockColor", "#03E715", "This changes the color of the clock element that is added to the terminal");
+            TerminalLightColor = MakeString(Plugin.instance.Config,"Terminal Customization", "TerminalLightColor", "#DBFFBA", "This changes the color of the light that shines from the terminal");
             TerminalCustomBG = MakeBool(Plugin.instance.Config, "Terminal Customization", "TerminalCustomBG", false, "Enable or Disable custom background for the terminal screen");
-            TerminalCustomBGColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalCustomBGColor", "#9900ff", "This changes the color of the custom background for the terminal screen");
+            TerminalCustomBGColor = MakeString(Plugin.instance.Config, "Terminal Customization", "TerminalCustomBGColor", "#FFFFFF", "This changes the color of the custom background for the terminal screen");
             TerminalCustomBGAlpha = MakeClampedFloat(Plugin.instance.Config, "Terminal Customization", "TerminalCustomBGAlpha", 0.08f, "This changes the transparency of the custom background for the terminal screen", 0f, 1f);
 
             //Font Stuff

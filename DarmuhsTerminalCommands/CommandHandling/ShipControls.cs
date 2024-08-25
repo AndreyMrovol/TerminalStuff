@@ -219,13 +219,6 @@ namespace TerminalStuff
                 string displayText = $"We have not yet arrived to {getLevelName}, please wait.\r\n";
                 return displayText;
             }
-            else if (GameNetworkManager.Instance.gameHasStarted)
-            {
-                string displayText = $"{ConfigSettings.leverString.Value}\n";
-                leverInstance.StartCoroutine(LeverPull(leverInstance));
-                Plugin.MoreLogs("lever pulled");
-                return displayText;
-            }
             else
             {
                 string displayText = "Cannot pull the lever at this time.\r\n\r\n\tNOTE: If the game has not been started, only the host can do this.\r\n\r\n";
@@ -256,10 +249,16 @@ namespace TerminalStuff
 
         private static bool CanPullLever(NetworkManager networkManager)
         {
-            return !GameNetworkManager.Instance.gameHasStarted &&
+            if (!GameNetworkManager.Instance.gameHasStarted &&
                    !StartOfRound.Instance.travellingToNewLevel &&
                    networkManager is not null &&
-                   networkManager.IsHost;
+                   networkManager.IsHost)
+                return true;
+
+            if (GameNetworkManager.Instance.gameHasStarted && !StartOfRound.Instance.travellingToNewLevel)
+                return true;
+
+            return false;
         }
 
         static IEnumerator LeverPull(StartMatchLever leverInstance)
@@ -281,7 +280,7 @@ namespace TerminalStuff
                 Plugin.Log.LogError("StartMatchLever instance not found!");
             }
 
-            leverEnum = true;
+            leverEnum = false;
         }
     }
 }

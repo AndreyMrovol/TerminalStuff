@@ -35,8 +35,21 @@ namespace TerminalStuff
                 }
                 else
                 {
-                    validLevels.Add(level);
-                    Plugin.MoreLogs($"Added {level.PlanetName} to valid random planets");
+                    if(ConfigSettings.routeOnlyInCurrentConstellation.Value && Plugin.instance.Constellations)
+                    {
+                        if(Compatibility.ConstellationsCompat.IsLevelInConstellation(level))
+                        {
+                            validLevels.Add(level);
+                            Plugin.MoreLogs($"Added {level.PlanetName} to valid random planets within the current constellation!");
+                        }
+                        else
+                            continue;
+                    }
+                    else
+                    {
+                        validLevels.Add(level);
+                        Plugin.MoreLogs($"Added {level.PlanetName} to valid random planets");
+                    }
                 }
             }
 
@@ -50,6 +63,7 @@ namespace TerminalStuff
             Plugin.MoreLogs($"{validLevels[randomIndex].PlanetName} has been chosen!");
 
             StartOfRound.Instance.ChangeLevelServerRpc(validLevels[randomIndex].levelID, Plugin.instance.Terminal.groupCredits);
+            StartOfRound.Instance.SetMapScreenInfoToCurrentLevel();
 
             int newCreds = CostCommands.CalculateNewCredits(Plugin.instance.Terminal.groupCredits, ConfigSettings.routeRandomCost.Value, Plugin.instance.Terminal);
 

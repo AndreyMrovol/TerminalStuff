@@ -1,4 +1,5 @@
-﻿using OpenLib.Events;
+﻿using OpenLib.CoreMethods;
+using OpenLib.Events;
 using TerminalStuff.PluginCore;
 using TerminalStuff.SpecialStuff;
 using static TerminalStuff.EventSub.TerminalStart;
@@ -39,7 +40,6 @@ namespace TerminalStuff.EventSub
             Plugin.MoreLogs($"Setting Plugin.instance.Terminal");
             FontStuff.SetCachedDefault();
             StuffForLibrary.AddCommands(); //replaced addkeywords
-            firstload = false;
         }
     }
 }

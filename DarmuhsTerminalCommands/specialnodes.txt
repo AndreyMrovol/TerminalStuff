@@ -83,6 +83,18 @@ image alpha
 image color
 
 
+[Debug  :darmuhsTerminalStuff] CustomTerminalStuff.TerminalBody cached color: CFCFCF
+[Debug  :darmuhsTerminalStuff] CustomTerminalStuff.TerminalButtonsColor cached color: B1D2FF
+[Debug  :darmuhsTerminalStuff] CustomTerminalStuff.TerminalKeyboard cached color: 878787
+[Debug  :darmuhsTerminalStuff] CustomTerminalStuff.TerminalText cached color: 03E715
+[Debug  :darmuhsTerminalStuff] CustomTerminalStuff.MoneyText cached color: 03E715
+[Debug  :darmuhsTerminalStuff] CustomTerminalStuff.MoneyBG cached color: 064F00
+[Debug  :darmuhsTerminalStuff] CustomTerminalStuff.TextCaret cached color: 00BC0F
+[Debug  :darmuhsTerminalStuff] CustomTerminalStuff.Scrollbar cached color: 075200
+[Debug  :darmuhsTerminalStuff] CustomTerminalStuff.TerminalLight cached color: DBFFBA
+[Debug  :darmuhsTerminalStuff] CustomTerminalStuff.TerminalBackground cached color: FFFFFF
+
+
 from LLL:
 
 routeKeyword = Terminal.terminalNodes.allKeywords[27];

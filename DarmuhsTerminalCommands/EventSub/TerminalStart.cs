@@ -1,8 +1,10 @@
 ﻿using static TerminalStuff.TerminalEvents;
+using TerminalStuff.PluginCore;
 using UnityEngine;
 using System.Collections;
 using static OpenLib.ConfigManager.ConfigSetup;
 using static OpenLib.CoreMethods.LogicHandling;
+using System.Collections.Generic;
 
 namespace TerminalStuff.EventSub
 {
@@ -12,7 +14,7 @@ namespace TerminalStuff.EventSub
         internal static bool isTermInUse = false;
         internal static TerminalNode startNode = null;
         internal static TerminalNode helpNode = null;
-        internal static bool firstload = false;
+        internal static List<TerminalNode> vanillaNodes = [];
         internal static bool delayStartEnum = false;
 
         internal static void OnTerminalStart()
@@ -34,7 +36,7 @@ namespace TerminalStuff.EventSub
             TerminalClockStuff.MakeClock();
             ViewCommands.DetermineCamsTargets();
             ShortcutBindings.InitSavedShortcuts();
-            TerminalCustomization();
+            TerminalCustomizer.TerminalCustomization();
             MenuBuild.CategoryList();
         }
 
@@ -42,10 +44,11 @@ namespace TerminalStuff.EventSub
         private static void OverWriteTextNodes()
         {
             Plugin.MoreLogs("updating displaytext for help and home");
+            startNode = Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[1];
+            helpNode = Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[13];
+
             if (!GameStuff.oneTimeOnly)
             {
-                startNode = Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[1];
-                helpNode = Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[13];
                 string original = helpNode.displayText;
                 //Plugin.Spam(original);
                 string replacement = original.Replace("To see the list of moons the autopilot can route to.", "List of moons the autopilot can route to.").Replace("To see the company store's selection of useful items.", "Company store's selection of useful items.");
@@ -64,6 +67,35 @@ namespace TerminalStuff.EventSub
             }
 
             OpenLib.CoreMethods.AddingThings.AddKeywordToExistingNode("home", Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[1], true); //startNode
+
+
+        }
+
+        internal static void VanillaNodesCache()
+        {
+            vanillaNodes.Clear();
+
+            if (OpenLib.CoreMethods.DynamicBools.TryGetKeyword("store", out TerminalKeyword storeWord))
+            {
+                TerminalNode storeNode = storeWord.specialKeywordResult;
+                vanillaNodes.Add(storeNode);
+                Plugin.Spam("storeNode cached");
+            }
+
+            if (OpenLib.CoreMethods.DynamicBools.TryGetKeyword("moons", out TerminalKeyword moonsWord))
+            {
+                TerminalNode moonsNode = moonsWord.specialKeywordResult;
+                vanillaNodes.Add(moonsNode);
+                Plugin.Spam("moonsNode cached");
+            }
+
+            if (OpenLib.CoreMethods.DynamicBools.TryGetKeyword("bestiary", out TerminalKeyword bestiaryWord))
+            {
+                TerminalNode bestiaryNode = bestiaryWord.specialKeywordResult;
+                vanillaNodes.Add(bestiaryNode);
+                Plugin.Spam("bestiaryNode cached");
+            }
+
         }
 
         internal static void TerminalStartGroupDelay()
@@ -85,12 +117,11 @@ namespace TerminalStuff.EventSub
             SplitViewChecks.CheckForSplitView("neither");
             Plugin.MoreLogs("disabling cams views");
             ViewCommands.isVideoPlaying = false;
-            StartOfRound.Instance.mapScreen.SwitchRadarTargetAndSync(0); //fix vanilla bug where you need to switch map target at start
             NetHandler.UpgradeStatusCheck(); // sync upgrades status for this save
             TerminalClockStuff.StartClockCoroutine();
             AlwaysOnStart(Plugin.instance.Terminal, startNode);
             yield return new WaitForSeconds(0.1f);
-            Plugin.instance.Terminal.topRightText.text = Plugin.instance.Terminal.groupCredits.ToString(); //fix creds display for alwayson
+            Plugin.instance.Terminal.topRightText.text = $"${Plugin.instance.Terminal.groupCredits}"; //fix creds display for alwayson
             StartCheck(Plugin.instance.Terminal, startNode);
             DebugShowInfo();
             delayStartEnum = false;
@@ -105,21 +136,19 @@ namespace TerminalStuff.EventSub
         private static void AlwaysOnStart(Terminal thisterm, TerminalNode startNode)
         {
 
-            if (ConfigSettings.alwaysOnAtStart.Value && !firstload)
+            if (ConfigSettings.alwaysOnAtStart.Value)
             {
                 Plugin.Spam("Setting AlwaysOn Display.");
                 if (ConfigSettings.networkedNodes.Value && ConfigSettings.ModNetworking.Value)
                 {
                     Plugin.Spam("network nodes enabled, syncing alwayson status");
                     NetHandler.Instance.StartAoDServerRpc(true);
-                    firstload = true;
                 }
                 else
                 {
                     alwaysOnDisplay = true;
                     ToggleScreen(true);
                     thisterm.LoadNewNode(startNode);
-                    firstload = true;
                 }
 
                 if (ConfigSettings.TerminalLightBehaviour.Value == "alwayson")
@@ -141,6 +170,7 @@ namespace TerminalStuff.EventSub
 
             if (GameNetworkManager.Instance.localPlayerController.IsHost)
             {
+                StartOfRound.Instance.mapScreen.SwitchRadarTargetAndSync(0); //fix vanilla bug where you need to switch map target at start
                 thisterm.LoadNewNode(startNode);
                 StartofHandling.CheckNetNode(startNode);
                 return;

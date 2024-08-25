@@ -85,6 +85,10 @@ namespace TerminalStuff.EventSub
             {
                 Plugin.Spam("Terminal Formatter by mrov detected!");
             }
+            if (SoftCompatibility("com.github.darmuh.LethalConstellations", ref Plugin.instance.Constellations))
+            {
+                Plugin.Spam("LethalConstellations detected ^.^");
+            }
         }
     }
 }
