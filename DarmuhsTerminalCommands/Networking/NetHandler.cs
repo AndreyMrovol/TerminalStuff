@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using static TerminalStuff.EventSub.TerminalStart;
-using static OpenLib.ConfigManager.ConfigSetup;
 using static OpenLib.CoreMethods.AddingThings;
 using static OpenLib.CoreMethods.LogicHandling;
 using Object = UnityEngine.Object;
@@ -35,8 +34,8 @@ namespace TerminalStuff
             }
             else if (!netNodeSet && networkManager.IsHost || networkManager.IsServer)
             {
-                if (!Plugin.instance.Terminal.terminalUIScreen.gameObject.activeSelf)
-                    return;
+                //if (!Plugin.instance.Terminal.terminalUIScreen.gameObject.activeSelf)
+                    //return;
 
                 Plugin.MoreLogs($"Host: attempting to sync node {nodeName}/{nodeNumber}");
                 SyncNodes(topRightText, nodeName, nodeText, nodeNumber);
@@ -53,8 +52,8 @@ namespace TerminalStuff
         [ClientRpc]
         internal void NodeLoadClientRpc(string topRightText, string nodeName, string nodeText, bool fromHost, int nodeNumber = -1)
         {
-            if (!Plugin.instance.Terminal.terminalUIScreen.gameObject.activeSelf)
-                return;
+            //if (!Plugin.instance.Terminal.terminalUIScreen.gameObject.activeSelf)
+               //return;
 
             NetworkManager networkManager = base.NetworkManager;
             if (fromHost && (networkManager.IsHost || networkManager.IsServer))
@@ -176,9 +175,10 @@ namespace TerminalStuff
             {
                 MoreCamStuff.CamPersistance(nodeName);
                 MoreCamStuff.VideoPersist(nodeName);
-                netNode = newNode;
-                Plugin.instance.Terminal.LoadNewNode(netNode);
-                TerminalEvents.lastNode = newNode;
+                newNode.displayText = Plugin.instance.Terminal.TextPostProcess(newNode.displayText, newNode);
+                Plugin.instance.Terminal.LoadNewNode(newNode);
+                if (ConfigSettings.CacheLastTerminalPage.Value)
+                    TerminalEvents.lastNode = newNode;
                 return;
             }
 
@@ -186,7 +186,10 @@ namespace TerminalStuff
             MoreCamStuff.VideoPersist(nodeName);
             netNode.displayText = nodeText;
             Plugin.instance.Terminal.LoadNewNode(netNode);
-            TerminalEvents.lastNode = netNode;
+            
+            if(ConfigSettings.CacheLastTerminalPage.Value)
+                TerminalEvents.lastNode = netNode;
+
             Plugin.MoreLogs($"Only displaying {nodeName} text.");
         }
 
@@ -485,9 +488,7 @@ namespace TerminalStuff
         {
             Plugin.MoreLogs($"Client: setting alwaysondisplay to {aod}");
             alwaysOnDisplay = aod;
-            if (isTermInUse == false && aod == true)
-                ToggleScreen(aod);
-            else if (isTermInUse == false && aod == false)
+            if (Plugin.instance.Terminal.terminalInUse == false)
                 ToggleScreen(aod);
         }
 

@@ -69,5 +69,7 @@ namespace TerminalStuff
             return false;
         }
 
+        //internal static bool 
+
     }
 }

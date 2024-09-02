@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.5.7]
+ - Added better handling of default "view monitor" command.
+	- Will now display a new page for users when the keyword is not already replaced.
+ - Added new config item [obcRequireUpgrade] which will disable any commands that use a bodycam until the unlock has been purchased.
+	- Commands that will show a new message telling the user the bodycam upgrade is required: terminalCams, terminalMinimap, terminalMinicams, and terminalOverlay.
+ - Updated handling for keeping the screen on. There shouldnt be any noticeable difference but it helps on the backend.
+ - Added a simple transpiler patch to disable the vanilla behaviour of loading different nodes when you start using the terminal.
+	- This mod is now fully responsible for loading a node when you first start using the terminal.
+ - Fixed some issues with terminal video handling such as:
+	- extra (unnecessary) folder being created for video packs
+	- videos restarting when leaving/reentering the terminal causing desyncs with other players.
+ - Hopefully fixed some minor desync issues with networked nodes.
+ - Added config item [alwaysUniqueVideo] which will ensure a unique video is always played when running the videoplayer command.
+	- When enabled, this setting will shuffle all of the videos into a list. Each time a video command is run it will play a video from the list until it reaches the end of the list. Then a new re-shuffled list will be created.
+ - Added priority handling so that Store commands will always take priority over Moons routing commands with ConflictResolution enabled.
+	- I can add this as a configurable in the future if requested.
+ - Removed alwaysOnAtStart & alwaysOnDynamic in favor of new Quality of Life setting - [TerminalScreen]
+	- this can be set to one of the following modes:
+		- nochange (screen will follow vanilla behavior and remain untouched)
+		- alwayson (screen will stay on at all times)
+		- inship (screen will stay on while you are in the ship)
+		- inuse (screen will only stay on when someone is using the terminal)
+ - Renamed alwaysOnWhileDead and aodOffDelay config items to ScreenOnWhileDead and ScreenOffDelay
+
 ## [3.5.6]
  - Hotfix for minor issue with cached terminal pages
 

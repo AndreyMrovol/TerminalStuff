@@ -1,8 +1,11 @@
 ﻿using GameNetcodeStuff;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using static TerminalStuff.AllMyTerminalPatches;
+using static OpenLib.Menus.MenuBuild;
+using OpenLib.Menus;
 
 namespace TerminalStuff
 {
@@ -249,6 +252,11 @@ namespace TerminalStuff
         {
             isVideoPlaying = false;
             
+            if(Plugin.instance.OpenBodyCamsMod && ConfigSettings.camsUseDetectedMods.Value )
+            {
+                if (!OpenBodyCamsCompatibility.BodyCamIsUnlocked() && ConfigSettings.obcRequireUpgrade.Value)
+                    return "\tThis command is currently <color=#ff1a1a>unavailable</color>!\n\nPlease purchase the <color=#ffff66>BodyCam upgrade</color> to use this command.\r\n\r\n";
+            }
 
             if (Plugin.instance.isOnCamera == false && Plugin.instance.splitViewCreated)
             {
@@ -287,6 +295,12 @@ namespace TerminalStuff
         {
             isVideoPlaying = false;
             string displayText;
+
+            if (Plugin.instance.OpenBodyCamsMod && ConfigSettings.camsUseDetectedMods.Value)
+            {
+                if (!OpenBodyCamsCompatibility.BodyCamIsUnlocked() && ConfigSettings.obcRequireUpgrade.Value)
+                    return "\tThis command is currently <color=#ff1a1a>unavailable</color>!\n\nPlease purchase the <color=#ffff66>BodyCam upgrade</color> to use this command.\r\n\r\n";
+            }
 
             // Extract player name from map screen
             string playerNameText = StartOfRound.Instance.mapScreenPlayerName.text;
@@ -407,6 +421,13 @@ namespace TerminalStuff
         {
             isVideoPlaying = false;
             string displayText;
+
+            if (Plugin.instance.OpenBodyCamsMod && ConfigSettings.camsUseDetectedMods.Value)
+            {
+                if (!OpenBodyCamsCompatibility.BodyCamIsUnlocked() && ConfigSettings.obcRequireUpgrade.Value)
+                    return "\tThis command is currently <color=#ff1a1a>unavailable</color>!\n\nPlease purchase the <color=#ffff66>BodyCam upgrade</color> to use this command.\r\n\r\n";
+            }
+
             string playerNameText = StartOfRound.Instance.mapScreenPlayerName.text;
             string removeText = "MONITORING: ";
             string playerName = playerNameText.Remove(0, removeText.Length);
@@ -448,6 +469,13 @@ namespace TerminalStuff
         {
             isVideoPlaying = false;
             string displayText;
+
+            if (Plugin.instance.OpenBodyCamsMod && ConfigSettings.camsUseDetectedMods.Value)
+            {
+                if (!OpenBodyCamsCompatibility.BodyCamIsUnlocked() && ConfigSettings.obcRequireUpgrade.Value)
+                    return "\tThis command is currently <color=#ff1a1a>unavailable</color>!\n\nPlease purchase the <color=#ffff66>BodyCam upgrade</color> to use this command.\r\n\r\n";
+            }
+
             string playerNameText = StartOfRound.Instance.mapScreenPlayerName.text;
             string removeText = "MONITORING: ";
             string playerName = playerNameText.Remove(0, removeText.Length);
@@ -677,6 +705,20 @@ namespace TerminalStuff
 
             string displayText = VideoManager.PickVideoToPlay(Plugin.instance.Terminal.videoPlayer);
             return displayText;
+        }
+
+        internal static string NoVanillaView()
+        {
+            StringBuilder message = new();
+            message.AppendLine("\tThis command has been <color=#ff1a1a>replaced</color>!\n\nPlease use one of the following alternatives:\n");
+            List<TerminalMenuItem> menus = TerminalMenuItems(ConfigSettings.ViewConfig);
+
+            foreach(TerminalMenuItem menuItem in menus)
+            {
+                message.AppendLine($"> <color=#ffff66>{OpenLib.Common.CommonStringStuff.GetKeywordsForMenuItem(menuItem.itemKeywords)}</color>\r\n{menuItem.itemDescription}\r\n");
+            }
+
+            return message.ToString();
         }
 
         internal static void DisplayTextUpdater(out string displayText)

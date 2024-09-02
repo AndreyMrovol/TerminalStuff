@@ -1,6 +1,11 @@
 ﻿using HarmonyLib;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
 using TerminalStuff.SpecialStuff;
 using UnityEngine;
+using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.Video;
 
 
@@ -19,6 +24,56 @@ namespace TerminalStuff
                 ConflictRes.InitRes(playerWord, ref __result); //should modify the keyword to whatever resolution finds as the best match
             }
         }
+
+
+        [HarmonyPatch(typeof(Terminal), "waitUntilFrameEndToSetActive")]
+        public class QuitTerminalPatch : Terminal
+        {
+            [HarmonyPrefix]
+            static void Prefix(ref bool active)
+            {
+                Plugin.Spam("waitUntilFrameEndToSetActive");
+
+                if (EventSub.TerminalStart.alwaysOnDisplay)
+                {
+                    Plugin.Spam("alwaysOnDisplay is TRUE");
+
+                    if (!MoreCommands.keepAlwaysOnDisabled)
+                        active = true; //turn screen off
+
+                    //Plugin.Spam("End of Prefix");
+                    return;
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(Terminal), "BeginUsingTerminal")]
+        public class BeginUsingTranspiler : Terminal
+        {
+            [HarmonyTranspiler]
+            private static IEnumerable<CodeInstruction> BeginUsingTerminal_Transpiler(IEnumerable<CodeInstruction> instructions)
+            {
+                CodeInstruction nothing = new(OpCodes.Nop);
+                foreach(CodeInstruction instruction in instructions)
+                {
+                    if (instruction.Calls(AccessTools.Method("Terminal:LoadNewNode")))
+                    {
+                        Plugin.Spam("not adding matching instruction - Terminal:LoadNewNode");
+                        yield return nothing;
+                    }
+                    else
+                    {
+                        //Plugin.Log.LogInfo(instruction.ToString());
+                        yield return instruction;
+                    }
+                        
+                }
+
+                Plugin.Log.LogInfo("Transpiler success!!!");
+            }
+        }
+        
+
 
         [HarmonyPatch(typeof(Terminal), "TextPostProcess")]
         public class ZeekersTypo : Terminal
@@ -40,6 +95,8 @@ namespace TerminalStuff
             {
                 if (node.name == "darmuh's videoPlayer" && sanityCheckLOL)
                 {
+                    VideoManager.videoPlayerNode = node;
+
                     if (!ViewCommands.isVideoPlaying)
                     {
                         Plugin.instance.Terminal.videoPlayer.enabled = true;
@@ -58,9 +115,14 @@ namespace TerminalStuff
                     if (!Plugin.instance.splitViewCreated)
                         return;
 
-                    Plugin.instance.Terminal.terminalImage.enabled = BoolStuff.ShouldEnableImage();
+                    bool shouldEnable = BoolStuff.ShouldEnableImage();
+
+                    if (Plugin.instance.Terminal.terminalImage.enabled = shouldEnable)
+                        return;
+
+                    Plugin.instance.Terminal.terminalImage.enabled = shouldEnable;
                     //full screen image should always be enabled for cam views
-                    Plugin.Spam($"full screen image set to {BoolStuff.ShouldEnableImage()}");
+                    Plugin.Spam($"full screen image set to {shouldEnable}");
                 }
 
             }

@@ -4,35 +4,35 @@ using UnityEngine.Video;
 using static TerminalStuff.EventSub.TerminalQuit;
 using static TerminalStuff.BoolStuff;
 using OpenLib.CoreMethods;
+using static OpenLib.ConfigManager.ConfigSetup;
+using static OpenLib.CoreMethods.AddingThings;
 
 namespace TerminalStuff
 {
     internal class SplitViewChecks : MonoBehaviour
     {
         internal static bool enabledSplitObjects = false;
-        internal static CompatibleNoun[] vanillaViewNouns;
-        internal static TerminalKeyword viewKeyword;
+        internal static bool replacedViewMon = false;
+        //internal static CompatibleNoun[] vanillaViewNouns;
+        //internal static TerminalKeyword viewKeyword;
 
         private static void HandleVanillaMap(bool shouldRemove)
         {
             if (shouldRemove)
             {
-                if (DynamicBools.TryGetKeyword("view", out TerminalKeyword viewKW) && DynamicBools.TryGetKeyword("monitor", out TerminalKeyword monitorKW))
-                {
-                    Plugin.Spam("removing vanilla compat noun - monitor, from view");
-                    viewKeyword = viewKW;
-                    vanillaViewNouns = viewKW.compatibleNouns;
-                    RemoveThings.RemoveCompatibleNoun(ref viewKW, monitorKW);
-                }
+                ReplaceViewMonitor();
+            }
+        }
+
+        private static void ReplaceViewMonitor()
+        {
+            if (!DynamicBools.TryGetKeyword("view monitor"))
+            {
+                AddNodeManual("View Monitor Not Available", "view monitor", ViewCommands.NoVanillaView, true, 0, defaultListing);
+                Plugin.Spam("Added view monitor warning");
             }
             else
-            {
-                if (vanillaViewNouns != null)
-                {
-                    Plugin.Spam("returning to vanilla compat nouns");
-                    viewKeyword.compatibleNouns = vanillaViewNouns;
-                }
-            }
+                Plugin.Spam("keyword already exists!");
         }
 
         public static void InitSplitViewObjects()
@@ -109,6 +109,9 @@ namespace TerminalStuff
 
         private static void SetMiniScreen(string whatIsIt, bool state)
         {
+            if (ViewCommands.miniScreenImage.enabled == state)
+                return;
+
             ViewCommands.miniScreenImage.enabled = state;
             Plugin.MoreLogs($"{whatIsIt} has set miniscreen to {state}");
         }

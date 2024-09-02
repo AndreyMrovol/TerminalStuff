@@ -40,6 +40,7 @@ namespace TerminalStuff.EventSub
             Plugin.MoreLogs($"Setting Plugin.instance.Terminal");
             FontStuff.SetCachedDefault();
             StuffForLibrary.AddCommands(); //replaced addkeywords
+            AlwaysOnStuff.screenSettings = new(ConfigSettings.TerminalScreen.Value);
         }
     }
 }

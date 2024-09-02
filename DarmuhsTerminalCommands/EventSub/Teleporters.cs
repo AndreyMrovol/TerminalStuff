@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using static TerminalStuff.StringStuff;
-using static OpenLib.ConfigManager.ConfigSetup;
+﻿using static OpenLib.ConfigManager.ConfigSetup;
 using static OpenLib.CoreMethods.AddingThings;
-using static OpenLib.Menus.MenuBuild;
 
 namespace TerminalStuff.EventSub
 {

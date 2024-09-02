@@ -36,8 +36,15 @@ namespace TerminalStuff
                 ToggleOpenCams(true, false);
                 Plugin.MoreLogs($"OBC - camera already created, assigning targetTexture and enabling camera");
             }
-                
-            
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        internal static bool BodyCamIsUnlocked()
+        {
+            if (BodyCam.BodyCamsAreAvailable)
+                return true;
+            else
+                return false;
         }
 
         private static void CameraEvent(Camera cam)

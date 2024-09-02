@@ -12,6 +12,7 @@ namespace TerminalStuff
     {
         public static List<ManagedConfig> TerminalStuffBools = [];
         public static MainListing TerminalStuffMain;
+        public static List<ManagedConfig> ViewConfig = [];
 
         //keybinds
         public static ConfigEntry<string> walkieTermKey { get; internal set; }
@@ -20,6 +21,7 @@ namespace TerminalStuff
 
         //cams special
         public static ConfigEntry<bool> camsUseDetectedMods { get; internal set; }
+        public static ConfigEntry<bool> obcRequireUpgrade { get; internal set; }
         public static ConfigEntry<string> obcResolutionMirror {  get; internal set; }
         public static ConfigEntry<string> obcResolutionBodyCam { get; internal set; }
         public static ConfigEntry<float> mirrorZoom { get; internal set; }
@@ -121,6 +123,7 @@ namespace TerminalStuff
         public static ConfigEntry<string> gamblePoorString { get; internal set; } //gamble credits too low string
         public static ConfigEntry<string> videoFolderPath { get; internal set; } //Specify a different folder with videos
         public static ConfigEntry<bool> videoSync { get; internal set; } //Should videos be synced between players (good for AOD)
+        public static ConfigEntry<bool> alwaysUniqueVideo { get; internal set; }
         public static ConfigEntry<bool> leverConfirmOverride { get; internal set; } //disable confirmation check for lever
         public static ConfigEntry<bool> restartConfirmOverride { get; internal set; } //disable confirmation check for lever
         public static ConfigEntry<bool> camsNeverHide { get; internal set; }
@@ -137,10 +140,11 @@ namespace TerminalStuff
         public static ConfigEntry<string> homeTextArt { get; internal set; }
         public static ConfigEntry<string> moreMenuText { get; internal set; }
         public static ConfigEntry<string> moreHintText { get; internal set; }
-        public static ConfigEntry<bool> alwaysOnAtStart { get; internal set; }
-        public static ConfigEntry<bool> alwaysOnDynamic { get; internal set; }
-        public static ConfigEntry<bool> alwaysOnWhileDead { get; internal set; }
-        public static ConfigEntry<int> aodOffDelay { get; internal set; }
+        public static ConfigEntry<string> TerminalScreen { get; internal set; }
+        //public static ConfigEntry<bool> alwaysOnAtStart { get; internal set; }
+        //public static ConfigEntry<bool> alwaysOnDynamic { get; internal set; }
+        public static ConfigEntry<bool> ScreenOnWhileDead { get; internal set; }
+        public static ConfigEntry<int> ScreenOffDelay { get; internal set; }
         public static ConfigEntry<string> routeRandomBannedWeather { get; internal set; }
         public static ConfigEntry<int> routeRandomCost { get; internal set; }
         public static ConfigEntry<bool> routeOnlyInCurrentConstellation { get; internal set; }
@@ -228,7 +232,7 @@ namespace TerminalStuff
         {
             //Network Configs
             ModNetworking = MakeBool(Plugin.instance.Config, "Networking", "ModNetworking", true, "Disable this if you want to disable networking and use this mod as a Client-sided mod");
-            networkedNodes = MakeBool(Plugin.instance.Config, "Networking", "networkedNodes", false, "Enable networked Always-On Display & displaying synced terminal nodes");
+            networkedNodes = MakeBool(Plugin.instance.Config, "Networking", "networkedNodes", true, "Enable networked Always-On Display & displaying synced terminal nodes");
 
             AddManagedBool(networkedNodes, defaultManaged, true, "", "");
 
@@ -249,7 +253,9 @@ namespace TerminalStuff
             Plugin.Spam("keybind configs section done");
 
             //Cams Mod Config
-            camsUseDetectedMods = MakeBool(Plugin.instance.Config, "Extras Configuration", "camsUseDetectedMods", true, "With this enabled, this mod will detect if another mod that adds player cams is enabled and use the mod's camera for all cams commands. Currently detects the following: Helmet Cameras by Rick Arg, Body Cameras by Solo, OpenBodyCams by ");
+            camsUseDetectedMods = MakeBool(Plugin.instance.Config, "Extras Configuration", "camsUseDetectedMods", true, "With this enabled, this mod will detect if another mod that adds player cams is enabled and use the mod's camera for all cams commands. Currently detects the following: Helmet Cameras by Rick Arg, Body Cameras by Solo, OpenBodyCams by Zaggy1024");
+
+            obcRequireUpgrade = MakeBool(Plugin.instance.Config, "Extras Configuration", "obcRequireUpgrade", true, "With this enabled (and camsUseDetectedMods), cams views will not be available until the bodycam upgrade from OpenBodyCams has been unlocked.");
 
             //override configs
             leverConfirmOverride = MakeBool(Plugin.instance.Config, "Controls Configuration", "leverConfirmOverride", false, "Setting this to true will disable the confirmation check for the <lever> command.");
@@ -258,7 +264,7 @@ namespace TerminalStuff
             //Keyword configs (multiple per config item)
             alwaysOnKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "alwaysOnKeywords", "alwayson;always on", "This semi-colon separated list is all keywords that can be used in terminal to return <alwayson> command");
             camsKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "camsKeywords", "cameras; show cams; cams", "This semi-colon separated list is all keywords that can be used in terminal to return <cams> command");
-            mapKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "mapKeywords", "show map; map; view monitor", "Additional This semi-colon separated list is all keywords that can be used in terminal to return <map> command");
+            mapKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "mapKeywords", "show map; map", "Additional This semi-colon separated list is all keywords that can be used in terminal to return <map> command");
             minimapKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "minimapKeywords", "minimap; show minimap", "This semi-colon separated list is all keywords that can be used in terminal to return <minimap> command.");
             minicamsKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "minicamsKeywords", "minicams; show minicams", "This semi-colon separated list is all keywords that can be used in terminal to return <minicams> command");
             overlayKeywords = MakeString(Plugin.instance.Config, "Custom Keywords", "overlayKeywords", "overlay; show overlay", "This semi-colon separated list is all keywords that can be used in terminal to return <overlay> command");
@@ -397,22 +403,27 @@ namespace TerminalStuff
             //----------------------------------termview managed bools----------------------------------//
 
             terminalCams = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalCams", true, "Command to toggle displaying cameras in terminal");
-            AddManagedBool(terminalCams, TerminalStuffBools, false, "EXTRAS", camsKeywords, ViewCommands.TermCamsEvent, 0, true, null, null, "", "", "cams", 1, "ViewInsideShipCam 1");
+            ManagedConfig cams = AddManagedBool(terminalCams, TerminalStuffBools, false, "EXTRAS", camsKeywords, ViewCommands.TermCamsEvent, 0, true, null, null, "", "", "cams", 1, "ViewInsideShipCam 1");
+            ViewConfig.Add(cams);
 
             terminalVideo = MakeBool(Plugin.instance.Config, "Fun Commands (On/Off)", "terminalVideo", true, "Play a video from the videoFolderPath folder <video>");
             AddManagedBool(terminalVideo, TerminalStuffBools, false, "FUN", videoKeywords, ViewCommands.LolVideoPlayerEvent, 0, true, null, null, "", "", "lol", 0, "darmuh's videoPlayer");
 
             terminalMap = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalMap", true, "Command to toggle displaying radar in the terminal");
-            AddManagedBool(terminalMap, TerminalStuffBools, false, "EXTRAS", mapKeywords, ViewCommands.TermMapEvent, 0, true, null, null, "", "", "map", 5, "ViewInsideShipCam 1");
+            ManagedConfig map = AddManagedBool(terminalMap, TerminalStuffBools, false, "EXTRAS", mapKeywords, ViewCommands.TermMapEvent, 0, true, null, null, "", "", "map", 5, "ViewInsideShipCam 1");
+            ViewConfig.Add(map);
 
             terminalMinimap = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalMinimap", true, "Command to toggle displaying radar/cam minimap view in the terminal");
-            AddManagedBool(terminalMinimap, TerminalStuffBools, false, "EXTRAS", minimapKeywords, ViewCommands.MiniMapTermEvent, 0, true, null, null, "", "", "minimap", 3, "ViewInsideShipCam 1");
+            ManagedConfig minimap = AddManagedBool(terminalMinimap, TerminalStuffBools, false, "EXTRAS", minimapKeywords, ViewCommands.MiniMapTermEvent, 0, true, null, null, "", "", "minimap", 3, "ViewInsideShipCam 1");
+            ViewConfig.Add(minimap);
 
             terminalMinicams = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalMinicams", true, "Command to toggle displaying radar/cam minicams view in the terminal");
-            AddManagedBool(terminalMinicams, TerminalStuffBools, false, "EXTRAS", minicamsKeywords, ViewCommands.MiniCamsTermEvent, 0, true, null, null, "", "", "minicams", 4, "ViewInsideShipCam 1");
+            ManagedConfig minicams = AddManagedBool(terminalMinicams, TerminalStuffBools, false, "EXTRAS", minicamsKeywords, ViewCommands.MiniCamsTermEvent, 0, true, null, null, "", "", "minicams", 4, "ViewInsideShipCam 1");
+            ViewConfig.Add(minicams);
 
             terminalOverlay = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalOverlay", true, "Command to toggle displaying radar/cam overlay view in the terminal");
-            AddManagedBool(terminalOverlay, TerminalStuffBools, false, "EXTRAS", overlayKeywords, ViewCommands.OverlayTermEvent, 0, true, null, null, "", "", "overlay", 2, "ViewInsideShipCam 1");
+            ManagedConfig overlay = AddManagedBool(terminalOverlay, TerminalStuffBools, false, "EXTRAS", overlayKeywords, ViewCommands.OverlayTermEvent, 0, true, null, null, "", "", "overlay", 2, "ViewInsideShipCam 1");
+            ViewConfig.Add(overlay);
 
             terminalMirror = MakeBool(Plugin.instance.Config, "Extras Commands (On/Off)", "terminalMirror", true, "Command to toggle displaying a Mirror Cam in the terminal");
             AddManagedBool(terminalMirror, TerminalStuffBools, false, "EXTRAS", mirrorKeywords, ViewCommands.MirrorEvent, 0, true, null, null, "", "", "mirror", 6, "terminalStuff Mirror");
@@ -503,16 +514,15 @@ namespace TerminalStuff
             gamblePoorString = MakeString(Plugin.instance.Config,"Fun Configuration", "gamblePoorString", "You don't meet the minimum credits requirement to gamble.", "Message returned when your credits is less than the gambleMinimum set.");
             videoFolderPath = MakeString(Plugin.instance.Config,"Fun Configuration", "videoFolderPath", "darmuh-darmuhsTerminalStuff", "Folder name where videos will be pulled from, needs to be in BepInEx/plugins");
             videoSync = MakeBool(Plugin.instance.Config,"Fun Configuration", "videoSync", true, "When networking is enabled, this setting will sync videos being played on the terminal for all players whose terminal screen is on.");
+            alwaysUniqueVideo = MakeBool(Plugin.instance.Config, "Fun Configuration", "alwaysUniqueVideo", true, "When enabled, this setting will shuffle all of the videos into a list. Each time a video command is run it will play a video from the list until it reaches the end of the list. Then a new re-shuffled list will be created.");
             obcResolutionMirror = MakeString(Plugin.instance.Config,"Extras Configuration", "obcResolutionMirror", "1000; 700", "Set the resolution of the Mirror Camera created with OpenBodyCams for darmuhsTerminalStuff");
             obcResolutionBodyCam = MakeString(Plugin.instance.Config,"Extras Configuration", "obcResolutionBodyCam", "1000; 700", "Set the resolution of the Body Camera created with OpenBodyCams for darmuhsTerminalStuff");
             mirrorZoom = MakeClampedFloat(Plugin.instance.Config, "Extras Configuration", "mirrorZoom", 3.4f, "Set the mirror zoom level, the higher the value the more zoomed out the mirror will be", 0.2f, 9f);
             camsNeverHide = MakeBool(Plugin.instance.Config,"Extras Configuration", "camsNeverHide", false, "Setting this to true will make it so no command will ever auto-hide any cams command.");
             defaultCamsView = Plugin.instance.Config.Bind("Extras Configuration", "defaultCamsView", "cams", new ConfigDescription("Set the default view switch commands will use when nothing is active.", new AcceptableValueList<string>("map", "cams", "minimap", "minicams", "overlay")));
             ovOpacity = Plugin.instance.Config.Bind("Extras Configuration", "ovOpacity", 10, new ConfigDescription("Opacity percentage for Overlay View.", new AcceptableValueRange<int>(0, 100)));
-            alwaysOnAtStart = MakeBool(Plugin.instance.Config, "Quality of Life", "alwaysOnAtStart", true, "Setting this to true will set <alwayson> to enabled at launch.");
-            alwaysOnDynamic = MakeBool(Plugin.instance.Config, "Quality of Life", "alwaysOnDynamic", true, "Setting this to true will disable the terminal screen whenever you are not on the ship when alwayson is enabled.");
-            alwaysOnWhileDead = MakeBool(Plugin.instance.Config, "Quality of Life", "alwaysOnWhileDead", false, "Set this to true if you wish to keep the screen on after death.");
-            aodOffDelay = MakeClampedInt(Plugin.instance.Config, "Quality of Life", "aodOffDelay", -1, "Set this to delay turning the terminal screen off by this many seconds after leaving the ship.", -1, 30);
+            ScreenOnWhileDead = MakeBool(Plugin.instance.Config, "Quality of Life", "ScreenOnWhileDead", false, "Set this to true if you wish to keep the screen on after death when TerminalScreen is set to any mode that keeps the screen on.");
+            ScreenOffDelay = MakeClampedInt(Plugin.instance.Config, "Quality of Life", "ScreenOffDelay", -1, "Set this to delay turning the terminal screen off by this many seconds after leaving the ship.", -1, 30);
 
 
             //homescreen lines
@@ -528,7 +538,8 @@ namespace TerminalStuff
 
             //Quality of Life Stuff
             LockCameraInTerminal = MakeBool(Plugin.instance.Config,"Quality of Life", "LockCameraInTerminal", false, "Enable this to lock the player camera to the terminal when it is in use.");
-            TerminalLightBehaviour = MakeClampedString(Plugin.instance.Config, "Quality of Life", "TerminalLightBehaviour", "nochange", "Use this config item to change how the terminal light behaves. Options are 'nochange' which keeps vanilla behaviour, 'disable' which disables this light whenever you use it, and 'alwayson' which will keep the light on as long as the screen is on from alwayson", new AcceptableValueList<string>("nochange", "disable", "alwayson"));
+            TerminalLightBehaviour = MakeClampedString(Plugin.instance.Config, "Quality of Life", "TerminalLightBehaviour", "nochange", "Use this config item to change how the terminal light behaves. Options are 'nochange' which keeps vanilla behaviour, 'disable' which disables this light whenever you use it, and 'alwayson' which will keep the light on as long as the screen is on", new AcceptableValueList<string>("nochange", "disable", "alwayson"));
+            TerminalScreen = MakeClampedString(Plugin.instance.Config, "Quality of Life", "TerminalScreen", "alwayson", "Use this config item to change how the terminal screen behaves. Options are 'nochange' which keeps vanilla behaviour, 'alwayson' which keeps the screen on at all times, 'inship' which will keep the screen on whenever you are in the ship, and 'inuse' which will keep the screen on whenever anyone is using the terminal.", new AcceptableValueList<string>("nochange", "alwayson", "inship", "inuse"));
             TerminalHistory = MakeBool(Plugin.instance.Config,"Quality of Life", "TerminalHistory", false, "(Requires terminalShortcuts feature to function) With this feature enabled, uparrow and downarrow will cycle through a list of previously used commands.");
             TerminalHistoryMaxCount = MakeClampedInt(Plugin.instance.Config, "Quality of Life", "TerminalHistoryMaxCount", 9, "Max amount of previous commands to save in TerminalHistory list.", 3, 50);
             TerminalAutoComplete = MakeBool(Plugin.instance.Config,"Quality of Life", "TerminalAutoComplete", false, "(Requires terminalShortcuts feature to function) With this feature enabled, tab key will cycle through a list of matching commands to the current input.");

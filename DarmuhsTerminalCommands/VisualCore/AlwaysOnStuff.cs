@@ -7,6 +7,7 @@ namespace TerminalStuff
     internal class AlwaysOnStuff
     {
         internal static bool dynamicStatus = false;
+        internal static ScreenSettings screenSettings;
         internal static IEnumerator AlwaysOnDynamic(Terminal instance)
         {
             if (dynamicStatus)
@@ -20,12 +21,13 @@ namespace TerminalStuff
 
             while (instance.terminalUIScreen.gameObject != null && !MoreCommands.keepAlwaysOnDisabled && !DisableScreenOnDeath())
             {
+                //player not in ship & screen is active
                 if (!StartOfRound.Instance.localPlayerController.isInHangarShipRoom && instance.terminalUIScreen.gameObject.activeSelf)
                 {
-                    if (ConfigSettings.aodOffDelay.Value >= 0)
-                        yield return new WaitForSeconds(ConfigSettings.aodOffDelay.Value);
+                    if (ConfigSettings.ScreenOffDelay.Value >= 0)
+                        yield return new WaitForSeconds(ConfigSettings.ScreenOffDelay.Value);
                     
-                    if(StartOfRound.Instance.localPlayerController.isInHangarShipRoom && instance.terminalUIScreen.gameObject.activeSelf)
+                    if(StartOfRound.Instance.localPlayerController.isInHangarShipRoom && instance.terminalUIScreen.gameObject.activeSelf && !screenSettings.inUse)
                         continue;
                     
                     instance.terminalUIScreen.gameObject.SetActive(false);
@@ -37,9 +39,19 @@ namespace TerminalStuff
                     if (ConfigSettings.TerminalLightBehaviour.Value == "alwayson")
                         TerminalEvents.ShouldDisableTerminalLight(true, "alwayson");
                 }
+                //player is in ship and screen is inactive
                 else if (StartOfRound.Instance.localPlayerController.isInHangarShipRoom && !instance.terminalUIScreen.gameObject.activeSelf)
                 {
-                    instance.terminalUIScreen.gameObject.SetActive(true);
+                    //inuse setting check
+                    if (!screenSettings.inUse || instance.terminalInUse)
+                        instance.terminalUIScreen.gameObject.SetActive(true);
+                    else if (screenSettings.inUse && instance.placeableObject.inUse)
+                        instance.terminalUIScreen.gameObject.SetActive(true);
+                    else
+                    {
+                        yield return new WaitForSeconds(0.1f);
+                        continue;
+                    }
 
                     if (ViewCommands.externalcamsmod && Plugin.instance.OpenBodyCamsMod && ViewCommands.AnyActiveMonitoring())
                         TerminalCameraStatus(true);
@@ -47,6 +59,18 @@ namespace TerminalStuff
                     Plugin.Log.LogInfo("Enabling terminal screen.");
                     if (ConfigSettings.TerminalLightBehaviour.Value == "alwayson")
                         TerminalEvents.ShouldDisableTerminalLight(false, "alwayson");
+                }
+                //player is in ship, screen is active, and screenSettings is set to inUse
+                else if (StartOfRound.Instance.localPlayerController.isInHangarShipRoom && instance.terminalUIScreen.gameObject.activeSelf && screenSettings.inUse)
+                {
+                    if (!instance.placeableObject.inUse)
+                    {
+                        instance.terminalUIScreen.gameObject.SetActive(false);
+                    }
+                    else
+                        yield return new WaitForSeconds(0.1f);
+                    
+                    continue;
                 }
 
                 yield return new WaitForSeconds(0.5f);
@@ -71,10 +95,48 @@ namespace TerminalStuff
 
         internal static bool DisableScreenOnDeath()
         {
-            if (ConfigSettings.alwaysOnWhileDead.Value)
+            if (ConfigSettings.ScreenOnWhileDead.Value)
                 return false;
 
             return StartOfRound.Instance.localPlayerController.isPlayerDead;
+        }
+    }
+
+    internal class ScreenSettings
+    {
+        //"nochange", "alwayson", "inship", "inuse"
+        internal bool AlwaysOn;
+        internal bool Dynamic;
+        internal bool inUse;
+
+        internal ScreenSettings(string setting)
+        {
+            if(setting.ToLower() == "alwayson")
+            {
+                this.AlwaysOn = true;
+                this.Dynamic = false;
+                this.inUse = false;
+            }
+            else if(setting.ToLower() == "inship")
+            {
+                this.AlwaysOn = true;
+                this.Dynamic = true;
+                this.inUse = false;
+            }
+            else if (setting.ToLower() == "inuse")
+            {
+                this.AlwaysOn = true;
+                this.Dynamic = true;
+                this.inUse = true;
+            }
+            else
+            {
+                this.AlwaysOn = false;
+                this.Dynamic = false;
+                this.inUse = false;
+            }
+
+            Plugin.Spam($"ScreenSettings set to: {setting}");
         }
     }
 }

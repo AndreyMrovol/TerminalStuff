@@ -24,7 +24,8 @@ namespace TerminalStuff.EventSub
 
         internal static void OnPlayerSpawn()
         {
-            if (ConfigSettings.alwaysOnDynamic.Value)
+            screenSettings = new(ConfigSettings.TerminalScreen.Value);
+            if (screenSettings.Dynamic)
                 Plugin.instance.Terminal.StartCoroutine(AlwaysOnDynamic(Plugin.instance.Terminal));
         }
 

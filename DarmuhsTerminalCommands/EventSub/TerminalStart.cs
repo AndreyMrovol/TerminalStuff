@@ -11,7 +11,6 @@ namespace TerminalStuff.EventSub
     internal class TerminalStart
     {
         internal static bool alwaysOnDisplay = false;
-        internal static bool isTermInUse = false;
         internal static TerminalNode startNode = null;
         internal static TerminalNode helpNode = null;
         internal static List<TerminalNode> vanillaNodes = [];
@@ -33,6 +32,7 @@ namespace TerminalStuff.EventSub
             Plugin.MoreLogs("Upgrading terminal with my stuff, smile.");
             Plugin.Allnodes = GetAllNodes();
             OverWriteTextNodes();
+            VanillaNodesCache();
             TerminalClockStuff.MakeClock();
             ViewCommands.DetermineCamsTargets();
             ShortcutBindings.InitSavedShortcuts();
@@ -135,8 +135,7 @@ namespace TerminalStuff.EventSub
 
         private static void AlwaysOnStart(Terminal thisterm, TerminalNode startNode)
         {
-
-            if (ConfigSettings.alwaysOnAtStart.Value)
+            if (AlwaysOnStuff.screenSettings.AlwaysOn && !AlwaysOnStuff.screenSettings.inUse)
             {
                 Plugin.Spam("Setting AlwaysOn Display.");
                 if (ConfigSettings.networkedNodes.Value && ConfigSettings.ModNetworking.Value)

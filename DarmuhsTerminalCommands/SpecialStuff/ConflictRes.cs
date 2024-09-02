@@ -14,14 +14,21 @@ namespace TerminalStuff.SpecialStuff
         TerminalKeyword word;
         int distance;
         int bonus;
-        bool highPri = false;
+        int priority;
 
-        internal ConflictRes(TerminalKeyword word, int distance, int bonus, bool priority = false)
+        internal ConflictRes(TerminalKeyword word, int distance, int bonus, string verb = "none")
         {
             this.word = word;
             this.distance = distance;
             this.bonus = bonus;
-            this.highPri = priority;
+            if (verb == "route")
+                this.priority = 1;
+            else if (verb == "buy")
+                this.priority = 2;
+            else
+                this.priority = 0;
+
+            Plugin.Spam($"{word.word} registered.\ndistance: {distance}\nbonus: {bonus}\nverb: {verb}");
         }
 
         internal static bool ContainsWord(List<ConflictRes> conflictList, TerminalKeyword query)
@@ -52,7 +59,7 @@ namespace TerminalStuff.SpecialStuff
 
         internal static void QueryKeywords(ref List<ConflictRes> matching, string input)
         {
-            List<string> highPriorityVerbs = new List<string>() { "buy", "route" };
+            List<string> highPriorityVerbs = ["buy", "route"];
             foreach (TerminalKeyword word in Plugin.instance.Terminal.terminalNodes.allKeywords)
             {
                 if ((word.word.ToLower().Contains(input) && !ContainsWord(matching, word)))
@@ -72,7 +79,7 @@ namespace TerminalStuff.SpecialStuff
                     if (highPriorityVerbs.Contains(word.defaultVerb.word.ToLower()))
                     {
                         Plugin.Spam($"Word - {word.word} given high priority attribute due to matching high priority verb: {word.defaultVerb.word}");
-                        matching.Add(new(word, score, bonus, true));
+                        matching.Add(new(word, score, bonus, word.defaultVerb.word.ToLower()));
                     }
                     else
                         matching.Add(new(word, score, bonus));
@@ -93,7 +100,7 @@ namespace TerminalStuff.SpecialStuff
                             if (highPriorityVerbs.Contains(noun.noun.defaultVerb.word.ToLower()))
                             {
                                 Plugin.Spam($"Word - {noun.noun.word} given high priority attribute due to matching high priority verb: {noun.noun.defaultVerb.word}");
-                                matching.Add(new(noun.noun, score, bonus, true));
+                                matching.Add(new(noun.noun, score, bonus, noun.noun.defaultVerb.word.ToLower()));
                             }
                             else
                                 matching.Add(new(noun.noun, score, bonus));
@@ -120,7 +127,7 @@ namespace TerminalStuff.SpecialStuff
 
             foreach (ConflictRes resolution in resolutionList)
             {
-                if(resolution.highPri)
+                if(resolution.priority > 0)
                     highPri.Add(resolution);
             }
 
@@ -150,14 +157,27 @@ namespace TerminalStuff.SpecialStuff
                 
         }
 
+        internal static bool TryGetHighestPriority(List<ConflictRes> resolutionList, ConflictRes currentRes)
+        {
+            bool isHighest = false;
+            foreach(ConflictRes resolution in resolutionList)
+            {
+                if (currentRes.priority >= resolution.priority)
+                    isHighest = true;
+            }
+
+            return isHighest;
+        }
+
         internal static void GetResolution(List<ConflictRes> resolutionList, ref ConflictRes bestMatch)
         {
             int highestBonus = 0;
 
             foreach (ConflictRes resolution in resolutionList)
             {
-                if (resolution.bonus > highestBonus)
+                if (resolution.bonus > highestBonus && TryGetHighestPriority(resolutionList, resolution))
                 {
+                    Plugin.Spam($"Highest priority: {resolution.priority}");
                     bestMatch = resolution;
                     highestBonus = resolution.bonus;
                     Plugin.Spam($"highestBonus updated to {highestBonus} - from {bestMatch.word}");
@@ -165,7 +185,7 @@ namespace TerminalStuff.SpecialStuff
                 else if (resolution.bonus == highestBonus && bestMatch != null)
                 {
                     Plugin.Spam($"matching highestBonus found for word {resolution.word.word}");
-                    if (resolution.distance < bestMatch.distance)
+                    if (resolution.distance < bestMatch.distance && resolution.priority >= bestMatch.priority)
                     {
                         Plugin.Spam($"distance for {resolution.word.word} is lower than {bestMatch.word.word}");
                         Plugin.Spam($"setting bestMatch to {resolution.word.word}");

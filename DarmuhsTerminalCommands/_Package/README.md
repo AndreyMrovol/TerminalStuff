@@ -18,6 +18,7 @@
  - Configurable "Purchase Packs" that let you buy multiple items from the store with one command!
  - Client-side Terminal Customization, change the color of the terminal and the different text types!
  - Client-side Quality of Life features, make the terminal experience how you want it to be!
+ - Set the terminal screen/light to stay on all the time, only when you are in the ship, or only when someone is using the terminal!
  - Terminal Autocomplete and History features to make typing in the terminal feel more like a real terminal!
  - Terminal Conflict Resolution will compare your input to all keywords to give you the best result.
 	- Using the [Fastenshtein string comparison algorithm](https://github.com/DanHarltey/Fastenshtein)
@@ -28,6 +29,7 @@
  - Cams commands can now show player povs even without a separate bodycam mod present.
 	- Still compatibile with every major bodycam mod; OpenBodyCams, Helmet Cameras, and Solos Bodycams are all compatible!
  - Expanded compatibility with LethalLevelLoader, OpenBodyCams, and TwoRadarMaps!
+	- [NEW IN 3.5.7] Will now check if BodyCam upgrade has been purchased when using OpenBodyCams cameras!
 
 ### Comfort Commands:
  - Lobby: Display the current lobby name.
@@ -37,7 +39,7 @@
  - Fov: Change your Fov. (requires Fov_Adjust mod by Rozebud)
  - Mods: Display a list of all loaded mods.
  - Kick (host only): Kick another player from the ship (from the terminal)
- - AlwaysOn: Keep the terminal screen on at all times.
+ - AlwaysOn: Adjust whether the terminal screen should stay on (will not change TerminalScreen QoL setting)
 
 ### Controls Commands:
  - Bind/Unbind: Commands used to set terminal shortcuts (enabled/disabled by terminalShortcutCommands)

@@ -13,31 +13,24 @@ namespace TerminalStuff
         public static List<string> Videos = [];
         private static int lastPlayedIndex = -1;
         internal static string currentlyPlaying;
+        internal static TerminalNode videoPlayerNode;
+        internal static bool uniqueShuffled = false;
 
         public static void Load()
         {
+            foreach (string directory in Directory.GetDirectories(Paths.PluginPath))
             {
-                foreach (string directory in Directory.GetDirectories(Paths.PluginPath))
+                string path = Path.Combine(Paths.PluginPath, directory, $"{ConfigSettings.videoFolderPath.Value}");
+                if (Directory.Exists(path))
                 {
-                    string path = Path.Combine(Paths.PluginPath, directory, $"{ConfigSettings.videoFolderPath.Value}");
-                    if (Directory.Exists(path))
-                    {
-                        string[] files = Directory.GetFiles(path, "*.mp4");
-                        Videos.AddRange((IEnumerable<string>)files);
-                        Plugin.Log.LogInfo((object)string.Format("{0} has {1} videos.", (object)directory, (object)files.Length));
-                    }
+                    string[] files = Directory.GetFiles(path, "*.mp4");
+                    Videos.AddRange((IEnumerable<string>)files);
+                    Plugin.Log.LogInfo((object)string.Format("{0} has {1} videos.", (object)directory, (object)files.Length));
+                    return;
                 }
-                string path1 = Path.Combine(Paths.PluginPath, $"{ConfigSettings.videoFolderPath.Value}");
-                if (!Directory.Exists(path1))
-                {
-                    Directory.CreateDirectory(path1);
-                    Plugin.MoreLogs("[VIDEO] Creating directory if doesn't exist");
-                }
-
-                string[] files1 = Directory.GetFiles(path1, "*.mp4");
-                Videos.AddRange((IEnumerable<string>)files1);
-                Plugin.Log.LogInfo((object)string.Format("Loaded {0} total videos.", (object)Videos.Count));
             }
+
+            Plugin.WARNING($"Unable to load video files from path configuration: {ConfigSettings.videoFolderPath.Value}");
         }
 
         internal static void PlaySyncedVideo()
@@ -45,6 +38,12 @@ namespace TerminalStuff
             Plugin.MoreLogs("Start of synced LolEvent");
 
             TerminalNode node = Plugin.instance.Terminal.currentNode;
+
+            if (node == null)
+            {
+                Plugin.WARNING("Attempted to play video on NULL node!");
+                return;
+            }
 
             node.clearPreviousText = true;
             FixVideoPatch.sanityCheckLOL = true;
@@ -78,7 +77,7 @@ namespace TerminalStuff
                 // Set up the video player
                 GetVideoToPlay(termVP, lastPlayedIndex);
                 SetupVideoPlayer(termVP, Plugin.instance.Terminal);
-                
+
                 termVP.Play();
                 Plugin.MoreLogs("Video should be playing");
 
@@ -109,7 +108,23 @@ namespace TerminalStuff
             else if (Videos.Count <= 2)
             {
                 lastPlayedIndex = 0;
-                Plugin.MoreLogs("2 or less videos detected, no shuffle");
+                Plugin.Spam("2 or less videos detected, no shuffle");
+            }
+            else if (ConfigSettings.alwaysUniqueVideo.Value)
+            {
+                if (lastPlayedIndex < 0 || lastPlayedIndex >= Videos.Count - 1)
+                {
+                    Plugin.Spam("alwaysUniqueVideo, shuffling");
+                    // Shuffle the list of videos to get a random order
+                    ShuffleList(Videos);
+                    lastPlayedIndex = 0;
+                    uniqueShuffled = true;
+                }
+                else
+                {
+                    lastPlayedIndex++;
+                    Plugin.Spam($"set to {lastPlayedIndex} of {Videos.Count - 1}");
+                }
             }
             else
             {
@@ -119,7 +134,7 @@ namespace TerminalStuff
 
                 // Always select the first video (except when there are only 1 or 2 videos available)
                 lastPlayedIndex = Mathf.Min(lastPlayedIndex + 1, Videos.Count - 1);
-                Plugin.MoreLogs($"{lastPlayedIndex} - random video selected");
+                Plugin.Spam($"{lastPlayedIndex} - random video selected");
             }
         }
 

@@ -85,31 +85,8 @@ namespace TerminalStuff.EventSub
 
         private static void HandleAlwaysOnQuit(Terminal instance)
         {
-            instance.StartCoroutine(instance.waitUntilFrameEndToSetActive(active: true));
-            Plugin.Spam("Screen set to active");
-            if (ViewCommands.isVideoPlaying)
-            {
-                instance.videoPlayer.Pause();
-                instance.StartCoroutine(WaitUntilFrameEndVideo(instance));
-            }
-
-            if (ConfigSettings.alwaysOnDynamic.Value)
+            if (screenSettings.Dynamic && !dynamicStatus)
                 instance.StartCoroutine(AlwaysOnDynamic(instance));
-        }
-
-        private static IEnumerator WaitUntilFrameEndVideo(Terminal instance)
-        {
-            if (videoQuitEnum)
-                yield break;
-
-            videoQuitEnum = true;
-
-            yield return new WaitForEndOfFrame();
-            if (ViewCommands.isVideoPlaying)
-                instance.videoPlayer.Play();
-            Plugin.MoreLogs("attemtped to resume videoplayer");
-
-            videoQuitEnum = false;
         }
     }
 }
