@@ -90,7 +90,7 @@ namespace TerminalStuff.SpecialStuff
                     {
                         if (input.Contains(noun.noun.word) && !ContainsWord(matching, noun.noun))
                         {
-                            if (noun.noun.word.Length < 3)
+                            if (noun.noun.word.Length < 3 || noun.noun.defaultVerb == null)
                                 continue;
                             Plugin.Spam($"{word.word} has compatible noun: {noun.noun.word} which is in {input}");
                             int bonus = Levenshtein.MatchingStart(noun.noun.word, input);

@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.5.8]
+ - Added null check in Conflict Resolution for nouns that do not have a defaultVerb property which was throwing errors for some people.
+
 ## [3.5.7]
  - Added better handling of default "view monitor" command.
 	- Will now display a new page for users when the keyword is not already replaced.
