@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.5.9]
+ - Hotfix for default video folder config not working following 3.5.7
+ - Also added new result page for when no videos are present in the folder specified by [videoFolderPath] 
+
 ## [3.5.8]
  - Added null check in Conflict Resolution for nouns that do not have a defaultVerb property which was throwing errors for some people.
 

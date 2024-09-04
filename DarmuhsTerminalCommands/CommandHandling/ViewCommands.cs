@@ -698,10 +698,13 @@ namespace TerminalStuff
 
             TerminalNode node = Plugin.instance.Terminal.currentNode;
 
+            SplitViewChecks.CheckForSplitView("neither"); // Disables split view components if enabled
+
+            if (VideoManager.Videos.Count == 0) //if videos failed to load at launch
+                return "No videos available to play!\n\nWomp Womp.\r\n\r\n";
+
             node.clearPreviousText = true;
             FixVideoPatch.sanityCheckLOL = true;
-
-            SplitViewChecks.CheckForSplitView("neither"); // Disables split view components if enabled
 
             string displayText = VideoManager.PickVideoToPlay(Plugin.instance.Terminal.videoPlayer);
             return displayText;

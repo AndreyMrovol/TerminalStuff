@@ -28,6 +28,14 @@ namespace TerminalStuff
                     Plugin.Log.LogInfo((object)string.Format("{0} has {1} videos.", (object)directory, (object)files.Length));
                     return;
                 }
+                else if (directory.ToLower().Contains(ConfigSettings.videoFolderPath.Value.ToLower()))
+                {
+                    string path2 = Path.Combine(Paths.PluginPath, directory);
+                    string[] files = Directory.GetFiles(path2, "*.mp4");
+                    Videos.AddRange((IEnumerable<string>)files);
+                    Plugin.Log.LogInfo((object)string.Format("{0} has {1} videos.", (object)directory, (object)files.Length));
+                    return;
+                }
             }
 
             Plugin.WARNING($"Unable to load video files from path configuration: {ConfigSettings.videoFolderPath.Value}");
