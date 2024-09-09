@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.5.10]
+ - Hotfix for issue where having cached pages disabled would make it seem like they are still enabled when screen was set to always be on.
+	- Issue was just that when you started using the terminal, *nothing* would load. So the last page you had would be what you'd see.
+	- May adjust/simplify this feature in the future.
+
 ## [3.5.9]
  - Hotfix for default video folder config not working following 3.5.7
  - Also added new result page for when no videos are present in the folder specified by [videoFolderPath] 

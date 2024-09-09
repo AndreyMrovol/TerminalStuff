@@ -141,11 +141,16 @@ namespace TerminalStuff.EventSub
                             instance.LoadNewNode(lastNode);
                             nextNode = lastNode;
                         }
-                            
-                    }
 
-                    if (lastText.Length > 0 && ConfigSettings.CacheLastTerminalPage.Value)
-                        LogicHandling.SetTerminalInput(lastText);
+                        if (lastText.Length > 0)
+                            LogicHandling.SetTerminalInput(lastText);
+
+                    }
+                    else
+                    {
+                        instance.LoadNewNode(instance.terminalNodes.specialNodes.ToArray()[1]);
+                        nextNode = instance.terminalNodes.specialNodes.ToArray()[1];
+                    }
                 }
             }
 
