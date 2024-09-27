@@ -1,11 +1,8 @@
 ﻿using HarmonyLib;
-using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Reflection.Emit;
 using TerminalStuff.SpecialStuff;
 using UnityEngine;
-using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.Video;
 
 
@@ -54,7 +51,7 @@ namespace TerminalStuff
             private static IEnumerable<CodeInstruction> BeginUsingTerminal_Transpiler(IEnumerable<CodeInstruction> instructions)
             {
                 CodeInstruction nothing = new(OpCodes.Nop);
-                foreach(CodeInstruction instruction in instructions)
+                foreach (CodeInstruction instruction in instructions)
                 {
                     if (instruction.Calls(AccessTools.Method("Terminal:LoadNewNode")))
                     {
@@ -66,13 +63,13 @@ namespace TerminalStuff
                         //Plugin.Log.LogInfo(instruction.ToString());
                         yield return instruction;
                     }
-                        
+
                 }
 
                 Plugin.Log.LogInfo("Transpiler success!!!");
             }
         }
-        
+
 
 
         [HarmonyPatch(typeof(Terminal), "TextPostProcess")]

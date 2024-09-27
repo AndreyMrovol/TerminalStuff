@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using static TerminalStuff.StringStuff;
 
@@ -15,12 +14,6 @@ namespace TerminalStuff
         internal static bool validFovNum = false;
         internal static bool fovEnum = false;
 
-        internal static string fColor;
-        internal static string Gamble;
-        internal static string sColor;
-        internal static string Link;
-        internal static string Link2;
-        internal static string Restart;
         public static string Linktext { get; internal set; } //public static string
 
 
@@ -47,9 +40,9 @@ namespace TerminalStuff
                 return displayText;
             }
 
-            string[] words = GetWords();
+            string val = GetAfterKeyword(GetKeywordsPerConfigItem(ConfigSettings.FovKeywords.Value));
 
-            if (words.Length < 2 || words.Length > 2)
+            if (val.Length < 1)
             {
                 validFovNum = false;
                 string displayText = "Unable to change your fov at this time...\r\n\tInvalid input detected, no digits were provided!\r\n\r\n";
@@ -57,7 +50,7 @@ namespace TerminalStuff
                 return displayText;
             }
 
-            if (int.TryParse(words[1], out int parsedValue))
+            if (int.TryParse(val, out int parsedValue))
             {
                 newParsedValue = true;
                 validFovNum = true;
@@ -69,7 +62,7 @@ namespace TerminalStuff
             else
             {
                 validFovNum = false;
-                string displayText = "Unable to change your fov at this time...\r\n\tInvalid input detected, digits were provided!\r\n\r\n";
+                string displayText = $"Unable to change your fov at this time...\r\n\tInvalid input detected!\n\tInput: {val}\r\n\r\n";
                 Plugin.WARNING("there are no digits for the fov command!");
                 return displayText;
             }

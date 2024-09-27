@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using UnityEngine.Windows;
-using UnityEngine;
-using Unity.Collections.LowLevel.Unsafe;
+﻿using System.Collections.Generic;
+
 
 namespace TerminalStuff.SpecialStuff
 {
@@ -68,14 +63,14 @@ namespace TerminalStuff.SpecialStuff
                         continue;
                     int bonus = Levenshtein.MatchingStart(word.word, input);
                     int score = Levenshtein.Distance(word.word, input);
-                   
+
                     Plugin.Spam($"Word {word.word} noted with score {score} for input {input} with bonus {bonus}");
-                    if(word.defaultVerb == null)
+                    if (word.defaultVerb == null)
                     {
                         matching.Add(new(word, score, bonus));
                         continue;
                     }
-                        
+
                     if (highPriorityVerbs.Contains(word.defaultVerb.word.ToLower()))
                     {
                         Plugin.Spam($"Word - {word.word} given high priority attribute due to matching high priority verb: {word.defaultVerb.word}");
@@ -84,9 +79,9 @@ namespace TerminalStuff.SpecialStuff
                     else
                         matching.Add(new(word, score, bonus));
                 }
-                else if(word.compatibleNouns != null)
+                else if (word.compatibleNouns != null)
                 {
-                    foreach(CompatibleNoun noun in word.compatibleNouns)
+                    foreach (CompatibleNoun noun in word.compatibleNouns)
                     {
                         if (input.Contains(noun.noun.word) && !ContainsWord(matching, noun.noun))
                         {
@@ -127,7 +122,7 @@ namespace TerminalStuff.SpecialStuff
 
             foreach (ConflictRes resolution in resolutionList)
             {
-                if(resolution.priority > 0)
+                if (resolution.priority > 0)
                     highPri.Add(resolution);
             }
 
@@ -142,6 +137,13 @@ namespace TerminalStuff.SpecialStuff
                 GetResolution(resolutionList, ref bestMatch);
             }
 
+            if (bestMatch == null)
+            {
+                Plugin.Log.LogWarning($"bestMatch is NULL for some reason?");
+                returnWord = null;
+                return false;
+            }
+
             if (bestMatch.word == null)
             {
                 Plugin.Log.LogWarning($"No matching keywords found for input: {query}");
@@ -154,13 +156,13 @@ namespace TerminalStuff.SpecialStuff
                 returnWord = bestMatch.word;
                 return true;
             }
-                
+
         }
 
         internal static bool TryGetHighestPriority(List<ConflictRes> resolutionList, ConflictRes currentRes)
         {
             bool isHighest = false;
-            foreach(ConflictRes resolution in resolutionList)
+            foreach (ConflictRes resolution in resolutionList)
             {
                 if (currentRes.priority >= resolution.priority)
                     isHighest = true;

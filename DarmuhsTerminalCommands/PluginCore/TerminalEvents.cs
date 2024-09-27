@@ -3,24 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
-using static TerminalStuff.StringStuff;
-using static TerminalStuff.PluginCore.TerminalCustomizer;
 using static OpenLib.CoreMethods.AddingThings;
+using static TerminalStuff.PluginCore.TerminalCustomizer;
+using static TerminalStuff.StringStuff;
 
 namespace TerminalStuff
 {
 
     public static class TerminalEvents
     {
-        //public static Dictionary<TerminalNode, Func<string>> darmuhsTerminalStuff = [];
-        //internal static List<TerminalKeyword> darmuhsKeywords = [];
-        internal static TerminalNode lastNode = CreateDummyNode("cachedNode1", true, "");
-        internal static TerminalNode justText = CreateDummyNode("cachedNode2", true, "");
         internal static string lastText = "";
-        internal static string TotalValueFormat = "";
         internal static string VideoErrorMessage = "";
         public static bool clockDisabledByCommand = false;
-
+        internal static TerminalSettings terminalSettings = new();
         internal static bool quitTerminalEnum = false;
 
 
@@ -29,13 +24,13 @@ namespace TerminalStuff
 
         internal static void StorePacks()
         {
-            if (!ConfigSettings.terminalPurchasePacks.Value)
+            if (!ConfigSettings.TerminalPurchasePacks.Value)
                 return;
 
-            if (ConfigSettings.purchasePackCommands.Value == "")
+            if (ConfigSettings.PurchasePackCommands.Value == "")
                 return;
 
-            Dictionary<string, string> keywordAndItems = GetKeywordAndItemNames(ConfigSettings.purchasePackCommands.Value);
+            Dictionary<string, string> keywordAndItems = GetKeywordAndItemNames(ConfigSettings.PurchasePackCommands.Value);
 
             if (keywordAndItems.Count == 0)
                 return;
@@ -65,7 +60,7 @@ namespace TerminalStuff
         }
         internal static string QuitTerminalCommand()
         {
-            string text = $"{ConfigSettings.quitString.Value}\n";
+            string text = $"{ConfigSettings.QuitString.Value}\n";
             Plugin.instance.Terminal.StartCoroutine(TerminalQuitter(Plugin.instance.Terminal));
             return text;
         }
@@ -148,6 +143,29 @@ namespace TerminalStuff
             string text = $"Refreshing TerminalCustomization from config.\n\n";
             TerminalCustomization();
             return text;
+        }
+    }
+
+    internal class TerminalSettings
+    {
+        internal TerminalNode startPage;
+        internal string startPageValue;
+
+        internal void StartPage(string entry)
+        {
+            startPageValue = entry;
+            startPage = null;
+            if (startPageValue.ToLower() == "none" || startPageValue.Length < 2)
+                return;
+
+            if (OpenLib.CoreMethods.DynamicBools.TryGetKeyword(startPageValue, out TerminalKeyword keyword))
+            {
+                startPage = keyword.specialKeywordResult;
+            }
+            else
+                Plugin.WARNING($"Unable to find matching keyword for start page - {entry}");
+
+            //"None", "Home", "Moons", "Store", "Help", "Other", "Bestiary", "Storage", "Sigurd", "Video"
         }
     }
 }

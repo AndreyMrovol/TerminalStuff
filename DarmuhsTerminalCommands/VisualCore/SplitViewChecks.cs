@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using OpenLib.CoreMethods;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Video;
-using static TerminalStuff.EventSub.TerminalQuit;
-using static TerminalStuff.BoolStuff;
-using OpenLib.CoreMethods;
 using static OpenLib.ConfigManager.ConfigSetup;
 using static OpenLib.CoreMethods.AddingThings;
+using static TerminalStuff.BoolStuff;
+using static TerminalStuff.EventSub.TerminalQuit;
 
 namespace TerminalStuff
 {
@@ -13,6 +14,7 @@ namespace TerminalStuff
     {
         internal static bool enabledSplitObjects = false;
         internal static bool replacedViewMon = false;
+        internal static RawImage miniScreenImage;
         //internal static CompatibleNoun[] vanillaViewNouns;
         //internal static TerminalKeyword viewKeyword;
 
@@ -52,16 +54,16 @@ namespace TerminalStuff
                 return;
             }
 
-            ViewCommands.miniScreenImage = Instantiate(Plugin.instance.Terminal.terminalImage, Plugin.instance.Terminal.terminalImage.transform);
-            
-            if(ViewCommands.miniScreenImage.gameObject.GetComponent<VideoPlayer>() != null)
+            miniScreenImage = Instantiate(Plugin.instance.Terminal.terminalImage, Plugin.instance.Terminal.terminalImage.transform);
+
+            if (miniScreenImage.gameObject.GetComponent<VideoPlayer>() != null)
             {
-                VideoPlayer extraPlayer = ViewCommands.miniScreenImage.GetComponent<VideoPlayer>();
+                VideoPlayer extraPlayer = miniScreenImage.GetComponent<VideoPlayer>();
                 Destroy(extraPlayer);
                 Plugin.Spam("extraPlayer deleted");
             }
 
-            ViewCommands.miniScreenImage.gameObject.name = "MiniScreen";
+            miniScreenImage.gameObject.name = "MiniScreen";
             Plugin.instance.Terminal.terminalImage.gameObject.name = "terminalImage";
 
             Plugin.instance.splitViewCreated = true;
@@ -76,7 +78,7 @@ namespace TerminalStuff
             }
             else if (!Plugin.instance.splitViewCreated)
                 return;
-                
+
             List<string> singleViewModes = ["cams", "map", "mirror"];
 
             if (enabledSplitObjects == false)
@@ -109,16 +111,16 @@ namespace TerminalStuff
 
         private static void SetMiniScreen(string whatIsIt, bool state)
         {
-            if (ViewCommands.miniScreenImage.enabled == state)
+            if (miniScreenImage.enabled == state)
                 return;
 
-            ViewCommands.miniScreenImage.enabled = state;
+            miniScreenImage.enabled = state;
             Plugin.MoreLogs($"{whatIsIt} has set miniscreen to {state}");
         }
 
         internal static void ResetPluginInstanceBools()
         {
-            ViewCommands.ResetPluginInstanceBools();
+            MoreCamStuff.ResetPluginInstanceBools();
         }
 
         internal static void EnableSplitView(string whatIsIt)
@@ -133,7 +135,7 @@ namespace TerminalStuff
         {
             Plugin.Spam("disabling vanilla view monitor");
             Plugin.instance.Terminal.displayingPersistentImage = null;
-            if(disableImage) 
+            if (disableImage)
                 Plugin.instance.Terminal.terminalImage.enabled = false;
         }
 
@@ -154,12 +156,12 @@ namespace TerminalStuff
 
         private static void ShowCameraView(bool state)
         {
-            if (ConfigSettings.camsUseDetectedMods.Value && Plugin.instance.OpenBodyCamsMod)
+            if (ConfigSettings.CamsUseDetectedMods.Value && Plugin.instance.OpenBodyCamsMod)
             {
                 TerminalCameraStatus(state);
             }
             else
-                ViewCommands.SetCameraState(state);
+                VisualCore.CamEvents.HomebrewCameraState(state);
         }
 
         private static void UpdatePluginInstanceBools(string whatIsIt)

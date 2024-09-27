@@ -1,14 +1,12 @@
 ﻿using GameNetcodeStuff;
 using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
+using static OpenLib.Common.Teleporter;
 using static TerminalStuff.Misc;
 using static TerminalStuff.StringStuff;
 using static UnityEngine.Object;
-using Object = UnityEngine.Object;
-using static OpenLib.Common.Teleporter;
 
 namespace TerminalStuff
 {
@@ -18,7 +16,7 @@ namespace TerminalStuff
         internal static bool leverEnum = false;
         internal static bool DoorSpaceCheck()
         {
-            if (ConfigSettings.canOpenDoorInSpace.Value)
+            if (ConfigSettings.CanOpenDoorInSpace.Value)
             {
                 return true;
             }
@@ -62,13 +60,13 @@ namespace TerminalStuff
                         // Log individual messages for open and close events
                         if (action == "opened")
                         {
-                            displayText = $"{ConfigSettings.doorOpenString.Value}\n";
+                            displayText = $"{ConfigSettings.DoorOpenString.Value}\n";
                             Plugin.MoreLogs($"Hangar doors {action} successfully by interacting with button {buttonName}.");
                             return displayText;
                         }
                         else if (action == "closed")
                         {
-                            displayText = $"{ConfigSettings.doorCloseString.Value}\n";
+                            displayText = $"{ConfigSettings.DoorCloseString.Value}\n";
                             Plugin.MoreLogs($"Hangar doors {action} successfully by interacting with button {buttonName}.");
                             return displayText;
                         }
@@ -91,7 +89,7 @@ namespace TerminalStuff
             }
             else
             {
-                displayText = $"{ConfigSettings.doorSpaceString.Value}\n";
+                displayText = $"{ConfigSettings.DoorSpaceString.Value}\n";
                 return displayText;
             }
 
@@ -112,25 +110,24 @@ namespace TerminalStuff
 
         internal static string RegularTeleporterCommand()
         {
-            string[] screenWords = GetWords();
-            string[] words = GetWordsAndKeyword(GetKeywordsPerConfigItem(ConfigSettings.tpKeywords.Value), screenWords);
+            string val = GetAfterKeyword(GetKeywordsPerConfigItem(ConfigSettings.TpKeywords.Value));
             string displayText;
             ShipTeleporter tp = NormalTP;
-            if ((Object)tp != (Object)null)
+            if (tp != null)
             {
                 float cooldownTime = tp.cooldownTime;
                 if (Mathf.Round(cooldownTime) == 0 && tp.buttonTrigger.interactable)
                 {
-                    if (words.Length > 1)
+                    if (val.Length > 1)
                     {
                         Plugin.MoreLogs("attempting to tp specific player");
-                        string playerName = words[1];
+                        string playerName = val;
                         PlayerControllerB player = GetPlayerFromName(playerName);
                         if (player != null && player.isPlayerControlled)
                         {
                             StartOfRound.Instance.mapScreen.targetedPlayer = player;
                             tp.PressTeleportButtonOnLocalClient();
-                            displayText = $"{ConfigSettings.tpMessageString.Value}\n";
+                            displayText = $"{ConfigSettings.TpMessageString.Value}\n\tPlayer: {val}\n\n";
                             return displayText;
                         }
                         else
@@ -165,7 +162,7 @@ namespace TerminalStuff
             else
             {
                 tp.PressTeleportButtonOnLocalClient();
-                displayText = $"{ConfigSettings.tpMessageString.Value}\n";
+                displayText = $"{ConfigSettings.TpMessageString.Value}\n";
                 return displayText;
             }
         }
@@ -174,13 +171,13 @@ namespace TerminalStuff
         {
             string displayText;
             ShipTeleporter tp = InverseTP;
-            if ((Object)tp != (Object)null)
+            if (tp != null)
             {
                 float cooldownTime = tp.cooldownTime;
                 if (!(StartOfRound.Instance.inShipPhase) && tp.buttonTrigger.interactable)
                 {
                     tp.PressTeleportButtonOnLocalClient();
-                    displayText = $"{ConfigSettings.itpMessageString.Value}\n";
+                    displayText = $"{ConfigSettings.ItpMessageString.Value}\n";
                     return displayText;
                 }
                 else if (Mathf.Round(cooldownTime) > 0)
@@ -209,7 +206,7 @@ namespace TerminalStuff
 
             if (CanPullLever(networkManager))
             {
-                string displayText = $"{ConfigSettings.leverString.Value}\n";
+                string displayText = $"{ConfigSettings.LeverString.Value}\n";
                 leverInstance.StartCoroutine(LeverPull(leverInstance));
                 Plugin.MoreLogs("lever pulled");
                 return displayText;

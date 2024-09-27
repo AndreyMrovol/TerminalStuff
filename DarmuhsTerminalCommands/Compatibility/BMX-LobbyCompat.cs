@@ -1,6 +1,6 @@
-﻿using System;
+﻿using LobbyCompatibility.Features;
+using System;
 using System.Reflection;
-using LobbyCompatibility.Features; 
 
 namespace TerminalStuff
 {

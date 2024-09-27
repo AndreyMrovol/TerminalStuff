@@ -1,16 +1,15 @@
-﻿using System;
+﻿using OpenLib.Common;
+using OpenLib.CoreMethods;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static TerminalStuff.BoolStuff;
-using static TerminalStuff.DynamicCommands;
-using OpenLib.CoreMethods;
 using static OpenLib.ConfigManager.ConfigSetup;
+using static TerminalStuff.BoolStuff;
 using Key = UnityEngine.InputSystem.Key;
-using HarmonyLib;
 
 namespace TerminalStuff
 {
@@ -20,12 +19,12 @@ namespace TerminalStuff
         internal static Dictionary<Key, string> keyActions = [];
         internal static List<Key> invalidKeys;
         internal static Key keyBeingPressed;
-        public static bool stopForAnyReason;
+        public static bool stopForAnyReason = false;
         internal static bool shortcutListenEnum = false;
 
         internal static void InitSavedShortcuts()
         {
-            if (!ConfigSettings.terminalShortcuts.Value)
+            if (!ConfigSettings.TerminalShortcuts.Value)
                 return;
 
             Plugin.MoreLogs("Loading shortcuts from config");
@@ -34,7 +33,7 @@ namespace TerminalStuff
             Key.K, Key.L, Key.M, Key.N, Key.O, Key.P, Key.Q, Key.R, Key.S, Key.T,
             Key.U, Key.V, Key.W, Key.X, Key.Y, Key.Z, Key.Space
             ];
-            DeserializeKeyActions(ConfigSettings.keyActionsConfig.Value);
+            DeserializeKeyActions(ConfigSettings.KeyActionsConfig.Value);
             InitTerminalHistoryBinds();
             InitTerminalAutoCompleteBinds();
 
@@ -80,7 +79,7 @@ namespace TerminalStuff
                     keyActions.Remove(keyFromString);
                     Plugin.WARNING($"Key: {ConfigSettings.TerminalAutoCompleteKey.Value} had an active shortcut bind that has now been removed!");
                 }
-                    
+
 
                 return keyFromString;
             }
@@ -118,7 +117,7 @@ namespace TerminalStuff
         private static void SaveShortcutsToConfig()
         {
             // Serialize the dictionary into a format that can be stored in the configuration
-            ConfigSettings.keyActionsConfig.Value = SerializeKeyActions();
+            ConfigSettings.KeyActionsConfig.Value = SerializeKeyActions();
 
             Plugin.MoreLogs("Shortcuts saved to config");
         }
@@ -282,9 +281,8 @@ namespace TerminalStuff
                     [
                         defaultListing, ConfigSettings.TerminalStuffMain
                     ];
-                    Func<string> displayTextSupplier = LogicHandling.GetFuncFromNode(fullListings, ref keyword.specialKeywordResult);
 
-                    if (displayTextSupplier != null)
+                    if (LogicHandling.TryGetFuncFromNode(fullListings, ref keyword.specialKeywordResult, out Func<string> displayTextSupplier))
                     {
                         string displayText = displayTextSupplier();
                         Plugin.MoreLogs("running function related to displaytext supplier");
@@ -317,7 +315,13 @@ namespace TerminalStuff
 
         private static bool BannedWords(string word)
         {
-            List<string> bannedWords = [Gamble, "fov", "kick", sColor, fColor, "bind", "unbind"];
+            List<string> bannedWords = ["bind", "unbind"];
+            bannedWords.AddRange(CommonStringStuff.GetKeywordsPerConfigItem(ConfigSettings.GambleKeywords.Value));
+            bannedWords.AddRange(CommonStringStuff.GetKeywordsPerConfigItem(ConfigSettings.FovKeywords.Value));
+            bannedWords.AddRange(CommonStringStuff.GetKeywordsPerConfigItem(ConfigSettings.KickKeywords.Value));
+            bannedWords.AddRange(CommonStringStuff.GetKeywordsPerConfigItem(ConfigSettings.ScolorKeywords.Value));
+            bannedWords.AddRange(CommonStringStuff.GetKeywordsPerConfigItem(ConfigSettings.FcolorKeywords.Value));
+
             if (bannedWords.Contains(word))
                 return true;
             else
@@ -375,16 +379,16 @@ namespace TerminalStuff
                     Plugin.Log.LogDebug($"Terminal Input set to:{TerminalHistory.GetFromCommandHistory(ref TerminalHistory.historyIndex)}");
                     return;
                 }
-                else if(value.Equals("[autocomplete]") && ConfigSettings.TerminalAutoComplete.Value)
+                else if (value.Equals("[autocomplete]") && ConfigSettings.TerminalAutoComplete.Value)
                 {
                     Plugin.Spam("autocomplete key detected");
 
-                    if(AutoComplete.CheckCurrentInput(AutoComplete.AutoCompleteResults, TerminalEvents.GetCleanedScreenText(Plugin.instance.Terminal)))
+                    if (AutoComplete.CheckCurrentInput(AutoComplete.AutoCompleteResults, TerminalEvents.GetCleanedScreenText(Plugin.instance.Terminal)))
                     {
                         LogicHandling.SetTerminalInput(AutoComplete.ShowMatchingKeywords(AutoComplete.AutoCompleteResults, ref AutoComplete.AutoCompleteIndex));
                         Plugin.Log.LogDebug($"Terminal Input set to:{AutoComplete.ShowMatchingKeywords(AutoComplete.AutoCompleteResults, ref AutoComplete.AutoCompleteIndex)}");
                     }
-                        
+
                     else
                     {
                         AutoComplete.AutoCompleteResults = AutoComplete.GetMatchingKeywords(TerminalEvents.GetCleanedScreenText(Plugin.instance.Terminal));
@@ -412,7 +416,7 @@ namespace TerminalStuff
             shortcutListenEnum = true;
 
             //Plugin.MoreLogs("Listening for shortcuts");
-            while (Plugin.instance.Terminal.terminalInUse && ConfigSettings.terminalShortcuts.Value)
+            while (Plugin.instance.Terminal.terminalInUse && ConfigSettings.TerminalShortcuts.Value && !stopForAnyReason)
             {
                 if (AnyKeyIsPressed() && ListenForShortCuts())
                 {

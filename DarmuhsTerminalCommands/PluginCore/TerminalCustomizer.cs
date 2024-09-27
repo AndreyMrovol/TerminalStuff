@@ -9,7 +9,7 @@ namespace TerminalStuff.PluginCore
         internal static bool defaultsCached = false;
         internal static Image terminalBackground;
 
-        private static void SetTerminalBodyColors(bool useConfigs = true)
+        private static void SetTerminalBodyColors()
         {
             if (!ConfigSettings.TerminalCustomization.Value)
                 return;
@@ -98,7 +98,7 @@ namespace TerminalStuff.PluginCore
             if (!ConfigSettings.TerminalCustomization.Value)
                 return;
 
-            if(!defaultsCached)
+            if (!defaultsCached)
                 CacheDefaults();
 
             SetTerminalBodyColors();
@@ -147,7 +147,7 @@ namespace TerminalStuff.PluginCore
             if ((config.Length < 1 || config.ToLower() == "default") && cachedColor != null)
             {
                 Plugin.Spam("setting to cached default value");
-                return cachedColor;   
+                return cachedColor;
             }
             else
             {
@@ -179,7 +179,7 @@ namespace TerminalStuff.PluginCore
 
             CustomTerminalStuff.TerminalText = Plugin.instance.Terminal.screenText.textComponent.color;
             AnnounceColor(CustomTerminalStuff.TerminalText, "CustomTerminalStuff.TerminalText");
-            
+
             CustomTerminalStuff.MoneyText = Plugin.instance.Terminal.topRightText.color;
             AnnounceColor(CustomTerminalStuff.MoneyText, "CustomTerminalStuff.MoneyText");
 
@@ -188,7 +188,7 @@ namespace TerminalStuff.PluginCore
                 CustomTerminalStuff.MoneyBG = Plugin.instance.Terminal.terminalUIScreen.gameObject.transform.GetChild(0).GetChild(5).gameObject.GetComponent<Image>().color;
                 AnnounceColor(CustomTerminalStuff.MoneyBG, "CustomTerminalStuff.MoneyBG");
             }
-               
+
 
             CustomTerminalStuff.TextCaret = Plugin.instance.Terminal.screenText.caretColor;
             CustomTerminalStuff.Scrollbar = Plugin.instance.Terminal.scrollBarVertical.image.color;
@@ -234,7 +234,7 @@ namespace TerminalStuff.PluginCore
 
         internal static void AnnounceColor(Color colorValue, string name)
         {
-            if(colorValue == null)
+            if (colorValue == null)
             {
                 Plugin.Spam($"colorValue is null for {name}");
                 return;

@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using TMPro;
 using UnityEngine;
-using static UnityEngine.Object;
 
 namespace TerminalStuff
 {
@@ -13,7 +12,7 @@ namespace TerminalStuff
 
         public static void StartClockCoroutine()
         {
-            if (!ConfigSettings.terminalClock.Value)
+            if (!ConfigSettings.TerminalClock.Value)
             {
                 Plugin.MoreLogs("clock is not enabled.");
                 return;
@@ -26,7 +25,7 @@ namespace TerminalStuff
 
         public static void MakeClock()
         {
-            if (!ConfigSettings.terminalClock.Value)
+            if (!ConfigSettings.TerminalClock.Value)
                 return;
 
             textComponent = MakeTimeText();
@@ -71,7 +70,7 @@ namespace TerminalStuff
 
             terminalClockEnum = false;
             Plugin.MoreLogs("while loop ended for clock");
-            
+
         }
 
         internal static TextMeshProUGUI MakeTimeText()

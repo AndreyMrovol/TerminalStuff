@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Video;
 using static TerminalStuff.AllMyTerminalPatches;
 using static TerminalStuff.ViewCommands;
+using Random = System.Random;
 
 namespace TerminalStuff
 {
@@ -20,25 +21,25 @@ namespace TerminalStuff
         {
             foreach (string directory in Directory.GetDirectories(Paths.PluginPath))
             {
-                string path = Path.Combine(Paths.PluginPath, directory, $"{ConfigSettings.videoFolderPath.Value}");
+                string path = Path.Combine(Paths.PluginPath, directory, $"{ConfigSettings.VideoFolderPath.Value}");
                 if (Directory.Exists(path))
                 {
                     string[] files = Directory.GetFiles(path, "*.mp4");
-                    Videos.AddRange((IEnumerable<string>)files);
-                    Plugin.Log.LogInfo((object)string.Format("{0} has {1} videos.", (object)directory, (object)files.Length));
+                    Videos.AddRange(files);
+                    Plugin.Log.LogInfo(string.Format("{0} has {1} videos.", directory, files.Length));
                     return;
                 }
-                else if (directory.ToLower().Contains(ConfigSettings.videoFolderPath.Value.ToLower()))
+                else if (directory.ToLower().Contains(ConfigSettings.VideoFolderPath.Value.ToLower()))
                 {
                     string path2 = Path.Combine(Paths.PluginPath, directory);
                     string[] files = Directory.GetFiles(path2, "*.mp4");
-                    Videos.AddRange((IEnumerable<string>)files);
-                    Plugin.Log.LogInfo((object)string.Format("{0} has {1} videos.", (object)directory, (object)files.Length));
+                    Videos.AddRange(files);
+                    Plugin.Log.LogInfo(string.Format("{0} has {1} videos.", directory, files.Length));
                     return;
                 }
             }
 
-            Plugin.WARNING($"Unable to load video files from path configuration: {ConfigSettings.videoFolderPath.Value}");
+            Plugin.WARNING($"Unable to load video files from path configuration: {ConfigSettings.VideoFolderPath.Value}");
         }
 
         internal static void PlaySyncedVideo()
@@ -69,7 +70,7 @@ namespace TerminalStuff
                 Plugin.MoreLogs("Video detected already playing, trying to stop it");
                 FixVideoPatch.OnVideoEnd(Plugin.instance.Terminal);
             }
-                
+
         }
 
         internal static string PickVideoToPlay(VideoPlayer termVP)
@@ -89,14 +90,14 @@ namespace TerminalStuff
                 termVP.Play();
                 Plugin.MoreLogs("Video should be playing");
 
-                displayText = $"{ConfigSettings.videoStartString.Value}\n";
+                displayText = $"{ConfigSettings.VideoStartString.Value}\n";
                 return displayText;
             }
             else if (isVideoPlaying)
             {
                 Plugin.MoreLogs("Video detected playing, trying to stop it");
                 FixVideoPatch.OnVideoEnd(Plugin.instance.Terminal);
-                displayText = $"{ConfigSettings.videoStopString.Value}\n";
+                displayText = $"{ConfigSettings.VideoStopString.Value}\n";
                 Plugin.MoreLogs("Lol stop detected");
                 return displayText;
             }
@@ -118,11 +119,11 @@ namespace TerminalStuff
                 lastPlayedIndex = 0;
                 Plugin.Spam("2 or less videos detected, no shuffle");
             }
-            else if (ConfigSettings.alwaysUniqueVideo.Value)
+            else if (ConfigSettings.AlwaysUniqueVideo.Value)
             {
                 if (lastPlayedIndex < 0 || lastPlayedIndex >= Videos.Count - 1)
                 {
-                    Plugin.Spam("alwaysUniqueVideo, shuffling");
+                    Plugin.Spam("AlwaysUniqueVideo, shuffling");
                     // Shuffle the list of videos to get a random order
                     ShuffleList(Videos);
                     lastPlayedIndex = 0;
@@ -148,9 +149,10 @@ namespace TerminalStuff
 
         private static void ShuffleList(List<string> list)
         {
+            Random rand = new();
             for (int i = 0; i < list.Count; i++)
             {
-                int randomIndex = Random.Range(i, list.Count);
+                int randomIndex = rand.Next(i, list.Count);
                 (list[i], list[randomIndex]) = (list[randomIndex], list[i]);
             }
         }
@@ -162,7 +164,7 @@ namespace TerminalStuff
             currentlyPlaying = Videos[randomIndex];
             Plugin.MoreLogs("URL:" + termVP.url);
 
-            if(ConfigSettings.videoSync.Value && ConfigSettings.ModNetworking.Value && ConfigSettings.networkedNodes.Value)
+            if (ConfigSettings.VideoSync.Value && ConfigSettings.ModNetworking.Value && ConfigSettings.NetworkedNodes.Value)
             {
                 NetHandler.SyncMyVideoChoiceToEveryone(currentlyPlaying);
                 Plugin.MoreLogs("Video picked and sent to clients");

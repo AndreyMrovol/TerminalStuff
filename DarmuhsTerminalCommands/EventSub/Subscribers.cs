@@ -1,7 +1,7 @@
-﻿using OpenLib.CoreMethods;
-using OpenLib.Events;
+﻿using OpenLib.Events;
 using TerminalStuff.PluginCore;
 using TerminalStuff.SpecialStuff;
+using TerminalStuff.VisualCore;
 using static TerminalStuff.EventSub.TerminalStart;
 
 namespace TerminalStuff.EventSub
@@ -32,6 +32,10 @@ namespace TerminalStuff.EventSub
 
             //Unique
             EventManager.GetNewDisplayText.AddListener(TerminalParse.OnNewDisplayText);
+
+            //CamEvents
+            CamEvents.UpdateCamsEvent.AddListener(CamEvents.OnUpdateCamsEvent);
+            CamEvents.UpdateTextures.AddListener(CamEvents.GetTextures);
         }
 
         internal static void OnTerminalAwake(Terminal instance)
@@ -40,7 +44,6 @@ namespace TerminalStuff.EventSub
             Plugin.MoreLogs($"Setting Plugin.instance.Terminal");
             FontStuff.SetCachedDefault();
             StuffForLibrary.AddCommands(); //replaced addkeywords
-            AlwaysOnStuff.screenSettings = new(ConfigSettings.TerminalScreen.Value);
         }
     }
 }

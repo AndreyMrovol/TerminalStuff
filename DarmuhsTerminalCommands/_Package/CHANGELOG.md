@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.6.0]
+ - Fixed issue of causing errors when typing nothing but spaces in the terminal.
+ - Removed default videos from the mod. They will be reuploaded under their own video pack as darmuhsTerminalVideos
+ - Formatting of config items has been standardized, this will result in many items resetting to default for this update
+ - Automatic info commands added with OpenLib 0.2.0
+ - Moved OpenBodyCams stuff to OpenLib for better standardization
+	- fixed issue where mirror cam positioning would break
+	- Added new config item [Mirror2DStyle] to switch between mirror camera styles
+	- default mirror style is a new style, switch to 2d for previous patch version
+ - Added ShipInventory compatibility for loot commands added by this mod
+ - All view commands (cams, minicams, overlay, etc.) have been refactored completely
+ - Updated handling of all commands to allow for multiple configured keywords
+ - Removed CachedTerminalPages config item in favor of new [TerminalStartPage] config option
+	- you can put any keyword here to load when entering the terminal
+	- Leave blank or set to "None" to not change terminal page when entering the terminal
+ - Saving last terminal input feature has been associated to new config item [SaveLastInput]
+ - Switched random functions from UnityEngine to System as I've read System random is a bit better
+ - Created ShipReset public event for other mods to subscribe to when lobby is fast reset (fired without cutscene)
+ - Added error handling for Conflict Resolution throwing null values
+ - General code cleanup and optimizations
+
 ## [3.5.10]
  - Hotfix for issue where having cached pages disabled would make it seem like they are still enabled when screen was set to always be on.
 	- Issue was just that when you started using the terminal, *nothing* would load. So the last page you had would be what you'd see.

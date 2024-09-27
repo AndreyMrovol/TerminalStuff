@@ -11,9 +11,9 @@ namespace TerminalStuff
         internal static string Ask2Gamble()
         {
             Plugin.MoreLogs("Ask2Gamble");
-            string[] words = GetWords();
+            string val = GetAfterKeyword(GetKeywordsPerConfigItem(ConfigSettings.GambleKeywords.Value));
 
-            if (words.Length < 2 || words.Length > 2)
+            if (val.Length < 1)
             {
                 validGambleValue = false;
                 string displayText = "Unable to gamble at this time...\r\n\tInvalid input detected, no digits were provided!\r\n\r\n";
@@ -21,7 +21,7 @@ namespace TerminalStuff
                 return displayText;
             }
 
-            if (int.TryParse(words[1], out int parsedValue))
+            if (int.TryParse(val, out int parsedValue))
             {
                 newParsedValue = true;
                 validGambleValue = true;
@@ -34,7 +34,7 @@ namespace TerminalStuff
             else
             {
                 validGambleValue = false;
-                string displayText = "Unable to gamble at this time...\r\n\tInvalid input detected, digits were provided!\r\n\r\n";
+                string displayText = $"Unable to gamble at this time...\r\n\tInvalid input detected, digits were provided!\r\n\tInput: {val}\r\n\r\n";
                 Plugin.WARNING("there are no digits for the gamble command!");
                 return displayText;
             }
@@ -85,11 +85,11 @@ namespace TerminalStuff
                 displayText = "Invalid gamble percentage, please input a value between 0 and 100.\n\n";
                 return;
             }
-            if (Plugin.instance.Terminal.groupCredits <= ConfigSettings.gambleMinimum.Value)
+            if (Plugin.instance.Terminal.groupCredits <= ConfigSettings.GambleMinimum.Value)
             {
                 // Handle the case when groupCredits is lower than minimum required
                 Plugin.MoreLogs("Invalid percentage value. Telling user.");
-                displayText = $"{ConfigSettings.gamblePoorString.Value}\n\n";
+                displayText = $"{ConfigSettings.GamblePoorString.Value}\n\n";
                 return;
             }
             else
@@ -132,12 +132,12 @@ namespace TerminalStuff
             {
                 // Code for losing scenario
                 int localResult = currentGroupCredits - gambleAmount;
-                if (ConfigSettings.gamblePityMode.Value && localResult == 0) //checks for pity mode and 0 credits
+                if (ConfigSettings.GamblePityMode.Value && localResult == 0) //checks for pity mode and 0 credits
                 {
-                    if (ConfigSettings.gamblePityCredits.Value <= 60) //capping pity credits to 60 to avoid abuses of this system.
+                    if (ConfigSettings.GamblePityCredits.Value <= 60) //capping pity credits to 60 to avoid abuses of this system.
                     {
-                        string displayText = $"Sorry, you lost ■{gambleAmount} credits.\n\nHowever, you've received {ConfigSettings.gamblePityCredits.Value} Pity Credits.\r\n\r\nYour new balance is ■{ConfigSettings.gamblePityCredits.Value} Credits.\r\n";
-                        return (ConfigSettings.gamblePityCredits.Value, displayText);
+                        string displayText = $"Sorry, you lost ■{gambleAmount} credits.\n\nHowever, you've received {ConfigSettings.GamblePityCredits.Value} Pity Credits.\r\n\r\nYour new balance is ■{ConfigSettings.GamblePityCredits.Value} Credits.\r\n";
+                        return (ConfigSettings.GamblePityCredits.Value, displayText);
                     }
                     else
                     {

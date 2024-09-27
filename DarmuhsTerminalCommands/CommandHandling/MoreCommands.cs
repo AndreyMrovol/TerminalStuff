@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
-using static TerminalStuff.EventSub.TerminalStart;
 using static TerminalStuff.DynamicCommands;
+using static TerminalStuff.EventSub.TerminalStart;
 using static TerminalStuff.TerminalEvents;
 
 namespace TerminalStuff
@@ -89,7 +89,7 @@ namespace TerminalStuff
             if (getPlayerHealth >= 100)
             {
                 Plugin.MoreLogs($"Health = {getPlayerHealth}");
-                displayText = $"{ConfigSettings.healIsFullString.Value}\n";
+                displayText = $"{ConfigSettings.HealIsFullString.Value}\n";
                 return displayText;
             }
 
@@ -99,7 +99,7 @@ namespace TerminalStuff
                 GameNetworkManager.Instance.localPlayerController.DamagePlayer(-100, false, true);
                 GameNetworkManager.Instance.localPlayerController.MakeCriticallyInjured(false);
                 int getNewHealth = GameNetworkManager.Instance.localPlayerController.health;
-                displayText = $"{ConfigSettings.healString.Value}\nHealth: {GameNetworkManager.Instance.localPlayerController.health}\r\n";
+                displayText = $"{ConfigSettings.HealString.Value}\nHealth: {GameNetworkManager.Instance.localPlayerController.health}\r\n";
                 Plugin.MoreLogs($"Health now = {getNewHealth}");
                 return displayText;
             }
@@ -164,9 +164,9 @@ namespace TerminalStuff
         internal static void GetLinkText(int linkID)
         {
             if (linkID == 0)
-                Linktext = ConfigSettings.customLink.Value;
+                Linktext = ConfigSettings.CustomLink.Value;
             else
-                Linktext = ConfigSettings.customLink2.Value;
+                Linktext = ConfigSettings.CustomLink2.Value;
         }
 
         internal static string ExternalLink(int linkID)
@@ -195,7 +195,7 @@ namespace TerminalStuff
         internal static string AlwaysOnDisplay()
         {
             string displayText;
-            if (!alwaysOnDisplay && ConfigSettings.networkedNodes.Value && ConfigSettings.ModNetworking.Value)
+            if (!alwaysOnDisplay && ConfigSettings.NetworkedNodes.Value && ConfigSettings.ModNetworking.Value)
             {
                 keepAlwaysOnDisabled = false;
                 NetHandler.Instance.AoDServerRpc(true);
@@ -203,7 +203,7 @@ namespace TerminalStuff
                 return displayText;
                 //Plugin.Log.LogInfo("set alwaysondisplay to true");
             }
-            else if (alwaysOnDisplay && ConfigSettings.networkedNodes.Value && ConfigSettings.ModNetworking.Value)
+            else if (alwaysOnDisplay && ConfigSettings.NetworkedNodes.Value && ConfigSettings.ModNetworking.Value)
             {
                 keepAlwaysOnDisabled = true;
                 NetHandler.Instance.AoDServerRpc(false);
@@ -211,14 +211,14 @@ namespace TerminalStuff
                 return displayText;
                 //Plugin.Log.LogInfo("set alwaysondisplay to false");
             }
-            else if (!alwaysOnDisplay && !ConfigSettings.networkedNodes.Value)
+            else if (!alwaysOnDisplay && !ConfigSettings.NetworkedNodes.Value)
             {
                 keepAlwaysOnDisabled = false;
                 alwaysOnDisplay = true;
                 displayText = $"Terminal Always-on Display [ENABLED]\r\n";
                 return displayText;
             }
-            else if (alwaysOnDisplay && !ConfigSettings.networkedNodes.Value)
+            else if (alwaysOnDisplay && !ConfigSettings.NetworkedNodes.Value)
             {
                 keepAlwaysOnDisabled = true;
                 alwaysOnDisplay = false;

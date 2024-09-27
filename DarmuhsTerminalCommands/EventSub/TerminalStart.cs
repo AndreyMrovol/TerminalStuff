@@ -1,10 +1,10 @@
-﻿using static TerminalStuff.TerminalEvents;
+﻿using System.Collections;
+using System.Collections.Generic;
 using TerminalStuff.PluginCore;
 using UnityEngine;
-using System.Collections;
 using static OpenLib.ConfigManager.ConfigSetup;
 using static OpenLib.CoreMethods.LogicHandling;
-using System.Collections.Generic;
+using static TerminalStuff.TerminalEvents;
 
 namespace TerminalStuff.EventSub
 {
@@ -31,10 +31,11 @@ namespace TerminalStuff.EventSub
         {
             Plugin.MoreLogs("Upgrading terminal with my stuff, smile.");
             Plugin.Allnodes = GetAllNodes();
+
             OverWriteTextNodes();
             VanillaNodesCache();
             TerminalClockStuff.MakeClock();
-            ViewCommands.DetermineCamsTargets();
+            MoreCamStuff.DetermineCamsTargets();
             ShortcutBindings.InitSavedShortcuts();
             TerminalCustomizer.TerminalCustomization();
             MenuBuild.CategoryList();
@@ -58,11 +59,11 @@ namespace TerminalStuff.EventSub
                 Plugin.Spam("~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HELP MODIFIED ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
                 //string maskasciiart = "     ._______.\r\n     | \\   / |\r\n  .--|.O.|.O.|______.\r\n__).-| = | = |/   \\ |\r\np__) (.'---`.)Q.|.Q.|--.\r\n      \\\\___// = | = |-.(__\r\n       `---'( .---. ) (__&lt;\r\n             \\\\.-.//\r\n              `---'\r\n\t\t\t  ";
-                string asciiArt = ConfigSettings.homeTextArt.Value;
+                string asciiArt = ConfigSettings.HomeTextArt.Value;
                 asciiArt = asciiArt.Replace("[leadingSpace]", " ");
                 asciiArt = asciiArt.Replace("[leadingSpacex4]", "    ");
                 //no known compatibility issues with home screen
-                startNode.displayText = $"{ConfigSettings.homeLine1.Value}\r\n{ConfigSettings.homeLine2.Value}\r\n\r\n{ConfigSettings.homeHelpLines.Value}\r\n{asciiArt}\r\n\r\n{ConfigSettings.homeLine3.Value}\r\n\r\n";
+                startNode.displayText = $"{ConfigSettings.HomeLine1.Value}\r\n{ConfigSettings.HomeLine2.Value}\r\n\r\n{ConfigSettings.HomeHelpLines.Value}\r\n{asciiArt}\r\n\r\n{ConfigSettings.HomeLine3.Value}\r\n\r\n";
                 GameStuff.oneTimeOnly = true;
             }
 
@@ -110,10 +111,8 @@ namespace TerminalStuff.EventSub
                 yield break;
 
             delayStartEnum = true;
-
             yield return new WaitForSeconds(1);
             Plugin.MoreLogs("1 Second delay methods starting.");
-            //StoreCommands(); //adding after delay for storerotation mod
             SplitViewChecks.CheckForSplitView("neither");
             Plugin.MoreLogs("disabling cams views");
             ViewCommands.isVideoPlaying = false;
@@ -129,8 +128,16 @@ namespace TerminalStuff.EventSub
 
         public static void ToggleScreen(bool status)
         {
-            Plugin.instance.Terminal.StartCoroutine(Plugin.instance.Terminal.waitUntilFrameEndToSetActive(status));
-            Plugin.Spam($"Screen set to {status}");
+            OpenLib.Common.CommonTerminal.ToggleScreen(status);
+        }
+
+        internal static void InitiateTerminalStuff()
+        {
+            if (Plugin.instance.Terminal == null)
+                return;
+
+            AlwaysOnStuff.screenSettings = new(ConfigSettings.TerminalScreen.Value);
+            terminalSettings.StartPage(ConfigSettings.TerminalStartPage.Value);
         }
 
         private static void AlwaysOnStart(Terminal thisterm, TerminalNode startNode)
@@ -138,7 +145,7 @@ namespace TerminalStuff.EventSub
             if (AlwaysOnStuff.screenSettings.AlwaysOn && !AlwaysOnStuff.screenSettings.inUse)
             {
                 Plugin.Spam("Setting AlwaysOn Display.");
-                if (ConfigSettings.networkedNodes.Value && ConfigSettings.ModNetworking.Value)
+                if (ConfigSettings.NetworkedNodes.Value && ConfigSettings.ModNetworking.Value)
                 {
                     Plugin.Spam("network nodes enabled, syncing alwayson status");
                     NetHandler.Instance.StartAoDServerRpc(true);
@@ -158,7 +165,7 @@ namespace TerminalStuff.EventSub
 
         private static void StartCheck(Terminal thisterm, TerminalNode startNode)
         {
-            if (!ConfigSettings.ModNetworking.Value || !ConfigSettings.networkedNodes.Value)
+            if (!ConfigSettings.ModNetworking.Value || !ConfigSettings.NetworkedNodes.Value)
             {
                 Plugin.Spam("Networking disabled, returning...");
                 thisterm.LoadNewNode(startNode);

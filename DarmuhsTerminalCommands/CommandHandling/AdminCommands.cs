@@ -17,18 +17,19 @@ namespace TerminalStuff
 
             playerToKick = null;
             string displayText;
-            string[] words = GetWords();
-            if (words.Length < 2)
+            string val = GetAfterKeyword(GetKeywordsPerConfigItem(ConfigSettings.KickKeywords.Value));
+
+            if (!AmIHost(out displayText))
+                return displayText;
+
+            if (val.Length < 1)
             {
                 string getPlayerNames = PlayerNameAndIDList();
                 displayText = $"You must specify a player name or ID to kick them!\r\n\tKickable Players:\r\n(id) PlayerName{getPlayerNames}\r\n\r\n";
                 return displayText;
             }
 
-            if (!AmIHost(out displayText))
-                return displayText;
-
-            if (ulong.TryParse(words[1], out ulong tryPlayerID))
+            if (ulong.TryParse(val, out ulong tryPlayerID))
             {
                 foreach (PlayerControllerB player in StartOfRound.Instance.allPlayerScripts)
                 {
@@ -45,7 +46,7 @@ namespace TerminalStuff
             else
             {
                 Plugin.Spam("ulong failed parse");
-                string targetPlayerName = words[1].ToLower();
+                string targetPlayerName = val.ToLower();
                 foreach (PlayerControllerB player in StartOfRound.Instance.allPlayerScripts)
                 {
                     if (player.playerUsername.ToLower() == targetPlayerName)
@@ -57,7 +58,7 @@ namespace TerminalStuff
                 }
             }
 
-            displayText = $"Unable to find player to kick by name or id - {words[1]}\r\n\r\n";
+            displayText = $"Unable to find player to kick by name or id - {val}\r\n\r\n";
             return displayText;
         }
 

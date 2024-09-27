@@ -1,15 +1,15 @@
-﻿using static TerminalStuff.AlwaysOnStuff;
-using static TerminalStuff.TerminalClockStuff;
-using static TerminalStuff.ShipControls;
-using static TerminalStuff.TerminalEvents;
+﻿using static TerminalStuff.AdminCommands;
+using static TerminalStuff.AlwaysOnStuff;
 using static TerminalStuff.DynamicCommands;
-using static TerminalStuff.ShortcutBindings;
-using static TerminalStuff.NetHandler;
-using static TerminalStuff.AdminCommands;
-using static TerminalStuff.WalkieTerm;
-using static TerminalStuff.StartofHandling;
 using static TerminalStuff.EventSub.TerminalQuit;
 using static TerminalStuff.EventSub.TerminalStart;
+using static TerminalStuff.NetHandler;
+using static TerminalStuff.ShipControls;
+using static TerminalStuff.ShortcutBindings;
+using static TerminalStuff.StartofHandling;
+using static TerminalStuff.TerminalClockStuff;
+using static TerminalStuff.TerminalEvents;
+using static TerminalStuff.WalkieTerm;
 
 namespace TerminalStuff
 {
@@ -45,17 +45,17 @@ namespace TerminalStuff
 
         internal static bool ShouldAddCamsLogic()
         {
-            if (ConfigSettings.terminalCams.Value)
+            if (ConfigSettings.TerminalCams.Value)
                 return true;
-            if (ConfigSettings.terminalMap.Value)
+            if (ConfigSettings.TerminalMap.Value)
                 return true;
-            if (ConfigSettings.terminalMinicams.Value)
+            if (ConfigSettings.TerminalMinicams.Value)
                 return true;
-            if (ConfigSettings.terminalMinimap.Value)
+            if (ConfigSettings.TerminalMinimap.Value)
                 return true;
-            if (ConfigSettings.terminalOverlay.Value)
+            if (ConfigSettings.TerminalOverlay.Value)
                 return true;
-            if (ConfigSettings.terminalMirror.Value)
+            if (ConfigSettings.TerminalMirror.Value)
                 return true;
             return false;
         }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace TerminalStuff
 {
@@ -36,7 +31,7 @@ namespace TerminalStuff
                 historyIndex = 0;
                 return historyIndex;
             }
-                
+
             if (historyIndex == 0)
                 historyIndex = CommandHistory.Count - 1;
             else
@@ -66,11 +61,11 @@ namespace TerminalStuff
         {
 
             string command = string.Empty;
-            if(CommandHistory.Count < 1)
+            if (CommandHistory.Count < 1)
                 return command;
             else
             {
-                if(CommandHistory.Count > currentIndex)
+                if (CommandHistory.Count > currentIndex)
                     command = CommandHistory[currentIndex];
                 else
                 {

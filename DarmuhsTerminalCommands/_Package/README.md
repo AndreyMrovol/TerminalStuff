@@ -4,8 +4,6 @@
 
 ### Completely configurable Terminal expansion mod! 40+ new commands, 5+ new features, QoL fixes, and much more
 
-### Updated for Lethal Company v62 in version 3.5.5
-
 ### Features:
  - **Near infinite** customizable keywords for a majority of commands
  - Networked Terminal nodes with Always On Display will let you see what your coworkers are doing on the terminal! **NOW WORKS WITH CAMS AND VIDEOS**
@@ -30,6 +28,7 @@
 	- Still compatibile with every major bodycam mod; OpenBodyCams, Helmet Cameras, and Solos Bodycams are all compatible!
  - Expanded compatibility with LethalLevelLoader, OpenBodyCams, and TwoRadarMaps!
 	- [NEW IN 3.5.7] Will now check if BodyCam upgrade has been purchased when using OpenBodyCams cameras!
+ - [NEW IN 3.6.0] Loot commands have added compatiblility with ShipInventory
 
 ### Comfort Commands:
  - Lobby: Display the current lobby name.
@@ -74,6 +73,7 @@
 
 ### Fun Commands:
  - VideoPlayer: Plays a random video on the terminal from all videos located in the configured videoFolderPath folder.
+	- As of 3.6.0, requires a separate TerminalVideoPack.
  - Gamble: Gamble a percentage of your ship credits (networking required)
  - Fcolor: Change the color of the light coming from your flashlight (networking required)
  - Scolor: Change the color of the lights inside the ship (networking required)

@@ -1,9 +1,7 @@
-﻿using System.Collections;
-using UnityEngine;
-using static TerminalStuff.TerminalEvents;
+﻿using OpenLib.Common;
 using static TerminalStuff.AlwaysOnStuff;
 using static TerminalStuff.EventSub.TerminalStart;
-using OpenLib.Common;
+using static TerminalStuff.TerminalEvents;
 
 namespace TerminalStuff.EventSub
 {
@@ -12,36 +10,10 @@ namespace TerminalStuff.EventSub
         internal static bool videoQuitEnum = false;
         internal static void OnTerminalQuit()
         {
-            if(ConfigSettings.CacheLastTerminalPage.Value && Plugin.instance.Terminal.currentNode != null && Plugin.instance.Terminal.currentNode.name != "terminalQuit")
+            if (ConfigSettings.SaveLastInput.Value && Plugin.instance.Terminal.currentNode != null && Plugin.instance.Terminal.currentNode.name != "TerminalQuit")
             {
-
                 lastText = CommonStringStuff.GetCleanedScreenText(Plugin.instance.Terminal);
-
-                if (Plugin.instance.suitsTerminal && SuitsTerminalCompatibility.CheckForSuitsMenu())
-                {
-                    Plugin.Spam("setting last node text to empty");
-                    justText.displayText = "";
-                    lastNode = justText;
-                }
-                else if(Plugin.instance.Terminal.currentNode.playClip != null || Plugin.instance.Terminal.currentNode.playSyncedClip != -1)
-                {
-                    string cachedText = Plugin.instance.Terminal.screenText.text;
-                    Plugin.Spam(cachedText);
-                    cachedText = cachedText.TrimStart('\r', '\n');
-
-                    if (cachedText.EndsWith(lastText))
-                    {
-                        cachedText = cachedText.Substring(0, cachedText.LastIndexOf(lastText));
-                        cachedText += "\r\n";
-                    }
-
-                    justText.displayText = cachedText;
-                    lastNode = justText;
-                    Plugin.Spam("caching node from quit");
-                }
-                else
-                    lastNode = Plugin.instance.Terminal.currentNode;
-                
+                Plugin.Spam("grabbed lastText");
             }
 
             if (StartOfRound.Instance.localPlayerController != null)
@@ -62,15 +34,15 @@ namespace TerminalStuff.EventSub
         {
             if (status == false)
             {
-                OpenBodyCamsCompatibility.TerminalMirrorStatus(status);
-                OpenBodyCamsCompatibility.TerminalCameraStatus(status);
+                OpenLib.Compat.OpenBodyCamFuncs.TerminalMirrorStatus(status);
+                OpenLib.Compat.OpenBodyCamFuncs.TerminalCameraStatus(status);
             }
             else if (Plugin.instance.isOnMirror)
             {
-                OpenBodyCamsCompatibility.TerminalMirrorStatus(status);
+                OpenLib.Compat.OpenBodyCamFuncs.TerminalMirrorStatus(status);
             }
             else
-                OpenBodyCamsCompatibility.TerminalCameraStatus(status);
+                OpenLib.Compat.OpenBodyCamFuncs.TerminalCameraStatus(status);
         }
 
         private static void HandleRegularQuit()

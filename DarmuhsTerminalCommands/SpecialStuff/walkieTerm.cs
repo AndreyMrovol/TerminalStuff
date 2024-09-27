@@ -10,8 +10,8 @@ namespace TerminalStuff
     {
         //static PlayerControllerB getmyself = GameNetworkManager.Instance.localPlayerController;
 
-        public static string UseWalkieKey = ConfigSettings.walkieTermKey.Value;
-        public static string UseWalkieMB = ConfigSettings.walkieTermMB.Value;
+        public static string UseWalkieKey = ConfigSettings.WalkieTermKey.Value;
+        public static string UseWalkieMB = ConfigSettings.WalkieTermMB.Value;
         internal static bool walkieEnum = false;
 
         public WalkieTerm(string useWalkieKey)
@@ -88,7 +88,7 @@ namespace TerminalStuff
 
             if (getmywalkie != null)
             {
-                while (Plugin.instance.Terminal.terminalInUse && ConfigSettings.walkieTerm.Value)
+                while (Plugin.instance.Terminal.terminalInUse && ConfigSettings.WalkieTerm.Value)
                 {
                     if (ActivateWalkie() && !usingWalkFromTerm)
                     {

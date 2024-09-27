@@ -90,6 +90,10 @@
     <Reference Include="OpenLib">
       <HintPath>..\..\..\publicDevLibrary\OpenLib\_Release Files\OpenLib.dll</HintPath>
     </Reference>
+    <Reference Include="ShipInventory">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\BepInEx\dontloadpls\WarperSan-ShipInventory\ShipInventory.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="suitsTerminal">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\BepInEx\dontloadpls\suitsTerminal.dll</HintPath>
       <Private>False</Private>
@@ -189,6 +193,7 @@
     <Compile Include="Compatibility\FovAdjustStuff.cs" />
     <Compile Include="CommandHandling\GambaCommands.cs" />
     <Compile Include="Compatibility\ConstellationsCompat.cs" />
+    <Compile Include="Compatibility\ShipInventoryCompat.cs" />
     <Compile Include="EventSub\GameStuff.cs" />
     <Compile Include="EventSub\Subscribers.cs" />
     <Compile Include="EventSub\Teleporters.cs" />
@@ -209,6 +214,7 @@
     <Compile Include="SpecialStuff\Fastenshtein.cs" />
     <Compile Include="SpecialStuff\FontStuff.cs" />
     <Compile Include="SpecialStuff\TerminalHistory.cs" />
+    <Compile Include="throwawaycode.cs" />
     <Compile Include="VisualCore\AlwaysOnStuff.cs" />
     <Compile Include="Compatibility\PlayerCamsCompatibility.cs" />
     <Compile Include="PluginCore\MenuBuild.cs" />
@@ -225,6 +231,8 @@
     <Compile Include="CommandHandling\ShipControls.cs" />
     <Compile Include="SpecialStuff\ShortcutBindings.cs" />
     <Compile Include="SpecialStuff\SpecialConfirmationLogic.cs" />
+    <Compile Include="VisualCore\CamEvents.cs" />
+    <Compile Include="VisualCore\CamsClass.cs" />
     <Compile Include="VisualCore\MoreCamStuff.cs" />
     <Compile Include="VisualCore\SplitViewChecks.cs" />
     <Compile Include="PluginCore\StartofHandling.cs" />
@@ -251,11 +259,7 @@
   <ItemGroup>
     <Content Include="specialnodes.txt" />
     <Content Include="tbd.txt" />
-    <Content Include="_Package\allmyfellas.mp4" />
-    <Content Include="_Package\clapclap.mp4" />
     <Content Include="_Package\icon.png" />
-    <Content Include="_Package\lol.mp4" />
-    <Content Include="_Package\thinkutheshit.mp4" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

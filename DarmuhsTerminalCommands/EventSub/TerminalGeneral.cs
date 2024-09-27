@@ -8,14 +8,9 @@ namespace TerminalStuff.EventSub
         internal static TerminalNode lastNodeFormatted;
         internal static void OnTerminalDisable()
         {
-            if (Plugin.instance.OpenBodyCamsMod)
-                OpenBodyCamsCompatibility.ResidualCamsCheck();
-
             //Plugin.instance.Config.Reload();
             MenuBuild.ClearMyMenustuff();
             ConfigSettings.TerminalStuffMain.DeleteAll();
-            justText.displayText = ""; //reset cached terminal node on lobby disable
-            lastNode = justText; //stop persisting nodes between lobbies
             lastText = "";
             //Plugin.ClearLists();
             //Terminal disabled, disabling ESC key listener OnDisable
@@ -32,7 +27,7 @@ namespace TerminalStuff.EventSub
             if (Plugin.instance.Terminal.currentNode == Plugin.instance.Terminal.terminalNodes.specialNodes[1])
                 return;
 
-            if(Plugin.instance.Terminal.screenText.textComponent.textInfo.lineCount < 24 && node != lastNodeFormatted)
+            if (Plugin.instance.Terminal.screenText.textComponent.textInfo.lineCount < 24 && node != lastNodeFormatted)
             {
                 int spaceToFill = 24 - Plugin.instance.Terminal.screenText.textComponent.textInfo.lineCount;
                 lastNodeFormatted = Plugin.instance.Terminal.currentNode;
@@ -44,7 +39,7 @@ namespace TerminalStuff.EventSub
         private static void FillText(string formatChoice, ref TerminalNode fixLength, int spaceToFill)
         {
 
-            if(formatChoice == "fillbottom")
+            if (formatChoice == "fillbottom")
             {
                 for (int i = 0; i < spaceToFill; i++)
                 {
@@ -89,10 +84,10 @@ namespace TerminalStuff.EventSub
 
         internal static void OnLoadAffordable(TerminalNode node)
         {
-            if (!ConfigSettings.terminalRefund.Value || !ConfigSettings.ModNetworking.Value)
+            if (!ConfigSettings.TerminalRefund.Value || !ConfigSettings.ModNetworking.Value)
                 return;
 
-            if(node == null)
+            if (node == null)
             {
                 Plugin.WARNING("WARNING: node is null at OnLoadAffordable, using early return & dropship will not be synced!");
                 return;

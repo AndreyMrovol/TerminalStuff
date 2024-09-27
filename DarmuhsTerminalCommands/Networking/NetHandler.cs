@@ -1,18 +1,19 @@
 ﻿using GameNetcodeStuff;
+using OpenLib.Events;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using static TerminalStuff.EventSub.TerminalStart;
 using static OpenLib.CoreMethods.AddingThings;
 using static OpenLib.CoreMethods.LogicHandling;
+using static TerminalStuff.EventSub.TerminalStart;
 using Object = UnityEngine.Object;
 
 namespace TerminalStuff
 {
     public class NetHandler : NetworkBehaviour
     {
-
+        public static Events.CustomEvent ShipReset = new();
         internal static NetHandler Instance { get; private set; }
         internal static Terminal patchTerminal = null;
         internal static bool netNodeSet = false;
@@ -35,7 +36,7 @@ namespace TerminalStuff
             else if (!netNodeSet && networkManager.IsHost || networkManager.IsServer)
             {
                 //if (!Plugin.instance.Terminal.terminalUIScreen.gameObject.activeSelf)
-                    //return;
+                //return;
 
                 Plugin.MoreLogs($"Host: attempting to sync node {nodeName}/{nodeNumber}");
                 SyncNodes(topRightText, nodeName, nodeText, nodeNumber);
@@ -53,7 +54,7 @@ namespace TerminalStuff
         internal void NodeLoadClientRpc(string topRightText, string nodeName, string nodeText, bool fromHost, int nodeNumber = -1)
         {
             //if (!Plugin.instance.Terminal.terminalUIScreen.gameObject.activeSelf)
-               //return;
+            //return;
 
             NetworkManager networkManager = base.NetworkManager;
             if (fromHost && (networkManager.IsHost || networkManager.IsServer))
@@ -88,14 +89,14 @@ namespace TerminalStuff
 
             if (nodeNumber == 0) //VideoPlayer
             {
-                if (ConfigSettings.videoSync.Value)
+                if (ConfigSettings.VideoSync.Value)
                 {
                     node.displayText = nodeText;
                     VideoManager.PlaySyncedVideo();
                 }
                 else
                     node.displayText = ViewCommands.LolVideoPlayerEvent();
-                
+
                 return;
             }
             else if (nodeNumber == 1) // cams
@@ -134,51 +135,48 @@ namespace TerminalStuff
         private void SyncNodes(string topRightText, string nodeName, string nodeText, int nodeNumber = -1)
         {
 
-            TerminalNode node = GetFromAllNodes(nodeName);
-
-            if (node == null)
+            if (!TryGetFromAllNodes(nodeName, out TerminalNode node))
             {
                 DefaultSync(nodeName, nodeText);
                 Plugin.MoreLogs($"{nodeName} not matching known nodes. Only displaying text:\n{nodeText}");
                 return;
             }
-
-            NetNodeReset(true);
-
-            if (nodeNumber != -1 && nodeNumber <= ConfigSettings.TerminalStuffMain.ListNumToString.Count)
-            {
-                TerminalNode viewNode = StartofHandling.FindViewNode(nodeNumber);
-                
-                if (viewNode == null)
-                    return;
-
-                SyncViewNodeWithNum(ref viewNode, nodeNumber, nodeText);
-                Plugin.instance.Terminal.LoadNewNode(viewNode);
-                //Plugin.instance.Terminal.currentNode.displayText = viewNode.displayText;
-                Plugin.MoreLogs($"Non terminal user: Attempting to load {nodeName}, ViewNode: {nodeNumber}\n {viewNode.displayText}");
-            }
             else
             {
-                DefaultSync(nodeName, nodeText, node);
-                Plugin.MoreLogs($"Non terminal user: Attempting to load {nodeName}'s displayText:\n {nodeText}");
+                NetNodeReset(true);
+
+                if (nodeNumber != -1 && nodeNumber <= ConfigSettings.TerminalStuffMain.ListNumToString.Count)
+                {
+                    TerminalNode viewNode = StartofHandling.FindViewNode(nodeNumber);
+
+                    if (viewNode == null)
+                        return;
+
+                    SyncViewNodeWithNum(ref viewNode, nodeNumber, nodeText);
+                    Plugin.instance.Terminal.LoadNewNode(viewNode);
+                    //Plugin.instance.Terminal.currentNode.displayText = viewNode.displayText;
+                    Plugin.MoreLogs($"Non terminal user: Attempting to load {nodeName}, ViewNode: {nodeNumber}\n {viewNode.displayText}");
+                }
+                else
+                {
+                    DefaultSync(nodeName, nodeText, node);
+                    Plugin.MoreLogs($"Non terminal user: Attempting to load {nodeName}'s displayText:\n {nodeText}");
+                }
+
+
+                Plugin.instance.Terminal.topRightText.text = topRightText;
+                NetNodeReset(false);
             }
-
-
-            Plugin.instance.Terminal.topRightText.text = topRightText;
-            NetNodeReset(false);
-
         }
 
         private void DefaultSync(string nodeName, string nodeText, TerminalNode newNode = null)
         {
-            if(newNode != null && vanillaNodes.Contains(newNode))
+            if (newNode != null && vanillaNodes.Contains(newNode))
             {
                 MoreCamStuff.CamPersistance(nodeName);
                 MoreCamStuff.VideoPersist(nodeName);
                 newNode.displayText = Plugin.instance.Terminal.TextPostProcess(newNode.displayText, newNode);
                 Plugin.instance.Terminal.LoadNewNode(newNode);
-                if (ConfigSettings.CacheLastTerminalPage.Value)
-                    TerminalEvents.lastNode = newNode;
                 return;
             }
 
@@ -186,9 +184,6 @@ namespace TerminalStuff
             MoreCamStuff.VideoPersist(nodeName);
             netNode.displayText = nodeText;
             Plugin.instance.Terminal.LoadNewNode(netNode);
-            
-            if(ConfigSettings.CacheLastTerminalPage.Value)
-                TerminalEvents.lastNode = netNode;
 
             Plugin.MoreLogs($"Only displaying {nodeName} text.");
         }
@@ -223,7 +218,7 @@ namespace TerminalStuff
 
         internal static void SyncMyVideoChoiceToEveryone(string videoPlaying)
         {
-            if (!ConfigSettings.networkedNodes.Value || !ConfigSettings.ModNetworking.Value || !ConfigSettings.videoSync.Value)
+            if (!ConfigSettings.NetworkedNodes.Value || !ConfigSettings.ModNetworking.Value || !ConfigSettings.VideoSync.Value)
                 return;
 
             if (Instance == null || StartOfRound.Instance == null || StartOfRound.Instance.localPlayerController == null)
@@ -253,7 +248,7 @@ namespace TerminalStuff
                 Plugin.Spam("SyncTwoRadarMapsClientRpc called from another client");
                 TwoRadarMapsCompatibility.SyncTarget(playerNum);
             }
-            
+
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -290,7 +285,7 @@ namespace TerminalStuff
 
         internal static void SyncMyCamsBoolToEveryone(bool myCams)
         {
-            if (!ConfigSettings.networkedNodes.Value || !ConfigSettings.ModNetworking.Value)
+            if (!ConfigSettings.NetworkedNodes.Value || !ConfigSettings.ModNetworking.Value)
                 return;
 
             if (Instance == null || StartOfRound.Instance == null || StartOfRound.Instance.localPlayerController == null)
@@ -703,8 +698,9 @@ namespace TerminalStuff
 
             StartOfRound.Instance.ResetShip();
             StartOfRound.Instance.currentPlanetPrefab.transform.position = StartOfRound.Instance.planetContainer.transform.position;
-        }
+            ShipReset.Invoke(); //public event for other mods to listen to and do things on ship reset
 
+        }
 
 
         //DO NOT REMOVE
@@ -730,14 +726,15 @@ namespace TerminalStuff
 
             if (GameNetworkManager.Instance.isHostingGame)
                 return;
+
         }
 
         internal static void UpgradeStatusCheck()
         {
-            if (ConfigSettings.terminalBioScan.Value && ConfigSettings.terminalBioScanPatch.Value && ConfigSettings.ModNetworking.Value)
+            if (ConfigSettings.TerminalBioScan.Value && ConfigSettings.TerminalBioScanPatch.Value && ConfigSettings.ModNetworking.Value)
                 Instance.GetItemStatusServerRpc("BioscanPatch", CostCommands.enemyScanUpgradeEnabled);
 
-            if (ConfigSettings.terminalVitals.Value && ConfigSettings.terminalVitalsUpgrade.Value && ConfigSettings.ModNetworking.Value)
+            if (ConfigSettings.TerminalVitals.Value && ConfigSettings.TerminalVitalsUpgrade.Value && ConfigSettings.ModNetworking.Value)
                 Instance.GetItemStatusServerRpc("VitalsPatch", CostCommands.vitalsUpgradeEnabled);
         }
 

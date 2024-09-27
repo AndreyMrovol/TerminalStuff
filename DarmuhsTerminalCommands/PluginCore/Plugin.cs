@@ -16,7 +16,7 @@ using static OpenLib.ConfigManager.ConfigSetup;
 namespace TerminalStuff
 {
     [BepInPlugin("darmuh.TerminalStuff", "darmuhsTerminalStuff", (PluginInfo.PLUGIN_VERSION))]
-    [BepInDependency("darmuh.OpenLib", "0.1.8")] //hard dependency for my library
+    [BepInDependency("darmuh.OpenLib", "0.2.1")] //hard dependency for my library
     [BepInDependency("Rozebud.FovAdjust", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("Zaggy1024.OpenBodyCams", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("Zaggy1024.TwoRadarMaps", BepInDependency.DependencyFlags.SoftDependency)]
@@ -32,7 +32,7 @@ namespace TerminalStuff
         {
             public const string PLUGIN_GUID = "darmuh.TerminalStuff";
             public const string PLUGIN_NAME = "darmuhsTerminalStuff";
-            public const string PLUGIN_VERSION = "3.5.10";
+            public const string PLUGIN_VERSION = "3.6.0";
         }
 
         internal static ManualLogSource Log;
@@ -48,6 +48,7 @@ namespace TerminalStuff
         public bool suitsTerminal = false;
         public bool TerminalFormatter = false;
         public bool Constellations = false;
+        public bool ShipInventory = false;
 
         //public stuff for instance
         public bool radarNonPlayer = false;
@@ -75,8 +76,8 @@ namespace TerminalStuff
         {
             instance = this;
             Log = base.Logger;
-            Log.LogInfo((object)$"{PluginInfo.PLUGIN_NAME} is loaded with version {PluginInfo.PLUGIN_VERSION}!");
-            Log.LogInfo((object)"--------[Now with more Quality of Life!]---------");
+            Log.LogInfo($"{PluginInfo.PLUGIN_NAME} is loaded with version {PluginInfo.PLUGIN_VERSION}!");
+            Log.LogInfo("--------[Now with more Quality of Life!]---------");
             StuffForLibrary.Init();
             ConfigSettings.BindConfigSettings();
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
@@ -109,11 +110,12 @@ namespace TerminalStuff
         {
             Spam("CONFIG SETTING CHANGE EVENT");
             StuffForLibrary.ManualCommands();
+            TerminalStart.InitiateTerminalStuff();
 
             if (settingChangedArg.ChangedSetting == null)
                 return;
 
-            if( ConfigMisc.CheckChangedConfigSetting(defaultManaged, settingChangedArg.ChangedSetting) || ConfigMisc.CheckChangedConfigSetting(ConfigSettings.TerminalStuffBools, settingChangedArg.ChangedSetting))
+            if (ConfigMisc.CheckChangedConfigSetting(defaultManaged, settingChangedArg.ChangedSetting) || ConfigMisc.CheckChangedConfigSetting(ConfigSettings.TerminalStuffBools, settingChangedArg.ChangedSetting))
             {
                 Spam("managed bools have been modified!!");
             }
@@ -129,7 +131,7 @@ namespace TerminalStuff
 
         internal static void MoreLogs(string message)
         {
-            if (ConfigSettings.extensiveLogging.Value)
+            if (ConfigSettings.ExtensiveLogging.Value)
                 Log.LogInfo(message);
             else
                 return;
@@ -137,7 +139,7 @@ namespace TerminalStuff
 
         internal static void Spam(string message)
         {
-            if (ConfigSettings.developerLogging.Value)
+            if (ConfigSettings.DeveloperLogging.Value)
                 Log.LogDebug(message);
             else
                 return;

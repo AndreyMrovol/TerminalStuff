@@ -1,6 +1,6 @@
-﻿using BepInEx.Bootstrap;
-using static TerminalStuff.AlwaysOnStuff;
+﻿using TerminalStuff.PluginCore;
 using static OpenLib.Common.StartGame;
+using static TerminalStuff.AlwaysOnStuff;
 
 namespace TerminalStuff.EventSub
 {
@@ -19,7 +19,8 @@ namespace TerminalStuff.EventSub
             SplitViewChecks.InitSplitViewObjects(); //addSplitViewObjects
             BoolStuff.ResetEnumBools(); // resets all enum bools
             TerminalClockStuff.showTime = false; // disable clock on game restart
-            ViewCommands.ResetPluginInstanceBools(); //reset view command bools
+            MoreCamStuff.ResetPluginInstanceBools(); //reset view command bools
+
         }
 
         internal static void OnPlayerSpawn()
@@ -27,13 +28,14 @@ namespace TerminalStuff.EventSub
             screenSettings = new(ConfigSettings.TerminalScreen.Value);
             if (screenSettings.Dynamic)
                 Plugin.instance.Terminal.StartCoroutine(AlwaysOnDynamic(Plugin.instance.Terminal));
+
         }
 
         internal static void OnStartGame()
         {
             if (!StartOfRound.Instance.inShipPhase)
             {
-                if (!TerminalEvents.clockDisabledByCommand && ConfigSettings.terminalClock.Value)
+                if (!TerminalEvents.clockDisabledByCommand && ConfigSettings.TerminalClock.Value)
                     TerminalClockStuff.showTime = true;
 
             }
@@ -49,7 +51,7 @@ namespace TerminalStuff.EventSub
 
         private static void CompatibilityCheck()
         {
-            if(SoftCompatibility("BMX.LobbyCompatibility", ref Plugin.instance.LobbyCompat))
+            if (SoftCompatibility("BMX.LobbyCompatibility", ref Plugin.instance.LobbyCompat))
             {
                 Plugin.MoreLogs("LobbyCompatibility detected, setting appropriate Lobby Compatibility Level depending on networking status");
                 BMX_LobbyCompat.SetCompat(ConfigSettings.ModNetworking.Value);
@@ -90,6 +92,11 @@ namespace TerminalStuff.EventSub
             {
                 Plugin.Spam("LethalConstellations detected ^.^");
             }
+            if (SoftCompatibility("ShipInventory", ref Plugin.instance.ShipInventory))
+                Plugin.Spam("ShipInventory compatibility enabled!");
+
+            if (OpenLib.Plugin.instance.LethalConfig)
+                OpenLib.Compat.LethalConfigSoft.AddButton("Terminal Customization", "Refresh Customizations", "Press this button to refresh all terminal customizations", "Refresh", TerminalCustomizer.TerminalCustomization);
         }
     }
 }

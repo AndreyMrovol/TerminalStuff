@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+using static TerminalStuff.MoreCamStuff;
 using static TerminalStuff.ViewCommands;
 using static TwoRadarMaps.Plugin;
 
@@ -31,7 +32,7 @@ namespace TerminalStuff
         {
             TeleportTarget(TerminalMapRenderer.targetTransformIndex);
             Plugin.MoreLogs("Valid player attached to tworadarmaps, teleporting");
-            string displayText = $"{ConfigSettings.tpMessageString.Value} (Targeted Player: {TerminalMapRenderer.radarTargets[TerminalMapRenderer.targetTransformIndex].name})";
+            string displayText = $"{ConfigSettings.TpMessageString.Value} (Targeted Player: {TerminalMapRenderer.radarTargets[TerminalMapRenderer.targetTransformIndex].name})";
             return displayText;
 
         }
@@ -75,7 +76,7 @@ namespace TerminalStuff
 
         internal static void NetCheck(int playerNum)
         {
-            if (!ConfigSettings.networkedNodes.Value)
+            if (!ConfigSettings.NetworkedNodes.Value)
                 return;
 
             NetHandler.Instance.SyncTwoRadarMapsServerRpc(((int)StartOfRound.Instance.localPlayerController.playerClientId), playerNum);
@@ -88,17 +89,17 @@ namespace TerminalStuff
             Plugin.MoreLogs("Syncing radar to specific player");
         }
 
-        internal static void UpdateCamsTarget()
+        internal static Texture UpdateCamsTarget()
         {
             if (Plugin.instance.activeCam && !StartOfRound.Instance.mapScreen.radarTargets[StartOfRound.Instance.mapScreen.targetTransformIndex].isNonPlayer)
             {
                 Plugin.MoreLogs("Using internal mod camera on valid player");
-                camsTexture = PlayerCamTexture();
+                return PlayerCamTexture();
             }
-            else if (Plugin.instance.activeCam && StartOfRound.Instance.mapScreen.radarTargets[StartOfRound.Instance.mapScreen.targetTransformIndex].isNonPlayer)
+            else
             {
                 Plugin.MoreLogs("Using internal mod camera on valid non-player");
-                camsTexture = NonPlayerCamTexture();
+                return NonPlayerCamTexture();
             }
         }
 
@@ -113,7 +114,7 @@ namespace TerminalStuff
             playerCam.orthographic = false;
             playerCam.enabled = true;
             playerCam.cameraType = CameraType.SceneView;
-            Transform camTransform = null;
+            Transform camTransform;
             if (TerminalMapRenderer.targetedPlayer != null)
             {
                 camTransform = TerminalMapRenderer.targetedPlayer.gameplayCamera.transform;
@@ -130,7 +131,7 @@ namespace TerminalStuff
             playerCam.transform.position = camTransform.transform.position;
             playerCam.usePhysicalProperties = false;
 
-            cullingMaskInt = playerCam.cullingMask & ~LayerMask.GetMask(layerNames: ["Ignore Raycast", "UI", "HelmetVisor"]);
+            int cullingMaskInt = playerCam.cullingMask & ~LayerMask.GetMask(layerNames: ["Ignore Raycast", "UI", "HelmetVisor"]);
             cullingMaskInt |= (1 << 23);
             playerCam.cullingMask = cullingMaskInt;
 
@@ -157,7 +158,7 @@ namespace TerminalStuff
             playerCam.transform.rotation = camTransform.rotation;
             playerCam.transform.position = camTransform.transform.position;
 
-            cullingMaskInt = playerCam.cullingMask & ~LayerMask.GetMask(layerNames: ["Ignore Raycast", "UI", "HelmetVisor"]);
+            int cullingMaskInt = playerCam.cullingMask & ~LayerMask.GetMask(layerNames: ["Ignore Raycast", "UI", "HelmetVisor"]);
             cullingMaskInt |= (1 << 23);
             playerCam.cullingMask = cullingMaskInt;
 
@@ -180,7 +181,7 @@ namespace TerminalStuff
             }
 
             Plugin.MoreLogs("first word: " + firstWord + "; second word: " + secondWord);
-            List<string> list = new List<string>();
+            List<string> list = [];
             for (int i = 0; i < TerminalMapRenderer.radarTargets.Count; i++) //swapped out vanilla mapscreen for TwoRadarMaps'
             {
                 if (TargetIsValid(TerminalMapRenderer.radarTargets[i]?.transform))

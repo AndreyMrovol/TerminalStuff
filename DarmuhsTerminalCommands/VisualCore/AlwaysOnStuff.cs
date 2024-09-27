@@ -21,15 +21,19 @@ namespace TerminalStuff
 
             while (instance.terminalUIScreen.gameObject != null && !MoreCommands.keepAlwaysOnDisabled && !DisableScreenOnDeath())
             {
+                //Debug Logs, dont leave in release version
+                //Plugin.Spam($"DEBUG LOGS\nisInHangarShipRoom: {StartOfRound.Instance.localPlayerController.isInHangarShipRoom}\nscreenActive: {instance.terminalUIScreen.gameObject.activeSelf}\nscreenSettings.inUse {screenSettings.inUse}\n ");
+
+
                 //player not in ship & screen is active
                 if (!StartOfRound.Instance.localPlayerController.isInHangarShipRoom && instance.terminalUIScreen.gameObject.activeSelf)
                 {
                     if (ConfigSettings.ScreenOffDelay.Value >= 0)
                         yield return new WaitForSeconds(ConfigSettings.ScreenOffDelay.Value);
-                    
-                    if(StartOfRound.Instance.localPlayerController.isInHangarShipRoom && instance.terminalUIScreen.gameObject.activeSelf && !screenSettings.inUse)
+
+                    if (StartOfRound.Instance.localPlayerController.isInHangarShipRoom && instance.terminalUIScreen.gameObject.activeSelf && !screenSettings.inUse)
                         continue;
-                    
+
                     instance.terminalUIScreen.gameObject.SetActive(false);
 
                     if (ViewCommands.externalcamsmod && Plugin.instance.OpenBodyCamsMod && ViewCommands.AnyActiveMonitoring())
@@ -69,14 +73,14 @@ namespace TerminalStuff
                     }
                     else
                         yield return new WaitForSeconds(0.1f);
-                    
+
                     continue;
                 }
 
                 yield return new WaitForSeconds(0.5f);
             }
 
-            if (DisableScreenOnDeath()) 
+            if (DisableScreenOnDeath())
             {
                 instance.terminalUIScreen.gameObject.SetActive(false);
                 if (ViewCommands.externalcamsmod && Plugin.instance.OpenBodyCamsMod && ViewCommands.AnyActiveMonitoring())
@@ -111,13 +115,13 @@ namespace TerminalStuff
 
         internal ScreenSettings(string setting)
         {
-            if(setting.ToLower() == "alwayson")
+            if (setting.ToLower() == "alwayson")
             {
                 this.AlwaysOn = true;
                 this.Dynamic = false;
                 this.inUse = false;
             }
-            else if(setting.ToLower() == "inship")
+            else if (setting.ToLower() == "inship")
             {
                 this.AlwaysOn = true;
                 this.Dynamic = true;

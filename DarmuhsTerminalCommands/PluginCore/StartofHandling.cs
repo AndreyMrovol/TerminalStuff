@@ -2,9 +2,11 @@
 using OpenLib.CoreMethods;
 using System.Collections;
 using System.Collections.Generic;
+using TerminalStuff.VisualCore;
 using UnityEngine;
 using static OpenLib.ConfigManager.ConfigSetup;
 using static OpenLib.CoreMethods.LogicHandling;
+using static TerminalStuff.MoreCamStuff;
 using static TerminalStuff.TerminalEvents;
 
 namespace TerminalStuff
@@ -55,7 +57,7 @@ namespace TerminalStuff
 
         internal static void EscapeConfirmCheck(ref TerminalNode resultNode)
         {
-            if(Plugin.instance.escapeConfirmation)
+            if (Plugin.instance.escapeConfirmation)
             {
                 Plugin.Spam("escape confirmation detected");
                 resultNode.overrideOptions = false;
@@ -168,7 +170,7 @@ namespace TerminalStuff
 
         internal static void CheckNetNode(TerminalNode resultNode)
         {
-            if (!ConfigSettings.networkedNodes.Value || !ConfigSettings.ModNetworking.Value)
+            if (!ConfigSettings.NetworkedNodes.Value || !ConfigSettings.ModNetworking.Value)
                 return;
 
             Plugin.MoreLogs("Networked nodes enabled, sending result to server.");
@@ -212,7 +214,7 @@ namespace TerminalStuff
                     else
                         StartOfRound.Instance.mapScreen.SwitchRadarTargetForward(callRPC: true);
 
-                    ViewCommands.UpdateCamsTarget(StartOfRound.Instance.mapScreen.targetTransformIndex);
+                    UpdateCamsTarget(StartOfRound.Instance.mapScreen.targetTransformIndex);
                     ViewCommands.DisplayTextUpdater(out string displayText);
 
                     resultNode.displayText = displayText;
@@ -230,7 +232,7 @@ namespace TerminalStuff
                         if (playernum != -1)
                         {
                             TwoRadarMapsCompatibility.UpdateTerminalRadarTarget(terminal, playernum);
-                            ViewCommands.InitializeTextures();
+                            CamEvents.UpdateTextures.Invoke();
                             ViewCommands.DisplayTextUpdater(out string displayText);
                             resultNode.displayText = displayText;
                             return resultNode;
@@ -245,8 +247,8 @@ namespace TerminalStuff
                         if (playernum != -1)
                         {
                             StartOfRound.Instance.mapScreen.SwitchRadarTargetAndSync(playernum);
-                            ViewCommands.UpdateCamsTarget(playernum);
-                            ViewCommands.InitializeTextures();
+                            UpdateCamsTarget(playernum);
+                            CamEvents.UpdateTextures.Invoke();
                             ViewCommands.DisplayTextUpdater(out string displayText);
                             resultNode.displayText = displayText;
                             return resultNode;
@@ -285,7 +287,7 @@ namespace TerminalStuff
 
             yield return new WaitForSeconds(0.045f);
             ViewCommands.DisplayTextUpdater(out string displayText);
-            ViewCommands.InitializeTextures();
+            CamEvents.UpdateTextures.Invoke();
             switchNode.displayText = displayText;
             terminal.LoadNewNode(switchNode);
 
@@ -300,7 +302,7 @@ namespace TerminalStuff
                 string s = CommonStringStuff.GetCleanedScreenText(Plugin.instance.Terminal);
                 TerminalHistory.AddToCommandHistory(CommonStringStuff.RemovePunctuation(s));
             }
-                
+
             if (initialResult == null)
                 return;
 

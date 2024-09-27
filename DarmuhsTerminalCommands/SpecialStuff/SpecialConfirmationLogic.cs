@@ -1,6 +1,4 @@
-﻿using Object = UnityEngine.Object;
-
-namespace TerminalStuff
+﻿namespace TerminalStuff
 {
     internal class SpecialConfirmationLogic
     {

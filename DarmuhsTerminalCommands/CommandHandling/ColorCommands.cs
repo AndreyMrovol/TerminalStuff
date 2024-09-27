@@ -1,7 +1,7 @@
 ﻿using GameNetcodeStuff;
+using System;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using static TerminalStuff.DynamicCommands;
 using static TerminalStuff.StringStuff;
 using Color = UnityEngine.Color;
 using Object = UnityEngine.Object;
@@ -96,41 +96,42 @@ namespace TerminalStuff
 
         internal static string ShipColorBase()
         {
-            string[] words = GetWords();
+            string val = GetAfterKeyword(GetKeywordsPerConfigItem(ConfigSettings.ScolorKeywords.Value));
 
-            if (words.Length < 2)
+            if (val.Length < 1)
             {
                 string message = ShipColorList();
                 Plugin.WARNING("not enough words for the command!");
                 return message;
             }
-            else if (words[1].Contains("list"))
+            else if (val.ToLower().Contains("list"))
             {
                 string message = ShipColorList();
                 Plugin.MoreLogs("list requested");
                 return message;
             }
 
+            string[] words = val.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             bool sColorCheck = ShipColorCommon(words, out string displayText, out string targetColor, out Color newColor);
             if (!sColorCheck)
                 return displayText;
 
-            if (words[1].Contains("all"))
+            if (val.ToLower().Contains("all"))
             {
                 NetHandler.Instance.ShipColorALLServerRpc(newColor, targetColor);
                 return displayText;
             }
-            else if (words[1].Contains("front"))
+            else if (val.ToLower().Contains("front"))
             {
                 NetHandler.Instance.ShipColorFRONTServerRpc(newColor, targetColor);
                 return displayText;
             }
-            else if (words[1].Contains("mid"))
+            else if (val.ToLower().Contains("mid"))
             {
                 NetHandler.Instance.ShipColorMIDServerRpc(newColor, targetColor);
                 return displayText;
             }
-            else if (words[1].Contains("back"))
+            else if (val.ToLower().Contains("back"))
             {
                 NetHandler.Instance.ShipColorBACKServerRpc(newColor, targetColor);
                 return displayText;
@@ -145,7 +146,7 @@ namespace TerminalStuff
 
         internal static bool ShipColorCommon(string[] words, out string displayText, out string targetColor, out Color newColor)
         {
-            if (words.Length < 3)
+            if (words.Length < 2)
             {
                 displayText = ShipColorList();
                 Plugin.MoreLogs("not enough words for the command, returning list!");
@@ -154,20 +155,20 @@ namespace TerminalStuff
                 return false;
             }
 
-            targetColor = words[2];
-            Plugin.MoreLogs($"Attempting to set {words[1]} ship light colors to {targetColor}");
+            targetColor = words[1];
+            Plugin.MoreLogs($"Attempting to set {words[0]} ship light colors to {targetColor}");
             SetCustomColor(targetColor);
             if (CustomColor.HasValue && targetColor != null)
             {
                 newColor = CustomColor.Value;
-                displayText = $"Color of {words[1]} ship lights set to {targetColor}!\r\n\r\n";
+                displayText = $"Color of {words[0]} ship lights set to {targetColor}!\r\n\r\n";
                 return true;
             }
             else
             {
                 targetColor = "";
                 newColor = Color.white;
-                displayText = $"Unable to set {words[1]} ship light color...\r\n\tInvalid color [{targetColor}] detected!\r\n\r\n";
+                displayText = $"Unable to set {words[0]} ship light color...\r\n\tInvalid color [{targetColor}] detected!\r\n\r\n";
                 Plugin.WARNING("invalid color for the color command!");
                 return false;
             }
@@ -175,36 +176,37 @@ namespace TerminalStuff
 
         internal static string ShipColorList()
         {
+            string sColor = GetKeywordsPerConfigItem(ConfigSettings.ScolorKeywords.Value)[0];
             string listContent = $"========= Ship Lights Color Options List =========\r\nColor Name: \"command used\"\r\n\r\nDefault: \"{sColor} all normal\" or \"{sColor} all default\"\r\nRed: \"{sColor} back red\"\r\nGreen: \"{sColor} mid green\"\r\nBlue: \"{sColor} front blue\"\r\nYellow: \"{sColor} middle yellow\"\r\nCyan: \"{sColor} all cyan\"\r\nMagenta: \"{sColor} back magenta\"\r\nPurple: \"{sColor} mid purple\"\r\nLime: \"{sColor} all lime\"\r\nPink: \"{sColor} front pink\"\r\nMaroon: \"{sColor} middle maroon\"\r\nOrange: \"{sColor} back orange\"\r\nSasstro's Color: \"{sColor} all sasstro\"\r\nSamstro's Color: \"{sColor} all samstro\"\r\nANY HEXCODE: \"{sColor} all FF00FF\"\r\n\r\n\r\n";
             return listContent;
         }
 
         internal static string FlashColorBase()
         {
-            string[] words = GetWords();
+            string val = GetAfterKeyword(GetKeywordsPerConfigItem(ConfigSettings.FcolorKeywords.Value));
             string message;
 
-            if (words.Length < 2)
+            if (val.Length < 1)
             {
                 message = FlashColorList();
                 Plugin.WARNING("getting list, not enough words for color command!");
                 return message;
             }
 
-            if (words[1].Contains("list"))
+            if (val.ToLower().Contains("list"))
             {
                 message = FlashColorList();
                 Plugin.MoreLogs("displaying flashcolor list");
                 return message;
             }
-            if (words[1].Contains("rainbow"))
+            if (val.ToLower().Contains("rainbow"))
             {
                 message = FlashColorRainbow();
                 Plugin.MoreLogs("running rainbow command");
                 return message;
             }
 
-            string targetColor = words[1];
+            string targetColor = val;
 
             Plugin.MoreLogs($"Attempting to set flashlight color to {targetColor}");
             SetCustomColor(targetColor);
@@ -227,6 +229,7 @@ namespace TerminalStuff
 
         internal static string FlashColorList()
         {
+            string fColor = GetKeywordsPerConfigItem(ConfigSettings.FcolorKeywords.Value)[0];
             string listContent = $"========= Flashlight Color Options List =========\r\nColor Name: \"command used\"\r\n\r\nDefault: \"{fColor} normal\" or \"{fColor} default\"\r\nRed: \"{fColor} red\"\r\nGreen: \"{fColor} green\"\r\nBlue: \"{fColor} blue\"\r\nYellow: \"{fColor} yellow\"\r\nCyan: \"{fColor} cyan\"\r\nMagenta: \"{fColor} magenta\"\r\nPurple: \"{fColor} purple\"\r\nLime: \"{fColor} lime\"\r\nPink: \"{fColor} pink\"\r\nMaroon: \"{fColor} maroon\"\r\nOrange: \"{fColor} orange\"\r\nSasstro's Color: \"{fColor} sasstro\"\r\nSamstro's Color: \"{fColor} samstro\"\r\n\r\nRainbow Color (animated): \"{fColor} rainbow\"\r\nANY HEXCODE: \"{fColor} FF00FF\"\r\n\r\n";
             return listContent;
         }

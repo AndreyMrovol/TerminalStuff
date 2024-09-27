@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = System.Random;
 
 namespace TerminalStuff
 {
@@ -22,13 +23,14 @@ namespace TerminalStuff
                 allSuits = [.. allSuits.OrderBy((UnlockableSuit suit) => suit.suitID)];
                 allSuits.RemoveAll(suit => suit.syncedSuitID.Value < 0); //simply remove bad suit IDs
                 Unlockables = StartOfRound.Instance.unlockablesList.unlockables;
+                Random random = new();
 
                 if (Unlockables != null)
                 {
                     for (int i = 0; i < Unlockables.Count; i++)
                     {
                         // Get a random index
-                        int randomIndex = Random.Range(0, allSuits.Count);
+                        int randomIndex = random.Next(0, allSuits.Count);
                         string SuitName;
 
                         // Get the UnlockableSuit at the random index
@@ -40,13 +42,11 @@ namespace TerminalStuff
                             displayText = $"Changing suit to {SuitName}!\r\n";
                             return;
                         }
-                        else
-                        {
-                            displayText = "A suit could not be found.\r\n";
-                            Plugin.Log.LogInfo($"Random suit ID was invalid or null");
-                            return;
-                        }
                     }
+
+                    displayText = "A suit could not be found.\r\n";
+                    Plugin.Log.LogInfo($"Random suit ID was invalid or null");
+                    return;
                 }
 
                 displayText = "A suit could not be found.\r\n";

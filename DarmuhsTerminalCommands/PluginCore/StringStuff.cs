@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace TerminalStuff
 {
@@ -15,34 +14,19 @@ namespace TerminalStuff
             return words;
         }
 
-        internal static string[] GetWordsAndKeyword(List<string> configItemWords, string[] words)
+        internal static string GetAfterKeyword(List<string> keywords)
         {
-            List<string> filteredWords = [];
-            bool keywordFound = false;
-
-            foreach (string word in words)
+            string cleanedText = Plugin.instance.Terminal.screenText.text.Substring(Plugin.instance.Terminal.screenText.text.Length - Plugin.instance.Terminal.textAdded);
+            foreach (string item in keywords)
             {
-                Plugin.MoreLogs($"checking {word}");
-                foreach (string keyword in configItemWords)
+                if (cleanedText.StartsWith(item, true, null))
                 {
-                    if (keyword.Contains(word))
-                    {
-                        filteredWords.Add(keyword);
-                        keywordFound = true;
-                        Plugin.MoreLogs($"adding {keyword} to list");
-                        break;
-                    }
+                    string val = cleanedText.Replace(item, "");
+                    return val;
                 }
-
-                if (!keywordFound)
-                {
-                    filteredWords.Add(word);
-                    Plugin.MoreLogs($"adding non-keyword, word: {word}");
-                }
-
             }
 
-            return [.. filteredWords];
+            return "";
         }
 
         internal static List<string> GetKeywordsPerConfigItem(string configItem)
@@ -55,7 +39,7 @@ namespace TerminalStuff
                                       .ToList();
                 //Plugin.MoreLogs("GetKeywordsPerConfigItem split complete");
             }
-                
+
             return keywordsInConfig;
         }
 
@@ -84,22 +68,22 @@ namespace TerminalStuff
                                       .Select(item => item.TrimStart())
                                       .ToList();
             }
-            
+
             return itemList;
         }
 
-        internal static Dictionary<string,string> GetKeywordAndItemNames(string configItem)
+        internal static Dictionary<string, string> GetKeywordAndItemNames(string configItem)
         {
             Dictionary<string, string> KeywordAndNames = [];
             if (configItem.Length > 0)
             {
-                 KeywordAndNames = configItem
-                    .Split(';')
-                    .Select(item => item.Trim())
-                    .Select(item => item.Split(':'))
-                    .ToDictionary(pair => pair[0].Trim(), pair => pair[1].Trim());
+                KeywordAndNames = configItem
+                   .Split(';')
+                   .Select(item => item.Trim())
+                   .Select(item => item.Split(':'))
+                   .ToDictionary(pair => pair[0].Trim(), pair => pair[1].Trim());
             }
-             
+
             return KeywordAndNames;
         }
 
@@ -107,7 +91,7 @@ namespace TerminalStuff
         {
             List<string> itemsToLower = [];
 
-            foreach(string item in stringList)
+            foreach (string item in stringList)
             {
                 itemsToLower.Add(item.ToLower());
             }

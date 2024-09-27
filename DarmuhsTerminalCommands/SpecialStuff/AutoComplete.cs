@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace TerminalStuff
 {
@@ -15,7 +11,7 @@ namespace TerminalStuff
             List<string> matching = [];
             matching.Add(input);
             Plugin.Spam($"added {input} to automcomplete list");
-            foreach(TerminalKeyword word in Plugin.instance.Terminal.terminalNodes.allKeywords)
+            foreach (TerminalKeyword word in Plugin.instance.Terminal.terminalNodes.allKeywords)
             {
                 if (word.word.ToLower().Contains(input))
                 {
@@ -34,7 +30,7 @@ namespace TerminalStuff
                 AutoCompleteIndex = -1;
                 return false;
             }
-                
+
             else
                 return true;
         }
@@ -42,13 +38,13 @@ namespace TerminalStuff
         internal static string ShowMatchingKeywords(List<string> matchList, ref int currentIndex)
         {
             Plugin.Spam($"Matching Words: {matchList.Count}");
-            if(matchList.Count < 1)
+            if (matchList.Count < 1)
             {
                 Plugin.Spam("matchList count is 0");
                 currentIndex = 0;
                 return string.Empty;
             }
-            else if(matchList.Count > ConfigSettings.TerminalAutoCompleteMaxCount.Value)
+            else if (matchList.Count > ConfigSettings.TerminalAutoCompleteMaxCount.Value)
             {
                 Plugin.Spam("matchList count is too high");
                 currentIndex = -1;
@@ -57,8 +53,8 @@ namespace TerminalStuff
 
             if (currentIndex == -1)
                 currentIndex = 1;
-            
-            if(currentIndex > matchList.Count -1)
+
+            if (currentIndex > matchList.Count - 1)
             {
                 Plugin.Spam("setting autocompleteindex to 0");
                 currentIndex = -1;

@@ -1,10 +1,8 @@
-﻿using UnityEngine;
-using TMPro;
-using System.Collections.Generic;
-using System.IO;
+﻿using BepInEx;
 using System;
-using BepInEx;
-using System.Linq;
+using System.IO;
+using TMPro;
+using UnityEngine;
 
 namespace TerminalStuff.SpecialStuff
 {
@@ -25,7 +23,7 @@ namespace TerminalStuff.SpecialStuff
             string[] fontPaths = Font.GetPathsToOSFonts();
 
             // Create new font object from one of those paths
-            List<Font> osFonts = new List<Font>();
+            //List<Font> osFonts = [];
             foreach (string fontPath in fontPaths)
             {
                 Plugin.Spam($"FontPath: {fontPath} detected!");
@@ -51,13 +49,13 @@ namespace TerminalStuff.SpecialStuff
             string[] fontPaths = Font.GetPathsToOSFonts();
 
             // Create new font object from one of those paths
-            List<Font> osFonts = new List<Font>();
+            //List<Font> osFonts = new List<Font>();
             foreach (string fontPath in fontPaths)
             {
                 if (fontPath.Contains(fontName))
                 {
                     Plugin.Spam($"FontPath: {fontPath} detected!");
-                    Font newFont = new Font(fontPath);
+                    Font newFont = new(fontPath);
                     // Create new dynamic font asset
                     CustomFontAsset = TMP_FontAsset.CreateFontAsset(newFont);
                     return true;
@@ -69,7 +67,7 @@ namespace TerminalStuff.SpecialStuff
 
         internal static void GetAndSetFont()
         {
-            if(ConfigSettings.CustomFontName.Value.ToLower() == "default" || ConfigSettings.CustomFontName.Value.Length < 1)
+            if (ConfigSettings.CustomFontName.Value.ToLower() == "default" || ConfigSettings.CustomFontName.Value.Length < 1)
             {
                 Plugin.Spam("assigning cached default font");
                 SetTerminalFont(CachedDefault);
@@ -90,13 +88,13 @@ namespace TerminalStuff.SpecialStuff
                 return;
             }
 
-            if(TryGetCustomFont(ConfigSettings.CustomFontName.Value, out TMP_FontAsset newFont))
+            if (TryGetCustomFont(ConfigSettings.CustomFontName.Value, out TMP_FontAsset newFont))
             {
                 Plugin.Spam($"{ConfigSettings.CustomFontName.Value} found in windows custom fonts path");
                 SetTerminalFont(newFont);
                 return;
             }
-            
+
             Plugin.Spam($"Unable to find {ConfigSettings.CustomFontName.Value} in system fonts, in windows fonts path, or custom fonts path {ConfigSettings.CustomFontPath.Value}");
         }
 
@@ -107,7 +105,7 @@ namespace TerminalStuff.SpecialStuff
                 CustomFontAsset = null;
                 return false;
             }
-                
+
             string path = Path.Combine(Paths.ConfigPath, ConfigSettings.CustomFontPath.Value);
             Plugin.Spam($"custom path: {path}");
             if (Directory.Exists(path))
@@ -170,15 +168,15 @@ namespace TerminalStuff.SpecialStuff
             Plugin.Spam("SetTerminalFont called to switch font");
             Plugin.instance.Terminal.screenText.fontAsset = newFont;
             Plugin.instance.Terminal.topRightText.font = newFont;
-            if(TerminalClockStuff.textComponent != null)
+            if (TerminalClockStuff.textComponent != null)
                 TerminalClockStuff.textComponent.font = newFont;
 
-            if(ConfigSettings.CustomFontSizeMain.Value > -1)
+            if (ConfigSettings.CustomFontSizeMain.Value > -1)
                 Plugin.instance.Terminal.screenText.textComponent.fontSize = ConfigSettings.CustomFontSizeMain.Value;
 
             if (ConfigSettings.CustomFontSizeMoney.Value > -1)
                 Plugin.instance.Terminal.topRightText.fontSize = ConfigSettings.CustomFontSizeMoney.Value;
-                
+
             if (TerminalClockStuff.textComponent != null && ConfigSettings.CustomFontSizeClock.Value > -1)
                 TerminalClockStuff.textComponent.fontSize = ConfigSettings.CustomFontSizeClock.Value;
         }

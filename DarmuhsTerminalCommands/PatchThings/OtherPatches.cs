@@ -1,8 +1,7 @@
-﻿using BepInEx.Bootstrap;
-using GameNetcodeStuff;
-using HarmonyLib;
+﻿using HarmonyLib;
 using System.Collections.Generic;
 using UnityEngine;
+using static TerminalStuff.MoreCamStuff;
 
 
 namespace TerminalStuff
@@ -25,18 +24,18 @@ namespace TerminalStuff
 
             Plugin.instance.radarNonPlayer = StartOfRound.Instance.mapScreen.radarTargets[setRadarTargetIndex].isNonPlayer;
 
-            if (!ViewCommands.IsExternalCamsPresent() && ViewCommands.AnyActiveMonitoring())
+            if (!IsExternalCamsPresent() && ViewCommands.AnyActiveMonitoring())
             {
                 ViewCommands.targetInt = setRadarTargetIndex;
                 Plugin.MoreLogs("Updating homebrew target");
                 SwitchedRadarEvent();
             }
-            else if (ViewCommands.IsExternalCamsPresent() && ViewCommands.AnyActiveMonitoring())
+            else if (IsExternalCamsPresent() && ViewCommands.AnyActiveMonitoring())
             {
-                if (Plugin.instance.OpenBodyCamsMod && !OpenBodyCamsCompatibility.showingBodyCam)
+                if (Plugin.instance.OpenBodyCamsMod && !OpenLib.Compat.OpenBodyCamFuncs.ShowingBodyCam)
                     Plugin.MoreLogs("OBC Terminal Body Cam is NOT active");
                 else
-                    ViewCommands.GetPlayerCamsFromExternalMod();
+                    GetPlayerCamsFromExternalMod();
             }
 
             UpdateDisplayText();
@@ -66,7 +65,7 @@ namespace TerminalStuff
             if (ViewCommands.AnyActiveMonitoring() && !ViewCommands.externalcamsmod)
             {
                 Plugin.MoreLogs($"targetNum = {ViewCommands.targetInt}");
-                ViewCommands.UpdateCamsTarget(ViewCommands.targetInt);
+                UpdateCamsTarget(ViewCommands.targetInt);
                 return;
             }
 

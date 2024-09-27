@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
 using static TerminalStuff.StringStuff;
+using Random = System.Random;
 
 namespace TerminalStuff
 {
@@ -14,13 +13,13 @@ namespace TerminalStuff
         {
             string displayText;
 
-            if (Plugin.instance.Terminal.groupCredits < ConfigSettings.routeRandomCost.Value)
+            if (Plugin.instance.Terminal.groupCredits < ConfigSettings.RouteRandomCost.Value)
             {
-                displayText = $"You cannot afford to run the 'route random' command.\r\n\r\n\tRoute Random Cost: [{ConfigSettings.routeRandomCost.Value}]\r\n\tYour credits: <color=#BD3131>[{Plugin.instance.Terminal.groupCredits}]</color>\r\n\r\n\r\n";
+                displayText = $"You cannot afford to run the 'route random' command.\r\n\r\n\tRoute Random Cost: [{ConfigSettings.RouteRandomCost.Value}]\r\n\tYour credits: <color=#BD3131>[{Plugin.instance.Terminal.groupCredits}]</color>\r\n\r\n\r\n";
                 return displayText;
             }
-                
-            bannedWeatherConfig = GetKeywordsPerConfigItem(ConfigSettings.routeRandomBannedWeather.Value);
+
+            bannedWeatherConfig = GetKeywordsPerConfigItem(ConfigSettings.RouteRandomBannedWeather.Value);
             bannedWeather = GetListToLower(bannedWeatherConfig);
 
             List<SelectableLevel> validLevels = [];
@@ -35,9 +34,9 @@ namespace TerminalStuff
                 }
                 else
                 {
-                    if(ConfigSettings.routeOnlyInCurrentConstellation.Value && Plugin.instance.Constellations)
+                    if (ConfigSettings.RouteOnlyInCurrentConstellation.Value && Plugin.instance.Constellations)
                     {
-                        if(Compatibility.ConstellationsCompat.IsLevelInConstellation(level))
+                        if (Compatibility.ConstellationsCompat.IsLevelInConstellation(level))
                         {
                             validLevels.Add(level);
                             Plugin.MoreLogs($"Added {level.PlanetName} to valid random planets within the current constellation!");
@@ -53,19 +52,19 @@ namespace TerminalStuff
                 }
             }
 
-            if(validLevels.Count < 1)
+            if (validLevels.Count < 1)
             {
                 displayText = $"Route Random was unable to select a valid moon and you have not been charged.\r\n\r\nThis may be due to all moons have banned weather attributes...\r\n\r\n\r\n";
                 return displayText;
             }
-
-            int randomIndex = Random.Range(0, validLevels.Count);
+            Random rand = new();
+            int randomIndex = rand.Next(0, validLevels.Count);
             Plugin.MoreLogs($"{validLevels[randomIndex].PlanetName} has been chosen!");
 
             StartOfRound.Instance.ChangeLevelServerRpc(validLevels[randomIndex].levelID, Plugin.instance.Terminal.groupCredits);
             StartOfRound.Instance.SetMapScreenInfoToCurrentLevel();
 
-            int newCreds = CostCommands.CalculateNewCredits(Plugin.instance.Terminal.groupCredits, ConfigSettings.routeRandomCost.Value, Plugin.instance.Terminal);
+            int newCreds = CostCommands.CalculateNewCredits(Plugin.instance.Terminal.groupCredits, ConfigSettings.RouteRandomCost.Value, Plugin.instance.Terminal);
 
             displayText = $"Your new balance is ■{newCreds} Credits.\r\n\r\nRoute Random has chosen {validLevels[randomIndex].PlanetName}!\r\n\r\n\tEnjoy!\r\n\r\n";
             return displayText;

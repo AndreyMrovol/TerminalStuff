@@ -9,11 +9,11 @@ namespace TerminalStuff.EventSub
 
         internal static TerminalNode OnParseSent(ref TerminalNode node)
         {
-            if(node == null) // handling cases where node is null for some reason
+            if (node == null) // handling cases where node is null for some reason
                 return Plugin.instance.Terminal.currentNode;
 
             //if(node == SplitViewChecks.originalMonitor)
-                //return Plugin.instance.Terminal.terminalNodes.specialNodes[18];
+            //return Plugin.instance.Terminal.terminalNodes.specialNodes[18];
 
             StartofHandling.FirstCheck(node);
 
@@ -24,13 +24,16 @@ namespace TerminalStuff.EventSub
                 Plugin.Spam("got node from menus");
 
             string[] words = CommonStringStuff.GetWords();
-            StartofHandling.HandleParsed(Plugin.instance.Terminal, node, words, out TerminalNode resultNode);
-            
-            if (resultNode != null)
+            if(words.Length > 0)
             {
-                node = resultNode;
-                NetSync(node);
-                return node;
+                StartofHandling.HandleParsed(Plugin.instance.Terminal, node, words, out TerminalNode resultNode);
+
+                if (resultNode != null)
+                {
+                    node = resultNode;
+                    NetSync(node);
+                    return node;
+                }
             }
 
             NetSync(node);
@@ -40,7 +43,7 @@ namespace TerminalStuff.EventSub
 
         internal static void NetSync(TerminalNode node)
         {
-            if (!ConfigSettings.networkedNodes.Value)
+            if (!ConfigSettings.NetworkedNodes.Value)
                 return;
 
             NetHandler.NetNodeReset(false);
