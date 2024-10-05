@@ -55,8 +55,6 @@ namespace TerminalStuff
                 return true;
             if (ConfigSettings.TerminalOverlay.Value)
                 return true;
-            if (ConfigSettings.TerminalMirror.Value)
-                return true;
             return false;
         }
 
@@ -66,6 +64,9 @@ namespace TerminalStuff
                 return true;
             if (Plugin.instance.isOnMirror)
                 return true;
+            if (!Plugin.instance.splitViewCreated && (bool)Plugin.instance.Terminal.displayingPersistentImage)
+                return true;
+
             return false;
         }
 

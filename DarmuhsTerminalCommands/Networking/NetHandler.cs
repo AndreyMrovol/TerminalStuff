@@ -175,7 +175,6 @@ namespace TerminalStuff
             {
                 MoreCamStuff.CamPersistance(nodeName);
                 MoreCamStuff.VideoPersist(nodeName);
-                newNode.displayText = Plugin.instance.Terminal.TextPostProcess(newNode.displayText, newNode);
                 Plugin.instance.Terminal.LoadNewNode(newNode);
                 return;
             }

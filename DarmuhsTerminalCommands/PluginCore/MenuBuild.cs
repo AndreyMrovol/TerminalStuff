@@ -1,4 +1,5 @@
-﻿using OpenLib.ConfigManager;
+﻿using OpenLib.Common;
+using OpenLib.ConfigManager;
 using OpenLib.CoreMethods;
 using OpenLib.Menus;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace TerminalStuff
         internal static void CategoryList()
         {
             Dictionary<string, string> myCategories = [];
+            myMenuItems.Clear();
             myMenuItems = TerminalMenuItems(defaultManaged);
             AddMenuItems(ConfigSettings.TerminalStuffBools, myMenuItems);
             if (ShouldAddCategoryNameToMainMenu(myMenuItems, "COMFORT"))
@@ -41,7 +43,30 @@ namespace TerminalStuff
         internal static void CreateDarmuhsTerminalStuffMenus()
         {
             Plugin.Spam("START CreateDarmuhsTerminalStuffMenus");
+            if(!ConfigSettings.CreateMoreMenus.Value)
+            {
+                if (!DynamicBools.TryGetKeyword("other", out TerminalKeyword otherWord))
+                    return;
 
+                foreach (TerminalMenuItem item in myMenuItems)
+                {
+                    if (item.itemKeywords.Count == 0)
+                    {
+                        Plugin.WARNING($"{item.ItemName} has no keywords!!");
+                        continue;
+                    }
+
+                    if(item == null)
+                    {
+                        Plugin.WARNING($"NULL ITEM IN myMenuItems!!!");
+                        continue;
+                    }
+                        
+                    AddingThings.AddToExistingNodeText($"\n>{CommonStringStuff.GetKeywordsForMenuItem(item.itemKeywords).ToUpper()}\n{item.itemDescription}", ref otherWord.specialKeywordResult);
+                    Plugin.Spam($"{item.ItemName} keywords added to other menu");
+                }
+                return;
+            }
             myMenu = AssembleMainMenu("darmuhsTerminalStuff", "more", ConfigSettings.MoreMenuText.Value, myMenuCategories, myMenuItems);
             AddingThings.AddToHelpCommand(ConfigSettings.MoreHintText.Value);
             if (LogicHandling.TryGetFromAllNodes("OtherCommands", out TerminalNode otherNode))
@@ -88,6 +113,9 @@ namespace TerminalStuff
 
         internal static void RefreshMyMenu()
         {
+            if (myMenu == null)
+                return;
+
             myMenu.menuItems.Clear();
             myMenuItems.Clear();
             myMenuItems = TerminalMenuItems(defaultManaged);
@@ -98,7 +126,7 @@ namespace TerminalStuff
 
         internal static void ClearMyMenustuff()
         {
-            myMenu.Delete();
+            myMenu?.Delete();
             myMenuItems.Clear();
             myMenuCategories.Clear();
         }

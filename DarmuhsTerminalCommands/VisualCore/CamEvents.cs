@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Rendering.HighDefinition;
 using UnityEngine.UI;
 using static TerminalStuff.MoreCamStuff;
 using static TerminalStuff.ViewCommands;
@@ -177,16 +178,9 @@ namespace TerminalStuff.VisualCore
                 PlayerCamSetup();
             }
 
-            MoreCamStuff.CamInitMirror(playerCam);
+            HomebrewCameraState(true);
+            OpenLib.Common.CamStuff.CamInitMirror(playerCam, ConfigSettings.MirrorZoom.Value, ConfigSettings.Mirror2DStyle.Value);
 
-            playerCam.orthographic = true;
-            playerCam.orthographicSize = ConfigSettings.MirrorZoom.Value;
-            playerCam.usePhysicalProperties = false;
-            playerCam.farClipPlane = 30f;
-            playerCam.nearClipPlane = 0.05f;
-            playerCam.fieldOfView = 130f;
-
-            SetAnyCamsTrue();
             return playerCam.targetTexture;
         }
 
@@ -194,13 +188,21 @@ namespace TerminalStuff.VisualCore
         //States
         internal static void HomebrewCameraState(bool active)
         {
-            if (darmCamObject == null)
+            if (playerCam == null)
                 return;
 
+            playerCam.gameObject.SetActive(active);
+
             if (active == true)
-                darmCamObject.SetActive(active);
+            {
+                GameNetworkManager.Instance.localPlayerController.thisPlayerModelArms.transform.gameObject.layer = 2;
+                Plugin.Spam("layer set to 2");
+            }    
             else
-                GameObject.Destroy(darmCamObject);
+            {
+                GameNetworkManager.Instance.localPlayerController.thisPlayerModelArms.transform.gameObject.layer = originalArmsLayer;
+                Plugin.Spam($"layer set to original - {originalArmsLayer}");
+            }      
         }
 
         internal static void SetMirrorState(bool active)

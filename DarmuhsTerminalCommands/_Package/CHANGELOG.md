@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.6.1]
+ - Fixed issue discovered with purchase packs where if you had exactly the amount it costed you could not buy it (thanks @frostycirno for the report)
+ - Added config item to disable more menu creation. When more menus is disabled any new commands will be added directly to the "Other" command listing.
+ - Replaced TextPostProcess postfix for zeekers' typo with a transpiler to search for the typo and fix it only once
+ - Fixed issue discovered with Store listing not updating when networkednodes is enabled. (thanks pacoito for the report & testing)
+ - Updated handling for homebrew cams to use new functions in OpenLib (this will probably be moved to OpenLib in a future update)
+	- Also improved visibility to remove local player arms in homebrew cams views whenever they are visible (please report any issues with this)
+ - Added handling for when OpenBodyCams' view bodycam command is set to be added to the terminal.
+	- This view does not have built in compatibility with my cams views so they will be disabled when this command is enabled.
+ - Updated OpenLib version requirement
+
 ## [3.6.0]
  - Fixed issue of causing errors when typing nothing but spaces in the terminal.
  - Removed default videos from the mod. They will be reuploaded under their own video pack as darmuhsTerminalVideos

@@ -126,7 +126,6 @@ namespace TerminalStuff
                 Plugin.MoreLogs("Invalid player for cams update, sending to backup");
             }
 
-            //
             playerCam.transform.rotation = camTransform.rotation;
             playerCam.transform.position = camTransform.transform.position;
             playerCam.usePhysicalProperties = false;

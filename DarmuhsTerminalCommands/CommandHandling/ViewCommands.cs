@@ -13,19 +13,19 @@ namespace TerminalStuff
 {
     internal class ViewCommands
     {
-        //internal static Dictionary<TerminalNode, int> termViewNodes = []; //defaultListing.specialListNum
-        //internal static Dictionary<int, string> termViewNodeNums = []; //defaultListing.ListNumToString
         internal static bool externalcamsmod = false;
         internal static bool isVideoPlaying = false;
+        internal static RenderTexture mycamTexture;
         internal static Camera playerCam = null;
-        internal static GameObject darmCamObject;
 
-        //internal static int cullingMaskInt;
         internal static int targetInt = 0;
         internal static float radarZoom;
 
         internal static string TermMapEvent()
         {
+            if (Plugin.instance.OpenBodyCamsMod && OpenBodyCamsCompatibility.IsCreatingCommands())
+                return OBCTerminalCommand();
+
             if (StartOfRound.Instance != null && StartOfRound.Instance.shipDoorsEnabled)
             {
                 HandleMapEvent(out string message);
@@ -91,11 +91,13 @@ namespace TerminalStuff
         internal static string MirrorEvent()
         {
             isVideoPlaying = false;
+            if (Plugin.instance.OpenBodyCamsMod && OpenBodyCamsCompatibility.IsCreatingCommands())
+                return OBCTerminalCommand();
 
-            if (Plugin.instance.isOnMirror == false && Plugin.instance.splitViewCreated)
+            if (Plugin.instance.isOnMirror == false || (bool)Plugin.instance.Terminal.displayingPersistentImage)
             {
                 SetMirrorState(true);
-                CamEvents.UpdateCamsEvent.Invoke("mirror");
+                UpdateCamsEvent.Invoke("mirror");
 
                 Plugin.MoreLogs("Mirror added to terminal screen");
                 DisplayTextUpdater(out string displayText);
@@ -113,6 +115,8 @@ namespace TerminalStuff
         internal static string TermCamsEvent()
         {
             isVideoPlaying = false;
+            if (Plugin.instance.OpenBodyCamsMod && OpenBodyCamsCompatibility.IsCreatingCommands())
+                return OBCTerminalCommand();
 
             if (Plugin.instance.OpenBodyCamsMod && ConfigSettings.CamsUseDetectedMods.Value)
             {
@@ -143,6 +147,9 @@ namespace TerminalStuff
         internal static string MiniCamsTermEvent()
         {
             isVideoPlaying = false;
+
+            if (Plugin.instance.OpenBodyCamsMod && OpenBodyCamsCompatibility.IsCreatingCommands())
+                return OBCTerminalCommand();
 
             if (Plugin.instance.OpenBodyCamsMod && ConfigSettings.CamsUseDetectedMods.Value)
             {
@@ -245,6 +252,9 @@ namespace TerminalStuff
         {
             isVideoPlaying = false;
 
+            if (Plugin.instance.OpenBodyCamsMod && OpenBodyCamsCompatibility.IsCreatingCommands())
+                return OBCTerminalCommand();
+
             if (Plugin.instance.OpenBodyCamsMod && ConfigSettings.CamsUseDetectedMods.Value)
             {
                 if (!OpenLib.Compat.OpenBodyCamFuncs.BodyCamIsUnlocked() && ConfigSettings.ObcRequireUpgrade.Value)
@@ -268,6 +278,9 @@ namespace TerminalStuff
         internal static string OverlayTermEvent()
         {
             isVideoPlaying = false;
+
+            if (Plugin.instance.OpenBodyCamsMod && OpenBodyCamsCompatibility.IsCreatingCommands())
+                return OBCTerminalCommand();
 
             if (Plugin.instance.OpenBodyCamsMod && ConfigSettings.CamsUseDetectedMods.Value)
             {
@@ -297,8 +310,6 @@ namespace TerminalStuff
             NetHandler.SyncMyCamsBoolToEveryone(true);
         }
 
-
-
         internal static string LolVideoPlayerEvent()
         {
             Plugin.MoreLogs("Start of LolEvent");
@@ -317,6 +328,14 @@ namespace TerminalStuff
             return displayText;
         }
 
+        internal static string OBCTerminalCommand()
+        {
+            StringBuilder message = new();
+            message.AppendLine("This command has been <color=#ff1a1a>deactivated</color> to ensure compatibility with <color=#ffff66>OpenBodyCams'</color> \"view bodycam\" command.\n\n");
+            message.AppendLine("If you would like to use this command please disable Terminal Commands in OpenBodyCams' config.\n\r\n");
+            return message.ToString();
+        }
+
         internal static string NoVanillaView()
         {
             StringBuilder message = new();
@@ -325,6 +344,8 @@ namespace TerminalStuff
 
             foreach (TerminalMenuItem menuItem in menus)
             {
+                if(menuItem.itemKeywords.Count == 0)
+                    continue;
                 message.AppendLine($"> <color=#ffff66>{OpenLib.Common.CommonStringStuff.GetKeywordsForMenuItem(menuItem.itemKeywords)}</color>\r\n{menuItem.itemDescription}\r\n");
             }
 
@@ -342,7 +363,7 @@ namespace TerminalStuff
                 playerName = TwoRadarMapsCompatibility.TargetedPlayerOnSecondRadar();
 
             if (mode == "Mirror")
-                displayText = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMirror Enabled.";
+                displayText = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMirror Enabled.\r\n\n";
             else
                 displayText = $"\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nMonitoring: {playerName} [{mode}]\r\n\n";
             return;

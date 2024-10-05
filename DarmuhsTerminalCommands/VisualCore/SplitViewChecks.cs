@@ -15,8 +15,6 @@ namespace TerminalStuff
         internal static bool enabledSplitObjects = false;
         internal static bool replacedViewMon = false;
         internal static RawImage miniScreenImage;
-        //internal static CompatibleNoun[] vanillaViewNouns;
-        //internal static TerminalKeyword viewKeyword;
 
         private static void HandleVanillaMap(bool shouldRemove)
         {
@@ -44,6 +42,12 @@ namespace TerminalStuff
                 HandleVanillaMap(false);
                 return;
             }
+            else if (Plugin.instance.OpenBodyCamsMod && OpenBodyCamsCompatibility.IsCreatingCommands())
+            {
+                Plugin.MoreLogs("Not replacing 'view monitor' command, as OpenBodyCams is creating terminal commands");
+                return;
+            }
+                
             else
                 HandleVanillaMap(true);
 
@@ -74,10 +78,22 @@ namespace TerminalStuff
             if (!Plugin.instance.splitViewCreated && whatIsIt == "neither")
             {
                 DisableVanillaViewMonitor();
+                ResetPluginInstanceBools();
+                return;
+            }
+            else if (!Plugin.instance.splitViewCreated && whatIsIt == "mirror")
+            {
+                DisableVanillaViewMonitor(false);
+                UpdatePluginInstanceBools(whatIsIt);
                 return;
             }
             else if (!Plugin.instance.splitViewCreated)
+            {
+                DisableVanillaViewMonitor();
+                ResetPluginInstanceBools();
                 return;
+            }
+               
 
             List<string> singleViewModes = ["cams", "map", "mirror"];
 
@@ -135,8 +151,7 @@ namespace TerminalStuff
         {
             Plugin.Spam("disabling vanilla view monitor");
             Plugin.instance.Terminal.displayingPersistentImage = null;
-            if (disableImage)
-                Plugin.instance.Terminal.terminalImage.enabled = false;
+            Plugin.instance.Terminal.terminalImage.enabled = !disableImage;
         }
 
         internal static void DisableSplitView(string whatIsIt)
@@ -147,7 +162,11 @@ namespace TerminalStuff
                 return;
             }
             else if (!Plugin.instance.splitViewCreated)
+            {
+                DisableVanillaViewMonitor();
+                ResetPluginInstanceBools();
                 return;
+            }
 
             enabledSplitObjects = false;
             CheckForSplitView(whatIsIt);

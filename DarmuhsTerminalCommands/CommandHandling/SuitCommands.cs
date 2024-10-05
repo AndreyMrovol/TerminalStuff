@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GameNetcodeStuff;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Random = System.Random;

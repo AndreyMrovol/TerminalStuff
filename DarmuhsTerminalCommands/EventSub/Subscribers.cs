@@ -1,4 +1,5 @@
-﻿using OpenLib.Events;
+﻿using OpenLib.CoreMethods;
+using OpenLib.Events;
 using TerminalStuff.PluginCore;
 using TerminalStuff.SpecialStuff;
 using TerminalStuff.VisualCore;
@@ -8,6 +9,7 @@ namespace TerminalStuff.EventSub
 {
     internal class Subscribers
     {
+        internal static string OriginalOtherText;
         internal static void Subscribe()
         {
             EventManager.TerminalAwake.AddListener(OnTerminalAwake);
@@ -42,8 +44,23 @@ namespace TerminalStuff.EventSub
         {
             Plugin.instance.Terminal = instance;
             Plugin.MoreLogs($"Setting Plugin.instance.Terminal");
+            CacheDefaultDisplayTexts();
             FontStuff.SetCachedDefault();
             StuffForLibrary.AddCommands(); //replaced addkeywords
+        }
+
+        internal static void CacheDefaultDisplayTexts()
+        {
+            if (DynamicBools.TryGetKeyword("Other", out TerminalKeyword otherWord))
+            {
+                if (GameStuff.oneTimeOnly)
+                    otherWord.specialKeywordResult.displayText = OriginalOtherText;
+                else
+                    OriginalOtherText = otherWord.specialKeywordResult.displayText;
+            }
+            else
+                Plugin.WARNING("Unable to find other command at awake!");
+
         }
     }
 }

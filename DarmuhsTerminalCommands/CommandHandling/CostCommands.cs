@@ -333,7 +333,7 @@ namespace TerminalStuff
                 itemCount += upgradeCount;
             }
 
-            if (totalCost < Plugin.instance.Terminal.groupCredits)
+            if (totalCost <= Plugin.instance.Terminal.groupCredits)
             {
                 packAsk.AppendLine($"\r\n\tTotal Cost: ■{totalCost}({itemCount} items)\r\n\r\nPlease CONFIRM or DENY.\n");
                 buyPackName = currentPackName;

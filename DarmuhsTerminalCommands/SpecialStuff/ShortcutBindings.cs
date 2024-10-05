@@ -289,7 +289,7 @@ namespace TerminalStuff
                         keyword.specialKeywordResult.displayText = displayText;
                     }
 
-                    MoreCamStuff.CamPersistance(keyword.specialKeywordResult.name);
+                    MoreCamStuff.CamPersistance(keyword.specialKeywordResult.name, keyword.specialKeywordResult);
                     MoreCamStuff.VideoPersist(keyword.specialKeywordResult.name);
                     Plugin.instance.Terminal.LoadNewNode(keyword.specialKeywordResult);
                     return;
@@ -302,7 +302,7 @@ namespace TerminalStuff
             if (resultNode != null)
             {
                 Plugin.MoreLogs($"handling parsed node for shortcut");
-                MoreCamStuff.CamPersistance(resultNode.name);
+                MoreCamStuff.CamPersistance(resultNode.name, resultNode);
                 MoreCamStuff.VideoPersist(resultNode.name);
                 Plugin.instance.Terminal.LoadNewNode(resultNode);
                 return;

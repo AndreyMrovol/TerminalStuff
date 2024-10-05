@@ -18,7 +18,6 @@ namespace TerminalStuff
         internal static TerminalSettings terminalSettings = new();
         internal static bool quitTerminalEnum = false;
 
-
         //internal static GameObject dummyObject;
         internal static TerminalNode switchNode = CreateDummyNode("switchDummy", true, "this should not display, switch command");
 

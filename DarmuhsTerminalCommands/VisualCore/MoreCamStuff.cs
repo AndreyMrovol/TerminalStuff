@@ -1,6 +1,7 @@
 ﻿using GameNetcodeStuff;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.HighDefinition;
 using static TerminalStuff.AllMyTerminalPatches;
 using static TerminalStuff.ViewCommands;
 
@@ -8,6 +9,8 @@ namespace TerminalStuff
 {
     internal class MoreCamStuff //UPDATE excludedNames to configItem Names for Nodes that dont specify nodeName!!!
     {
+        internal static int originalArmsLayer;
+        
         internal static void ResetPluginInstanceBools()
         {
             Plugin.instance.isOnMiniMap = false;
@@ -65,45 +68,33 @@ namespace TerminalStuff
             }
         }
 
-        internal static void CamInitMirror(Camera playerCam)
-        {
-            playerCam.cameraType = CameraType.Game;
-
-            Transform termTransform = Plugin.instance.Terminal.transform;
-            PlayerControllerB playerUsingTerminal = Misc.GetPlayerUsingTerminal();
-            if (playerUsingTerminal == null)
-            {
-                Plugin.WARNING("playerUsingTerminal returned NULL");
-                return;
-            }
-            Transform playerTransform = playerUsingTerminal.transform;
-            Plugin.MoreLogs("camTransform assigned to terminal");
-
-            // Calculate the opposite direction directly in local space
-            Vector3 oppositeDirection = -playerTransform.forward;
-
-            // Calculate the new rotation to look behind
-            Quaternion newRotation = Quaternion.LookRotation(oppositeDirection, playerTransform.up);
-
-            // Define the distance to back up the camera
-            float distanceBehind = 1f;
-
-            // Set camera's rotation and position
-            playerCam.transform.rotation = newRotation;
-            playerCam.transform.position = playerTransform.position - oppositeDirection * distanceBehind + playerTransform.up * 2f;
-            float initCamHeight = playerCam.transform.position.y;
-            Plugin.MoreLogs($"initCamHeight: {initCamHeight}");
-
-            playerCam.transform.SetParent(termTransform);
-        }
-
-        internal static void CamPersistance(string nodeName)
+        internal static void CamPersistance(string nodeName, TerminalNode node = null)
         {
             if (!excludedNames.Contains(nodeName) && HideCams())
             {
                 SplitViewChecks.DisableSplitView("neither");
                 Plugin.MoreLogs("disabling ANY cams views");
             }
+            else if(nodeName == "ViewInsideShipCam 1" && node != null)
+            {
+                if (!IsViewNode(node))
+                    ResetPluginInstanceBools();
+            }
+        }
+
+        private static bool IsViewNode(TerminalNode node)
+        {
+            if (ConfigSettings.ViewConfig.Count == 0)
+                return false;
+
+            foreach (var item in ConfigSettings.ViewConfig)
+            {
+                if (item.TerminalNode == node)
+                    return true;
+            }
+
+            Plugin.Spam("this node is not a managed node, resetting instance variables");
+            return false;
         }
 
         private static bool HideCams()
@@ -177,15 +168,16 @@ namespace TerminalStuff
             if (IsExternalCamsPresent())
                 return;
 
-            darmCamObject = new("darmuh's PlayerCam (Clone)");
-            RenderTexture renderTexture = new(StartOfRound.Instance.localPlayerController.gameplayCamera.targetTexture);
+            originalArmsLayer = GameNetworkManager.Instance.localPlayerController.thisPlayerModelArms.transform.gameObject.layer;
+            GameObject darmCamObject = OpenLib.Common.CamStuff.MirrorObject;
             playerCam = darmCamObject.AddComponent<Camera>();
-            playerCam.targetTexture = renderTexture;
-            int cullingMaskInt = StartOfRound.Instance.localPlayerController.gameplayCamera.cullingMask & ~LayerMask.GetMask(layerNames: ["Ignore Raycast", "UI", "HelmetVisor"]);
-            cullingMaskInt |= (1 << 23);
+            if(mycamTexture == null)
+                mycamTexture = new(StartOfRound.Instance.localPlayerController.gameplayCamera.targetTexture);
+            int cullingMaskInt = StartOfRound.Instance.localPlayerController.gameplayCamera.cullingMask & ~LayerMask.GetMask(["Ignore Raycast", "UI", "HelmetVisor"]);
+            playerCam.targetTexture = mycamTexture;
 
-            //Plugin.instance.Terminal.transform.gameObject.layer = 0;
             playerCam.cullingMask = cullingMaskInt;
+            
             darmCamObject.SetActive(false);
             Plugin.MoreLogs("playerCam instantiated");
         }
@@ -209,7 +201,6 @@ namespace TerminalStuff
             if (targetedPlayer != null)
             {
                 camTransform = targetedPlayer.gameplayCamera.transform;
-                //targetedPlayer.thisPlayerModelArms.gameObject.layer = 23;
                 Plugin.MoreLogs($"Valid player for cams update {targetedPlayer.playerUsername}");
             }
             else

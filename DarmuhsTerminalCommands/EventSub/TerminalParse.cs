@@ -12,16 +12,17 @@ namespace TerminalStuff.EventSub
             if (node == null) // handling cases where node is null for some reason
                 return Plugin.instance.Terminal.currentNode;
 
-            //if(node == SplitViewChecks.originalMonitor)
-            //return Plugin.instance.Terminal.terminalNodes.specialNodes[18];
-
             StartofHandling.FirstCheck(node);
 
             if (node.name.Equals("0_StoreHub") && ConfigSettings.TerminalStuffMain.storePacks.Count > 0)
                 GetDynamicCost();
 
-            if (InMainMenu(node, MenuBuild.myMenu))
-                Plugin.Spam("got node from menus");
+            if (ConfigSettings.CreateMoreMenus.Value)
+            {
+                if (InMainMenu(node, MenuBuild.myMenu))
+                    Plugin.Spam("got node from menus");
+            }
+                
 
             string[] words = CommonStringStuff.GetWords();
             if(words.Length > 0)

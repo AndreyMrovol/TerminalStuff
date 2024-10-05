@@ -17,6 +17,7 @@ namespace TerminalStuff
         public static ConfigEntry<string> WalkieTermKey { get; internal set; }
         public static ConfigEntry<string> WalkieTermMB { get; internal set; }
         public static ConfigEntry<string> KeyActionsConfig { get; internal set; }
+        public static ConfigEntry<bool> CreateMoreMenus {  get; internal set; }
 
         //cams special
         public static ConfigEntry<bool> CamsUseDetectedMods { get; internal set; }
@@ -240,6 +241,7 @@ namespace TerminalStuff
             ExtensiveLogging = MakeBool(Plugin.instance.Config, "Debug", "ExtensiveLogging", false, "Enable or Disable extensive logging for this mod.");
             DeveloperLogging = MakeBool(Plugin.instance.Config, "Debug", "DeveloperLogging", false, "Enable or Disable developer logging for this mod. (this will fill your log file FAST)");
             KeyActionsConfig = MakeString(Plugin.instance.Config, "Quality of Life", "KeyActionsConfig", "", "Stored keybinds, don't modify this unless you know what you're doing!");
+            CreateMoreMenus = MakeBool(Plugin.instance.Config, "Quality of Life", "CreateMoreMenus", true, "Set this to false to remove the More commands menu.\nIf disabled, any command added by this mod will be added to the 'Other' command listing");
             PurchasePackCommands = MakeString(Plugin.instance.Config, "Comfort Configuration", "PurchasePackCommands", "Essentials:pro,shov,walkie;PortalPack:teleporter,inverse", "List of purchase pack commands to create. Format is command:item1,item2,etc.;next command:item1,item2");
 
             Plugin.Spam("network configs section done");

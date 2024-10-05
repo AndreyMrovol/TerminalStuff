@@ -306,11 +306,8 @@ namespace TerminalStuff
             if (initialResult == null)
                 return;
 
-
-
-            MoreCamStuff.VideoPersist(initialResult.name);
-
-            MoreCamStuff.CamPersistance(initialResult.name);
+            VideoPersist(initialResult.name);
+            CamPersistance(initialResult.name, initialResult);
 
             return;
         }

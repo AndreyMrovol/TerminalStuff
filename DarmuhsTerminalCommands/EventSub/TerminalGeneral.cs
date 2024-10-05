@@ -1,4 +1,5 @@
-﻿using static TerminalStuff.TerminalEvents;
+﻿using OpenLib.Common;
+using static TerminalStuff.TerminalEvents;
 
 
 namespace TerminalStuff.EventSub

@@ -50,12 +50,13 @@ namespace TerminalStuff
             [HarmonyTranspiler]
             private static IEnumerable<CodeInstruction> BeginUsingTerminal_Transpiler(IEnumerable<CodeInstruction> instructions)
             {
+                int replacements = 0;
                 CodeInstruction nothing = new(OpCodes.Nop);
                 foreach (CodeInstruction instruction in instructions)
                 {
                     if (instruction.Calls(AccessTools.Method("Terminal:LoadNewNode")))
                     {
-                        Plugin.Spam("not adding matching instruction - Terminal:LoadNewNode");
+                        replacements++;
                         yield return nothing;
                     }
                     else
@@ -65,22 +66,40 @@ namespace TerminalStuff
                     }
 
                 }
-
-                Plugin.Log.LogInfo("Transpiler success!!!");
+                if(replacements > 0)
+                    Plugin.Log.LogInfo($"BeginUsingTerminal - Transpiler success!\n [ {replacements} ] lines changed");
+                else
+                    Plugin.Log.LogInfo("BeginUsingTerminal - Transpiler ran with no changes");
             }
         }
 
-
-
         [HarmonyPatch(typeof(Terminal), "TextPostProcess")]
-        public class ZeekersTypo : Terminal
+        public class TextPostProcessTranspiler : Terminal
         {
-            static void Postfix(ref string __result)
+            [HarmonyTranspiler]
+            private static IEnumerable<CodeInstruction> TextPostProcess_Transpiler(IEnumerable<CodeInstruction> instructions)
             {
-                if (__result.Contains("\n\n\n\n\n\n\n\n\n\n\n\n\n\nn\n\n\n\n\n\n"))
+                int replacements = 0;
+                CodeInstruction original = new(OpCodes.Ldstr, "\n\n\n\n\n\n\n\n\n\n\n\n\n\nn\n\n\n\n\n\n");
+                CodeInstruction myFix = new(OpCodes.Ldstr, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+                foreach (CodeInstruction instruction in instructions)
                 {
-                    __result = __result.Replace("\n\n\n\n\n\n\n\n\n\n\n\n\n\nn\n\n\n\n\n\n", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+                    if (instruction.operand == original.operand)
+                    {
+                        replacements++;
+                        yield return myFix;
+                    }
+                    else
+                    {
+                        yield return instruction;
+                    }
+
                 }
+
+                if (replacements > 0)
+                    Plugin.Log.LogInfo($"TextPostProcess - Transpiler success!\n [ {replacements} ] lines changed");
+                else
+                    Plugin.Log.LogInfo("TextPostProcess - Transpiler ran with no changes");
             }
         }
 
@@ -109,10 +128,15 @@ namespace TerminalStuff
                 }
                 else
                 {
-                    if (!Plugin.instance.splitViewCreated)
-                        return;
-
                     bool shouldEnable = BoolStuff.ShouldEnableImage();
+                    Plugin.Spam($"shouldEnable: {shouldEnable}");
+
+                    if ((bool)Plugin.instance.Terminal.displayingPersistentImage)
+                    {
+                        MoreCamStuff.ResetPluginInstanceBools();
+                        Plugin.Spam("Vanilla view monitor detected, resetting plugin bools");
+                    }
+                        
 
                     if (Plugin.instance.Terminal.terminalImage.enabled = shouldEnable)
                         return;
