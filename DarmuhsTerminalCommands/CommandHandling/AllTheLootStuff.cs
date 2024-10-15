@@ -64,7 +64,7 @@ namespace TerminalStuff
                     sb.AppendLine($"{kvp.Key}");
             }
 
-            if(Plugin.instance.ShipInventory)
+            if (Plugin.instance.ShipInventory)
             {
                 Compatibility.ShipInventoryCompat.GetInventoryItems(out List<Item> itemsInv);
                 StringBuilder inv = ShipInventoryItems(itemsInv, ref totalCredsWorth);

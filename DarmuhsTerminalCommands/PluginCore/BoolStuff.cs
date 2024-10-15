@@ -60,6 +60,16 @@ namespace TerminalStuff
 
         internal static bool ShouldEnableImage()
         {
+            if (Plugin.instance.suitsTerminal)
+            {
+                if (SuitsTerminalCompatibility.CheckForSuitsMenu())
+                {
+                    SplitViewChecks.ResetPluginInstanceBools();
+                    SplitViewChecks.DisableSplitView("neither");
+                    return false;
+                }
+
+            }
             if (ViewCommands.AnyActiveMonitoring())
                 return true;
             if (Plugin.instance.isOnMirror)

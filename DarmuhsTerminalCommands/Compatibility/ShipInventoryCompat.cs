@@ -20,7 +20,7 @@ namespace TerminalStuff.Compatibility
                 return;
 
             List<ItemData> allItems = [.. ItemManager.GetItems()];
- 
+
             foreach (ItemData item in allItems)
             {
                 Item thisItem = item.GetItem();

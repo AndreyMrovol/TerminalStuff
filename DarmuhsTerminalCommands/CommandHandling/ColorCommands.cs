@@ -206,7 +206,7 @@ namespace TerminalStuff
                 return message;
             }
 
-            string targetColor = val;
+            string targetColor = val.TrimStart();
 
             Plugin.MoreLogs($"Attempting to set flashlight color to {targetColor}");
             SetCustomColor(targetColor);

@@ -1,7 +1,7 @@
 ﻿using GameNetcodeStuff;
+using OpenLib.Common;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering.HighDefinition;
 using static TerminalStuff.AllMyTerminalPatches;
 using static TerminalStuff.ViewCommands;
 
@@ -10,7 +10,7 @@ namespace TerminalStuff
     internal class MoreCamStuff //UPDATE excludedNames to configItem Names for Nodes that dont specify nodeName!!!
     {
         internal static int originalArmsLayer;
-        
+
         internal static void ResetPluginInstanceBools()
         {
             Plugin.instance.isOnMiniMap = false;
@@ -75,7 +75,7 @@ namespace TerminalStuff
                 SplitViewChecks.DisableSplitView("neither");
                 Plugin.MoreLogs("disabling ANY cams views");
             }
-            else if(nodeName == "ViewInsideShipCam 1" && node != null)
+            else if (nodeName == "ViewInsideShipCam 1" && node != null)
             {
                 if (!IsViewNode(node))
                     ResetPluginInstanceBools();
@@ -163,33 +163,12 @@ namespace TerminalStuff
             }
         }
 
-        internal static void PlayerCamSetup()
-        {
-            if (IsExternalCamsPresent())
-                return;
-
-            originalArmsLayer = GameNetworkManager.Instance.localPlayerController.thisPlayerModelArms.transform.gameObject.layer;
-            GameObject darmCamObject = OpenLib.Common.CamStuff.MirrorObject;
-            playerCam = darmCamObject.AddComponent<Camera>();
-            if(mycamTexture == null)
-                mycamTexture = new(StartOfRound.Instance.localPlayerController.gameplayCamera.targetTexture);
-            int cullingMaskInt = StartOfRound.Instance.localPlayerController.gameplayCamera.cullingMask & ~LayerMask.GetMask(["Ignore Raycast", "UI", "HelmetVisor"]);
-            playerCam.targetTexture = mycamTexture;
-
-            playerCam.cullingMask = cullingMaskInt;
-            
-            darmCamObject.SetActive(false);
-            Plugin.MoreLogs("playerCam instantiated");
-        }
-
-
-
         private static Texture PlayerCamTexture(int targetPlayer)
         {
             if (playerCam == null)
             {
                 Plugin.MoreLogs("Creating home-brew PlayerCam");
-                PlayerCamSetup();
+                playerCam = CamStuff.HomebrewCam(ref mycamTexture, ref CamStuff.MyCameraHolder);
             }
 
             playerCam.orthographic = false;
@@ -225,7 +204,7 @@ namespace TerminalStuff
             if (playerCam == null)
             {
                 Plugin.MoreLogs("Creating home-brew PlayerCam");
-                PlayerCamSetup();
+                playerCam = CamStuff.HomebrewCam(ref mycamTexture, ref CamStuff.MyCameraHolder);
             }
 
             playerCam.orthographic = false;

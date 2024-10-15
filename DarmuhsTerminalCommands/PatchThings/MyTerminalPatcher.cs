@@ -66,7 +66,7 @@ namespace TerminalStuff
                     }
 
                 }
-                if(replacements > 0)
+                if (replacements > 0)
                     Plugin.Log.LogInfo($"BeginUsingTerminal - Transpiler success!\n [ {replacements} ] lines changed");
                 else
                     Plugin.Log.LogInfo("BeginUsingTerminal - Transpiler ran with no changes");
@@ -136,7 +136,7 @@ namespace TerminalStuff
                         MoreCamStuff.ResetPluginInstanceBools();
                         Plugin.Spam("Vanilla view monitor detected, resetting plugin bools");
                     }
-                        
+
 
                     if (Plugin.instance.Terminal.terminalImage.enabled = shouldEnable)
                         return;

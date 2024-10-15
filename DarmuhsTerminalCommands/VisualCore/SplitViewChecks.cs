@@ -1,4 +1,5 @@
-﻿using OpenLib.CoreMethods;
+﻿using OpenLib.Common;
+using OpenLib.CoreMethods;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -47,7 +48,7 @@ namespace TerminalStuff
                 Plugin.MoreLogs("Not replacing 'view monitor' command, as OpenBodyCams is creating terminal commands");
                 return;
             }
-                
+
             else
                 HandleVanillaMap(true);
 
@@ -93,7 +94,7 @@ namespace TerminalStuff
                 ResetPluginInstanceBools();
                 return;
             }
-               
+
 
             List<string> singleViewModes = ["cams", "map", "mirror"];
 
@@ -159,6 +160,7 @@ namespace TerminalStuff
             if (!Plugin.instance.splitViewCreated && whatIsIt == "neither")
             {
                 DisableVanillaViewMonitor();
+                ResetPluginInstanceBools();
                 return;
             }
             else if (!Plugin.instance.splitViewCreated)
@@ -180,7 +182,7 @@ namespace TerminalStuff
                 TerminalCameraStatus(state);
             }
             else
-                VisualCore.CamEvents.HomebrewCameraState(state);
+                CamStuff.HomebrewCameraState(state, ViewCommands.playerCam);
         }
 
         private static void UpdatePluginInstanceBools(string whatIsIt)

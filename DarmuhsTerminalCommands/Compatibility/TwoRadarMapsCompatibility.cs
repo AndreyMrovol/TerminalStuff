@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenLib.Common;
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
@@ -108,7 +109,7 @@ namespace TerminalStuff
             if (playerCam == null)
             {
                 Plugin.MoreLogs("Creating home-brew PlayerCam");
-                PlayerCamSetup();
+                playerCam = CamStuff.HomebrewCam(ref mycamTexture, ref CamStuff.MyCameraHolder);
             }
 
             playerCam.orthographic = false;
@@ -130,10 +131,6 @@ namespace TerminalStuff
             playerCam.transform.position = camTransform.transform.position;
             playerCam.usePhysicalProperties = false;
 
-            int cullingMaskInt = playerCam.cullingMask & ~LayerMask.GetMask(layerNames: ["Ignore Raycast", "UI", "HelmetVisor"]);
-            cullingMaskInt |= (1 << 23);
-            playerCam.cullingMask = cullingMaskInt;
-
             playerCam.farClipPlane = 25f;
             playerCam.nearClipPlane = 0.4f;
             playerCam.fieldOfView = 90f;
@@ -147,7 +144,7 @@ namespace TerminalStuff
             if (playerCam == null)
             {
                 Plugin.MoreLogs("Creating home-brew PlayerCam");
-                PlayerCamSetup();
+                playerCam = CamStuff.HomebrewCam(ref mycamTexture, ref CamStuff.MyCameraHolder);
             }
 
             playerCam.orthographic = false;
@@ -156,10 +153,6 @@ namespace TerminalStuff
             Transform camTransform = TerminalMapRenderer.radarTargets[TerminalMapRenderer.targetTransformIndex].transform;
             playerCam.transform.rotation = camTransform.rotation;
             playerCam.transform.position = camTransform.transform.position;
-
-            int cullingMaskInt = playerCam.cullingMask & ~LayerMask.GetMask(layerNames: ["Ignore Raycast", "UI", "HelmetVisor"]);
-            cullingMaskInt |= (1 << 23);
-            playerCam.cullingMask = cullingMaskInt;
 
             playerCam.usePhysicalProperties = true;
             playerCam.farClipPlane = 50f;

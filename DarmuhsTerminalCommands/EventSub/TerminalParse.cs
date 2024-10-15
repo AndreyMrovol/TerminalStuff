@@ -22,10 +22,10 @@ namespace TerminalStuff.EventSub
                 if (InMainMenu(node, MenuBuild.myMenu))
                     Plugin.Spam("got node from menus");
             }
-                
+
 
             string[] words = CommonStringStuff.GetWords();
-            if(words.Length > 0)
+            if (words.Length > 0)
             {
                 StartofHandling.HandleParsed(Plugin.instance.Terminal, node, words, out TerminalNode resultNode);
 

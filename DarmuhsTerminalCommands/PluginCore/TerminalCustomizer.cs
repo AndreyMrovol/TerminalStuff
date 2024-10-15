@@ -1,4 +1,5 @@
 ﻿using TerminalStuff.SpecialStuff;
+using static TerminalStuff.EventSub.TerminalStart;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -93,10 +94,23 @@ namespace TerminalStuff.PluginCore
                 Plugin.WARNING("customization failure: kbMesh is null\nFailed to get TerminalKeyboard color");
         }
 
+        internal static void StartNode()
+        {
+            Plugin.Spam("Updating home displaytext");
+            startNode = Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[1];
+            string asciiArt = ConfigSettings.HomeTextArt.Value;
+            asciiArt = asciiArt.Replace("[leadingSpace]", " ");
+            asciiArt = asciiArt.Replace("[leadingSpacex4]", "    ");
+            //no known compatibility issues with home screen
+            startNode.displayText = $"{ConfigSettings.HomeLine1.Value}\r\n{ConfigSettings.HomeLine2.Value}\r\n\r\n{ConfigSettings.HomeHelpLines.Value}\r\n{asciiArt}\r\n\r\n{ConfigSettings.HomeLine3.Value}\r\n\r\n";
+        }
+
         internal static void TerminalCustomization()
         {
             if (!ConfigSettings.TerminalCustomization.Value)
                 return;
+
+            StartNode();
 
             if (!defaultsCached)
                 CacheDefaults();

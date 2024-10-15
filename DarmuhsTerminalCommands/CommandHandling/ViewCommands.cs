@@ -1,7 +1,6 @@
 ﻿using OpenLib.Menus;
 using System.Collections.Generic;
 using System.Text;
-using TerminalStuff.VisualCore;
 using UnityEngine;
 using static OpenLib.Menus.MenuBuild;
 using static TerminalStuff.AllMyTerminalPatches;
@@ -344,7 +343,7 @@ namespace TerminalStuff
 
             foreach (TerminalMenuItem menuItem in menus)
             {
-                if(menuItem.itemKeywords.Count == 0)
+                if (menuItem.itemKeywords.Count == 0)
                     continue;
                 message.AppendLine($"> <color=#ffff66>{OpenLib.Common.CommonStringStuff.GetKeywordsForMenuItem(menuItem.itemKeywords)}</color>\r\n{menuItem.itemDescription}\r\n");
             }

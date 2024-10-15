@@ -17,7 +17,7 @@ namespace TerminalStuff
         public static ConfigEntry<string> WalkieTermKey { get; internal set; }
         public static ConfigEntry<string> WalkieTermMB { get; internal set; }
         public static ConfigEntry<string> KeyActionsConfig { get; internal set; }
-        public static ConfigEntry<bool> CreateMoreMenus {  get; internal set; }
+        public static ConfigEntry<bool> CreateMoreMenus { get; internal set; }
 
         //cams special
         public static ConfigEntry<bool> CamsUseDetectedMods { get; internal set; }
@@ -540,8 +540,8 @@ namespace TerminalStuff
 
             HomeTextArt = MakeString(Plugin.instance.Config, "Terminal Customization", "HomeTextArt", "[leadingSpacex4][leadingSpace]<color=#e6b800>^^      .-=-=-=-.  ^^\r\n ^^        (`-=-=-=-=-`)         ^^\r\n         (`-=-=-=-=-=-=-`)  ^^         ^^\r\n   ^^   (`-=-=-=-=-=-=-=-`)   ^^          \r\n       ( `-=-=-=-(@)-=-=-` )      ^^\r\n       (`-=-=-=-=-=-=-=-=-`)  ^^          \r\n       (`-=-=-=-=-=-=-=-=-`)  ^^\r\n        (`-=-=-=-=-=-=-=-`)          ^^\r\n         (`-=-=-=-=-=-=-`)  ^^            \r\n           (`-=-=-=-=-`)\r\n            `-=-=-=-=-`</color>", "ASCII Art goes here");
 
-            MoreMenuText = MakeString(Plugin.instance.Config, "Terminal Customization", "MoreMenuText", "Welcome to darmuh's Terminal Upgrade!\r\n\tSee below Categories for new stuff :)", "This is the header of the more command menu");
-            MoreHintText = MakeString(Plugin.instance.Config, "Terminal Customization", "MoreHintText", "<color=#b300b3>>MORE</color>\nTo open a menu of darmuh's commands.", "Text displayed for hints to the more command menu");
+            MoreMenuText = MakeString(Plugin.instance.Config, "Terminal Customization", "MoreMenuText", "Welcome to darmuh's Terminal Upgrade!\r\n\tSee below Categories for new stuff :)", "This is the header of the more command menu\nRefreshing this text requires a lobby restart.");
+            MoreHintText = MakeString(Plugin.instance.Config, "Terminal Customization", "MoreHintText", "<color=#b300b3>>MORE</color>\nTo open a menu of darmuh's commands.\nRefreshing this text requires a lobby restart.", "Text displayed for hints to the more command menu");
 
             //Quality of Life Stuff
             LockCameraInTerminal = MakeBool(Plugin.instance.Config, "Quality of Life", "LockCameraInTerminal", false, "Enable this to lock the player camera to the terminal when it is in use.");

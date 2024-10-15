@@ -44,8 +44,7 @@ namespace TerminalStuff.EventSub
 
         private static void OverWriteTextNodes()
         {
-            Plugin.MoreLogs("updating displaytext for help and home");
-            startNode = Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[1];
+            Plugin.MoreLogs("updating displaytext for help");
             helpNode = Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[13];
 
             if (!GameStuff.oneTimeOnly)
@@ -57,13 +56,6 @@ namespace TerminalStuff.EventSub
 
                 Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[13].displayText = replacement;
                 Plugin.Spam("~~~~~~~~~~~~~~~~~~~~~~~~~~~~ HELP MODIFIED ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-
-                //string maskasciiart = "     ._______.\r\n     | \\   / |\r\n  .--|.O.|.O.|______.\r\n__).-| = | = |/   \\ |\r\np__) (.'---`.)Q.|.Q.|--.\r\n      \\\\___// = | = |-.(__\r\n       `---'( .---. ) (__&lt;\r\n             \\\\.-.//\r\n              `---'\r\n\t\t\t  ";
-                string asciiArt = ConfigSettings.HomeTextArt.Value;
-                asciiArt = asciiArt.Replace("[leadingSpace]", " ");
-                asciiArt = asciiArt.Replace("[leadingSpacex4]", "    ");
-                //no known compatibility issues with home screen
-                startNode.displayText = $"{ConfigSettings.HomeLine1.Value}\r\n{ConfigSettings.HomeLine2.Value}\r\n\r\n{ConfigSettings.HomeHelpLines.Value}\r\n{asciiArt}\r\n\r\n{ConfigSettings.HomeLine3.Value}\r\n\r\n";
                 GameStuff.oneTimeOnly = true;
             }
 

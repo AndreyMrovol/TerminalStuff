@@ -43,7 +43,7 @@ namespace TerminalStuff
         internal static void CreateDarmuhsTerminalStuffMenus()
         {
             Plugin.Spam("START CreateDarmuhsTerminalStuffMenus");
-            if(!ConfigSettings.CreateMoreMenus.Value)
+            if (!ConfigSettings.CreateMoreMenus.Value)
             {
                 if (!DynamicBools.TryGetKeyword("other", out TerminalKeyword otherWord))
                     return;
@@ -56,12 +56,12 @@ namespace TerminalStuff
                         continue;
                     }
 
-                    if(item == null)
+                    if (item == null)
                     {
                         Plugin.WARNING($"NULL ITEM IN myMenuItems!!!");
                         continue;
                     }
-                        
+
                     AddingThings.AddToExistingNodeText($"\n>{CommonStringStuff.GetKeywordsForMenuItem(item.itemKeywords).ToUpper()}\n{item.itemDescription}", ref otherWord.specialKeywordResult);
                     Plugin.Spam($"{item.ItemName} keywords added to other menu");
                 }

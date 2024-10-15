@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using UnityEngine.Rendering.HighDefinition;
+﻿using OpenLib.Common;
+using UnityEngine;
 using UnityEngine.UI;
 using static TerminalStuff.MoreCamStuff;
 using static TerminalStuff.ViewCommands;
@@ -24,6 +24,8 @@ namespace TerminalStuff.VisualCore
 
         internal static void GetTextures()
         {
+            Plugin.Spam("GetTextures Event!");
+
             CamsThings.camsTexture = UpdateCamsTexture();
             CamsThings.radarTexture = UpdateRadarTexture();
             UpdateCamsEvent.Invoke(CamsThings.Mode);
@@ -50,6 +52,8 @@ namespace TerminalStuff.VisualCore
 
         internal static void OnUpdateCamsEvent(string mode)
         {
+            Plugin.Spam("UpdateCams Event!");
+
             CamsThings.Mode = mode;
             if (mode == "map")
             {
@@ -161,7 +165,7 @@ namespace TerminalStuff.VisualCore
             if (Plugin.instance.OpenBodyCamsMod && ConfigSettings.CamsUseDetectedMods.Value)
             {
                 Plugin.Spam("Sending to OBC for camera info");
-                OpenLib.Compat.OpenBodyCamFuncs.OpenBodyCamsMirrorStatus(true, ConfigSettings.ObcResolutionMirror.Value, ConfigSettings.MirrorZoom.Value, ConfigSettings.Mirror2DStyle.Value);
+                OpenLib.Compat.OpenBodyCamFuncs.OpenBodyCamsMirrorStatus(true, ConfigSettings.ObcResolutionMirror.Value, ConfigSettings.MirrorZoom.Value, ConfigSettings.Mirror2DStyle.Value, ref CamStuff.ObcCameraHolder);
                 return OpenLib.Compat.OpenBodyCamFuncs.GetTexture(OpenLib.Compat.OpenBodyCamFuncs.TerminalMirrorCam);
             }
             else
@@ -175,44 +179,23 @@ namespace TerminalStuff.VisualCore
             if (playerCam == null)
             {
                 Plugin.MoreLogs("Creating home-brew PlayerCam");
-                PlayerCamSetup();
+                playerCam = CamStuff.HomebrewCam(ref mycamTexture, ref CamStuff.MyCameraHolder);
             }
 
-            HomebrewCameraState(true);
-            OpenLib.Common.CamStuff.CamInitMirror(playerCam, ConfigSettings.MirrorZoom.Value, ConfigSettings.Mirror2DStyle.Value);
+            CamStuff.HomebrewCameraState(true, playerCam);
+            CamStuff.CamInitMirror(CamStuff.MyCameraHolder, playerCam, ConfigSettings.MirrorZoom.Value, ConfigSettings.Mirror2DStyle.Value);
 
             return playerCam.targetTexture;
-        }
-
-
-        //States
-        internal static void HomebrewCameraState(bool active)
-        {
-            if (playerCam == null)
-                return;
-
-            playerCam.gameObject.SetActive(active);
-
-            if (active == true)
-            {
-                GameNetworkManager.Instance.localPlayerController.thisPlayerModelArms.transform.gameObject.layer = 2;
-                Plugin.Spam("layer set to 2");
-            }    
-            else
-            {
-                GameNetworkManager.Instance.localPlayerController.thisPlayerModelArms.transform.gameObject.layer = originalArmsLayer;
-                Plugin.Spam($"layer set to original - {originalArmsLayer}");
-            }      
         }
 
         internal static void SetMirrorState(bool active)
         {
             if (Plugin.instance.OpenBodyCamsMod && ConfigSettings.CamsUseDetectedMods.Value)
             {
-                OpenLib.Compat.OpenBodyCamFuncs.OpenBodyCamsMirrorStatus(false, ConfigSettings.ObcResolutionMirror.Value, ConfigSettings.MirrorZoom.Value, ConfigSettings.Mirror2DStyle.Value);
+                OpenLib.Compat.OpenBodyCamFuncs.OpenBodyCamsMirrorStatus(active, ConfigSettings.ObcResolutionMirror.Value, ConfigSettings.MirrorZoom.Value, ConfigSettings.Mirror2DStyle.Value, ref CamStuff.ObcCameraHolder);
             }
             else
-                HomebrewCameraState(active);
+                CamStuff.HomebrewCameraState(active, playerCam);
         }
     }
 }

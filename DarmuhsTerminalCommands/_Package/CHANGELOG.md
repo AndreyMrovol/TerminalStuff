@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.6.3]
+ - Moved Homebrew cam stuff to OpenLib.
+	- Various fixes within OpenLib for the homebrew cams.
+ - Additional Compatibility with suitsTerminal (requires OpenLib update)
+ - Updated to utilize latest version of OpenLib (0.2.3)
+ - Additional suitsTerminal built-in compatibility
+ - Added home page text customization to be refreshed with terminal color customizations
+
+## [3.6.2]
+ - Hotfix for fcolor command (thanks @chrono57 for the report and testing)
+
 ## [3.6.1]
  - Fixed issue discovered with purchase packs where if you had exactly the amount it costed you could not buy it (thanks @frostycirno for the report)
  - Added config item to disable more menu creation. When more menus is disabled any new commands will be added directly to the "Other" command listing.
