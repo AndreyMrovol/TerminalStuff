@@ -30,12 +30,25 @@ namespace TerminalStuff.EventSub
             }
         }
 
-        internal static void TerminalCameraStatus(bool status)
+        internal static void OBCTerminalCameraStatus(bool status)
         {
             if (status == false)
             {
-                OpenLib.Compat.OpenBodyCamFuncs.TerminalMirrorStatus(status);
-                OpenLib.Compat.OpenBodyCamFuncs.TerminalCameraStatus(status);
+                if (Plugin.instance.suitsTerminal)
+                {
+                    if (SuitsTerminalCompatibility.CheckForSuitsMenu())
+                        OpenLib.Compat.OpenBodyCamFuncs.TerminalCameraStatus(status);
+                    else
+                    {
+                        OpenLib.Compat.OpenBodyCamFuncs.TerminalMirrorStatus(status);
+                        OpenLib.Compat.OpenBodyCamFuncs.TerminalCameraStatus(status);
+                    }
+                }
+                else
+                {
+                    OpenLib.Compat.OpenBodyCamFuncs.TerminalMirrorStatus(status);
+                    OpenLib.Compat.OpenBodyCamFuncs.TerminalCameraStatus(status);
+                }
             }
             else if (Plugin.instance.isOnMirror)
             {
@@ -47,11 +60,10 @@ namespace TerminalStuff.EventSub
 
         private static void HandleRegularQuit()
         {
-            if (ViewCommands.externalcamsmod && Plugin.instance.OpenBodyCamsMod && ViewCommands.AnyActiveMonitoring())
+            if ( ViewCommands.AnyActiveMonitoring() || Plugin.instance.isOnMirror)
             {
                 Plugin.MoreLogs("Leaving terminal and disabling any active monitoring");
-                TerminalCameraStatus(false);
-                SplitViewChecks.CheckForSplitView("neither");
+                SplitViewChecks.DisableSplitView("neither");
             }
         }
 

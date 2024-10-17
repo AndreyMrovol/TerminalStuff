@@ -175,11 +175,11 @@ namespace TerminalStuff
             ShowCameraView(false);
         }
 
-        private static void ShowCameraView(bool state)
+        internal static void ShowCameraView(bool state)
         {
             if (ConfigSettings.CamsUseDetectedMods.Value && Plugin.instance.OpenBodyCamsMod)
             {
-                TerminalCameraStatus(state);
+                OBCTerminalCameraStatus(state);
             }
             else
                 CamStuff.HomebrewCameraState(state, ViewCommands.playerCam);

@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.6.4]
+ - Fixed issue discovered with certain mod configurations that would brick the terminal.
+	- This was related to the recent changes in 3.6.0 that added a transpiler for BeginUsingTerminal
+ - Fixed various issues with cams implementations, including compatibility with suitsTerminal when both mods are using OpenBodyCams.
+	- Thank you @moroxide for the help in troubleshooting this.
+
 ## [3.6.3]
  - Moved Homebrew cam stuff to OpenLib.
 	- Various fixes within OpenLib for the homebrew cams.

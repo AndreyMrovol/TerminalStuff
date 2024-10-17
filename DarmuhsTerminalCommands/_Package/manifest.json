@@ -1,9 +1,9 @@
 {
   "name": "darmuhsTerminalStuff",
-  "version_number": "3.6.3",
+  "version_number": "3.6.4",
   "website_url": "https://github.com/darmuh/TerminalStuff",
   "description": "Completely configurable Terminal expansion mod! 40+ new commands, 6+ new features, QoL fixes, customization, and much more",
   "dependencies": [
-    "darmuh-OpenLib-0.2.3"
+    "darmuh-OpenLib-0.2.4"
   ]
 }

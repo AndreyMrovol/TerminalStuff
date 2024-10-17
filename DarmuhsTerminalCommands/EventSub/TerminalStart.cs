@@ -61,7 +61,6 @@ namespace TerminalStuff.EventSub
 
             OpenLib.CoreMethods.AddingThings.AddKeywordToExistingNode("home", Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[1], true); //startNode
 
-
         }
 
         internal static void VanillaNodesCache()
@@ -157,6 +156,9 @@ namespace TerminalStuff.EventSub
 
         private static void StartCheck(Terminal thisterm, TerminalNode startNode)
         {
+            if (startNode == null)
+                startNode = Plugin.instance.Terminal.terminalNodes.specialNodes.ToArray()[13];
+
             if (!ConfigSettings.ModNetworking.Value || !ConfigSettings.NetworkedNodes.Value)
             {
                 Plugin.Spam("Networking disabled, returning...");

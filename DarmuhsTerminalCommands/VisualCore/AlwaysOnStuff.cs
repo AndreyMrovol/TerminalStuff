@@ -36,8 +36,8 @@ namespace TerminalStuff
 
                     instance.terminalUIScreen.gameObject.SetActive(false);
 
-                    if (ViewCommands.externalcamsmod && Plugin.instance.OpenBodyCamsMod && ViewCommands.AnyActiveMonitoring())
-                        TerminalCameraStatus(false);
+                    if (ViewCommands.AnyActiveMonitoring() || Plugin.instance.isOnMirror)
+                        SplitViewChecks.ShowCameraView(false);
 
                     Plugin.Log.LogInfo("Disabling terminal screen.");
                     if (ConfigSettings.TerminalLightBehaviour.Value == "alwayson")
@@ -57,8 +57,8 @@ namespace TerminalStuff
                         continue;
                     }
 
-                    if (ViewCommands.externalcamsmod && Plugin.instance.OpenBodyCamsMod && ViewCommands.AnyActiveMonitoring())
-                        TerminalCameraStatus(true);
+                    if (ViewCommands.AnyActiveMonitoring() || Plugin.instance.isOnMirror)
+                        SplitViewChecks.ShowCameraView(true);
 
                     Plugin.Log.LogInfo("Enabling terminal screen.");
                     if (ConfigSettings.TerminalLightBehaviour.Value == "alwayson")
@@ -83,9 +83,9 @@ namespace TerminalStuff
             if (DisableScreenOnDeath())
             {
                 instance.terminalUIScreen.gameObject.SetActive(false);
-                if (ViewCommands.externalcamsmod && Plugin.instance.OpenBodyCamsMod && ViewCommands.AnyActiveMonitoring())
+                if (ViewCommands.AnyActiveMonitoring() || Plugin.instance.isOnMirror)
                 {
-                    TerminalCameraStatus(false);
+                    SplitViewChecks.ShowCameraView(false);
                     Plugin.Spam("Cams disabled on player death");
                 }
 
