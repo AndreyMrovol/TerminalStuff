@@ -127,12 +127,12 @@ namespace TerminalStuff.EventSub
             if (Plugin.instance.Terminal == null)
                 return;
 
-            AlwaysOnStuff.screenSettings = new(ConfigSettings.TerminalScreen.Value);
             terminalSettings.StartPage(ConfigSettings.TerminalStartPage.Value);
         }
 
         private static void AlwaysOnStart(Terminal thisterm, TerminalNode startNode)
         {
+
             if (AlwaysOnStuff.screenSettings.AlwaysOn && !AlwaysOnStuff.screenSettings.inUse)
             {
                 Plugin.Spam("Setting AlwaysOn Display.");

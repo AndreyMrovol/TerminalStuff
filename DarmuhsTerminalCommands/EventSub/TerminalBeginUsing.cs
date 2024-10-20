@@ -20,6 +20,8 @@ namespace TerminalStuff.EventSub
                 return;
             }
 
+            Plugin.instance.Terminal.screenText.interactable = true; //force terminal accept input
+
             StartUsingTerminalCheck(Plugin.instance.Terminal);
 
             if (StartOfRound.Instance.localPlayerController != null)
@@ -79,8 +81,6 @@ namespace TerminalStuff.EventSub
             if (!alwaysOnDisplay)
             {
                 Plugin.Spam("disabling cams views, alwaysOnDisplay is [DISABLED]");
-                SplitViewChecks.DisableSplitView("neither");
-                ViewCommands.isVideoPlaying = false;
 
                 //Loading specific startpage or nothing at all
                 ChooseStartPage(instance, ref nextNode);
@@ -112,7 +112,7 @@ namespace TerminalStuff.EventSub
             {
                 if (nextNode == null)
                 {
-                    Plugin.WARNING("Failed to grab nextNode for server sync!");
+                    Plugin.MoreLogs("Failed to grab nextNode for server sync!");
                     return;
                 }
                 Plugin.Spam("sending current node to other users");
@@ -127,6 +127,8 @@ namespace TerminalStuff.EventSub
             //Loading specific startpage or nothing at all
             if (terminalSettings.startPage != null)
             {
+                SplitViewChecks.DisableSplitView("neither");
+                ViewCommands.isVideoPlaying = false;
 
                 List<MainListing> fullListings =
                     [
@@ -148,6 +150,14 @@ namespace TerminalStuff.EventSub
                 Plugin.WARNING("currentNode is NULL, loading home page as fail-safe");
                 instance.LoadNewNode(startNode);
                 nextNode = startNode;
+            }
+            else
+            {
+                if (ViewCommands.AnyActiveMonitoring() || Plugin.instance.isOnMirror)
+                {
+                    Plugin.MoreLogs("Entering terminal and enabling any active cameras");
+                    SplitViewChecks.ShowCameraView(true);
+                }
             }
 
             if (lastText.Length > 0 && ConfigSettings.SaveLastInput.Value)

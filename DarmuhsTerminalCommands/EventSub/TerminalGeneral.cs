@@ -21,6 +21,9 @@ namespace TerminalStuff.EventSub
             Plugin.MoreLogs($"LoadNewNode patch, nNS: {NetHandler.netNodeSet}");
             Plugin.Spam(Plugin.instance.Terminal.screenText.textComponent.textInfo.lineCount.ToString());
 
+            if(ConfigSettings.TerminalInputMaxChars.Value >= 20 && node.maxCharactersToType >= 20)
+                node.maxCharactersToType = ConfigSettings.TerminalInputMaxChars.Value;
+
             if (ConfigSettings.TerminalFillEmptyText.Value == "nochange")
                 return;
 
@@ -100,10 +103,19 @@ namespace TerminalStuff.EventSub
         internal static void OnSetTerminalInUse()
         {
             string setting = ConfigSettings.TerminalLightBehaviour.Value;
+
+            AlwaysOnStuff.screenSettings ??= new(ConfigSettings.TerminalScreen.Value);
+
+            if (AlwaysOnStuff.screenSettings.inUse && StartOfRound.Instance.localPlayerController.isInHangarShipRoom)
+            {
+                Plugin.instance.Terminal.terminalUIScreen.gameObject.SetActive(Plugin.instance.Terminal.placeableObject.inUse);
+                Plugin.Spam($"OnSetTerminalInUse {Plugin.instance.Terminal.placeableObject.inUse}");
+            }
+
             if (setting == "nochange")
                 return;
             else if (setting == "disable")
-                ShouldDisableTerminalLight(true, setting);
+                ShouldDisableTerminalLight(Plugin.instance.Terminal.terminalInUse, setting);
             else if (setting == "alwayson")
                 ShouldDisableTerminalLight(false, setting);
         }

@@ -16,13 +16,7 @@ using static OpenLib.ConfigManager.ConfigSetup;
 namespace TerminalStuff
 {
     [BepInPlugin("darmuh.TerminalStuff", "darmuhsTerminalStuff", (PluginInfo.PLUGIN_VERSION))]
-    [BepInDependency("darmuh.OpenLib", "0.2.4")] //hard dependency for my library
-    [BepInDependency("Rozebud.FovAdjust", BepInDependency.DependencyFlags.SoftDependency)]
-    [BepInDependency("Zaggy1024.OpenBodyCams", BepInDependency.DependencyFlags.SoftDependency)]
-    [BepInDependency("Zaggy1024.TwoRadarMaps", BepInDependency.DependencyFlags.SoftDependency)]
-    [BepInDependency("darmuh.suitsTerminal", BepInDependency.DependencyFlags.SoftDependency)]
-    [BepInDependency("TerminalFormatter", BepInDependency.DependencyFlags.SoftDependency)]
-    [BepInDependency("BMX.LobbyCompatibility", BepInDependency.DependencyFlags.SoftDependency)]
+    [BepInDependency("darmuh.OpenLib", "0.2.5")] //hard dependency for my library
 
 
     public class Plugin : BaseUnityPlugin
@@ -32,7 +26,7 @@ namespace TerminalStuff
         {
             public const string PLUGIN_GUID = "darmuh.TerminalStuff";
             public const string PLUGIN_NAME = "darmuhsTerminalStuff";
-            public const string PLUGIN_VERSION = "3.6.4";
+            public const string PLUGIN_VERSION = "3.6.5";
         }
 
         internal static ManualLogSource Log;

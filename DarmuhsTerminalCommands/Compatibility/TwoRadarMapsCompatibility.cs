@@ -1,6 +1,5 @@
 ﻿using OpenLib.Common;
 using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using static TerminalStuff.MoreCamStuff;
@@ -164,53 +163,9 @@ namespace TerminalStuff
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        internal static int CheckForPlayerNameCommand(string firstWord, string secondWord) //vanilla function modified for use with TwoRadarMaps
+        internal static int CheckForPlayerNameCommand(string query) 
         {
-
-            if (secondWord.Length <= 2)
-            {
-                return -1;
-            }
-
-            Plugin.MoreLogs("first word: " + firstWord + "; second word: " + secondWord);
-            List<string> list = [];
-            for (int i = 0; i < TerminalMapRenderer.radarTargets.Count; i++) //swapped out vanilla mapscreen for TwoRadarMaps'
-            {
-                if (TargetIsValid(TerminalMapRenderer.radarTargets[i]?.transform))
-                {
-                    list.Add(TerminalMapRenderer.radarTargets[i].name); //added this to only get valid targets
-                    Plugin.MoreLogs($"name {i}: {list[i]}");
-                }
-                else
-                    list.Add(string.Empty); //added this to keep same list length
-            }
-
-            secondWord = secondWord.ToLower();
-            for (int j = 0; j < list.Count; j++)
-            {
-                string text = list[j].ToLower();
-                if (text == secondWord)
-                {
-                    return j;
-                }
-            }
-
-            Plugin.MoreLogs($"Target names length: {list.Count}");
-            for (int k = 0; k < list.Count; k++)
-            {
-                string text = list[k].ToLower();
-                Plugin.MoreLogs($"Word #{k}: {text}; length: {text.Length}");
-                for (int num = secondWord.Length; num > 2; num--)
-                {
-                    Plugin.MoreLogs($"c: {num}");
-                    Plugin.MoreLogs(secondWord.Substring(0, num));
-                    if (text.StartsWith(secondWord.Substring(0, num)))
-                    {
-                        return k;
-                    }
-                }
-            }
-            return -1;
+            return TerminalEvents.PlayerNameToTarget(query, TerminalMapRenderer.radarTargets);
         }
 
 

@@ -20,6 +20,8 @@ namespace TerminalStuff.EventSub
             EventManager.TerminalDisable.AddListener(TerminalGeneral.OnTerminalDisable);
             EventManager.TerminalLoadIfAffordable.AddListener(TerminalGeneral.OnLoadAffordable);
             EventManager.TerminalQuit.AddListener(TerminalQuit.OnTerminalQuit);
+
+            OpenLib.TerminalUpdatePatch.usePatch = true;
             EventManager.SetTerminalInUse.AddListener(TerminalGeneral.OnSetTerminalInUse);
 
             //TeleporterStuff
@@ -31,6 +33,11 @@ namespace TerminalStuff.EventSub
             EventManager.StartOfRoundStart.AddListener(GameStuff.OnStartOfRoundStart);
             EventManager.StartOfRoundStartGame.AddListener(GameStuff.OnStartGame);
             EventManager.PlayerSpawn.AddListener(GameStuff.OnPlayerSpawn);
+
+            //PlayerStuff
+            OpenLib.PlayerUpdatePatch.usePatch = true;
+            EventManager.PlayerIsInShip.AddListener(AlwaysOnStuff.PlayerShipChanged);
+            EventManager.PlayerIsDead.AddListener(AlwaysOnStuff.IsPlayerDead);
 
             //Unique
             EventManager.GetNewDisplayText.AddListener(TerminalParse.OnNewDisplayText);
@@ -47,6 +54,7 @@ namespace TerminalStuff.EventSub
             CacheDefaultDisplayTexts();
             FontStuff.SetCachedDefault();
             StuffForLibrary.AddCommands(); //replaced addkeywords
+            AlwaysOnStuff.screenSettings ??= new(ConfigSettings.TerminalScreen.Value);
         }
 
         internal static void CacheDefaultDisplayTexts()

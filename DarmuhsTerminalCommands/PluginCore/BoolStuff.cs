@@ -68,8 +68,8 @@ namespace TerminalStuff
                     SplitViewChecks.DisableSplitView("neither");
                     return false;
                 }
-
             }
+
             if (ViewCommands.AnyActiveMonitoring())
                 return true;
             if (Plugin.instance.isOnMirror)

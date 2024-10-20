@@ -49,7 +49,7 @@
  - Door: Control ship doors (open/closed) from terminal
  - Lights: Control ship lights (on/off) from terminal
  - Clock: Toggle Custom Terminal Clock display on/off
- - (BETA) Restart: Reset lobby without triggering firing sequence (networking required)
+ - Restart: Reset lobby without triggering firing sequence (networking required)
  - Radar Zoom: Change zoom level of the map from view monitor (will affect Map on the monitor if not using TwoRadarMaps)
 
 ### Extras Commands:

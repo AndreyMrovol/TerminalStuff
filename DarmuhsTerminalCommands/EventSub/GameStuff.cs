@@ -25,9 +25,18 @@ namespace TerminalStuff.EventSub
 
         internal static void OnPlayerSpawn()
         {
-            screenSettings = new(ConfigSettings.TerminalScreen.Value);
-            if (screenSettings.Dynamic)
-                Plugin.instance.Terminal.StartCoroutine(AlwaysOnDynamic(Plugin.instance.Terminal));
+            if (screenSettings == null)
+                return;
+
+            screenSettings.Update(ConfigSettings.TerminalScreen.Value);
+            if (!screenSettings.inUse && (screenSettings.AlwaysOn || screenSettings.Dynamic))
+            {
+                Plugin.Spam("Enabling screen!");
+                if (!Plugin.instance.Terminal.terminalUIScreen.gameObject.activeSelf && StartOfRound.Instance.localPlayerController.isInHangarShipRoom)
+                    Plugin.instance.Terminal.terminalUIScreen.gameObject.SetActive(true);
+            }
+            else
+                Plugin.Spam($"Screen setting set to inUse - {screenSettings.inUse} ");
 
         }
 

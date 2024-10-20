@@ -198,6 +198,7 @@ namespace TerminalStuff
         public static ConfigEntry<string> TerminalFillEmptyText { get; internal set; }
         public static ConfigEntry<string> TerminalStartPage { get; internal set; }
         public static ConfigEntry<bool> SaveLastInput { get; internal set; }
+        public static ConfigEntry<int> TerminalInputMaxChars { get; internal set; }
 
         public static ConfigEntry<int> StartingCreds { get; internal set; }
 
@@ -533,7 +534,7 @@ namespace TerminalStuff
 
 
             //homescreen lines
-            HomeLine1 = MakeString(Plugin.instance.Config, "Terminal Customization", "homeline1", "Welcome to the FORTUNE-9 OS PLUS", "First line of the home command (startup screen)");
+            HomeLine1 = MakeString(Plugin.instance.Config, "Terminal Customization", "homeline1", $"Welcome to the FORTUNE-9{Plugin.PluginInfo.PLUGIN_VERSION} OS PLUS", "First line of the home command (startup screen)");
             HomeLine2 = MakeString(Plugin.instance.Config, "Terminal Customization", "homeline2", "\tUpgraded by Employee: <color=#e6b800>darmuh</color>", "Second line of the home command (startup screen)");
             HomeLine3 = MakeString(Plugin.instance.Config, "Terminal Customization", "homeline3", "Have a wonderful [currentDay]!", "Last line of the home command (startup screen)");
             HomeHelpLines = MakeString(Plugin.instance.Config, "Terminal Customization", "HomeHelpLines", ">>Type \"Help\" for a list of commands.\r\n>>Type <color=#b300b3>\"More\"</color> for a menu of darmuh's commands.\r\n", "these two lines should generally be used to point to menus of other usable commands. Can also be expanded to more than two lines by using \"\\r\\n\" to indicate a new line");
@@ -558,6 +559,7 @@ namespace TerminalStuff
             TerminalStartPage = MakeString(Plugin.instance.Config, "Quality of Life", "TerminalStartPage", "None", "Enter a keyword to load when a player begins using the terminal.");
             SaveLastInput = MakeBool(Plugin.instance.Config, "Quality of Life", "SaveLastInput", true, "Will save the input of the person last using the terminal and add it back when you start using it again");
             StartingCreds = MakeClampedInt(Plugin.instance.Config, "Quality of Life", "StartingCreds", -1, "Change this Quality of Life feature from -1 to set your desired starting credits amount\n-1 will leave starting credits unchanged by this mod.\nCapped at 20K, you shouldn't need more than this", -1, 20000);
+            TerminalInputMaxChars = MakeClampedInt(Plugin.instance.Config, "Quality of Life", "TerminalInputMaxChars", -1, "Change this Quality of Life feature from -1 to set your desired Max Input Length to adjust node's max input that accepts at least 20 characters of input. Setting this to any number below 20 will do nothing.", -1, 999);
 
 
             //Terminal Customization

@@ -293,7 +293,7 @@ namespace TerminalStuff
                 return component.redirectToEnemy != null;
             }
 
-            Plugin.MoreLogs("returning true, no specific conditions met");
+            Plugin.MoreLogs("TargetIsValid, no specific conditions met");
             return true;
         }
     }

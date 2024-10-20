@@ -107,10 +107,10 @@ namespace TerminalStuff.PluginCore
 
         internal static void TerminalCustomization()
         {
+            StartNode(); //should always be modified, not colors
+
             if (!ConfigSettings.TerminalCustomization.Value)
                 return;
-
-            StartNode();
 
             if (!defaultsCached)
                 CacheDefaults();

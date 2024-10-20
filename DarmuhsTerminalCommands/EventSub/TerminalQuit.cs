@@ -20,11 +20,7 @@ namespace TerminalStuff.EventSub
                 ShouldLockPlayerCamera(true, StartOfRound.Instance.localPlayerController);
 
             //Plugin.Log.LogInfo($"terminuse set to {__instance.terminalInUse}");
-            if (alwaysOnDisplay)
-            {
-                HandleAlwaysOnQuit(Plugin.instance.Terminal);
-            }
-            else
+            if (!alwaysOnDisplay)
             {
                 HandleRegularQuit();
             }
@@ -60,17 +56,11 @@ namespace TerminalStuff.EventSub
 
         private static void HandleRegularQuit()
         {
-            if ( ViewCommands.AnyActiveMonitoring() || Plugin.instance.isOnMirror)
+            if (ViewCommands.AnyActiveMonitoring() || Plugin.instance.isOnMirror)
             {
-                Plugin.MoreLogs("Leaving terminal and disabling any active monitoring");
-                SplitViewChecks.DisableSplitView("neither");
+                Plugin.MoreLogs("Leaving terminal and disabling any active cameras");
+                SplitViewChecks.ShowCameraView(false);
             }
-        }
-
-        private static void HandleAlwaysOnQuit(Terminal instance)
-        {
-            if (screenSettings.Dynamic && !dynamicStatus)
-                instance.StartCoroutine(AlwaysOnDynamic(instance));
         }
     }
 }

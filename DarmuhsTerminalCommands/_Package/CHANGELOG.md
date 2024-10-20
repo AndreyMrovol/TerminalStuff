@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.6.5]
+ - Added config item [TerminalInputMaxChars] to adjust maximum character input for the majority of terminal nodes. Leave at -1 to make no changes.
+ - Updated handling for switch command matching to a player name per request from @thephxrises on the modding discord
+	- Now uses a similar method to the conflict resolution feature. 
+	- I was unable to test this as much as I'd like so let me know if there's any issues.
+ - Completely reworked Always-On Display handling for the different TerminalScreen settings.
+	- Should have fixed issue reported by @aglitchednpc and @moroxide which was causing clients not to be able to type in the terminal sometimes.
+	- Now utilizes new events in OpenLib that are called from changes detected in different Update patches.
+	- Performance difference should be negligible or only positive in theory, but please report if you experience any issues.
+ - Fixed issue reported by @thundershocker1 on the modding discord where the map radar would disappear on reloading "view bodycam" from OpenBodyCams in specific configurations.
+ - Fixed issue in OpenLib with confirmation keywords reported by @_stormyy on the modding discord.
+ - Fixed issue reported by @mmiinnaa11 on the modding discord with Home text not being customizable without enabling TerminalCustomization setting (this is only intended to disable colors)
+
 ## [3.6.4]
  - Fixed issue discovered with certain mod configurations that would brick the terminal.
 	- This was related to the recent changes in 3.6.0 that added a transpiler for BeginUsingTerminal

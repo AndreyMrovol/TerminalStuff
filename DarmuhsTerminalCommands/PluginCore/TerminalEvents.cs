@@ -1,11 +1,15 @@
 ﻿using GameNetcodeStuff;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using TerminalStuff.SpecialStuff;
 using UnityEngine;
 using static OpenLib.CoreMethods.AddingThings;
 using static TerminalStuff.PluginCore.TerminalCustomizer;
 using static TerminalStuff.StringStuff;
+using static TerminalStuff.MoreCamStuff;
+using Steamworks.Ugc;
 
 namespace TerminalStuff
 {
@@ -142,6 +146,31 @@ namespace TerminalStuff
             string text = $"Refreshing TerminalCustomization from config.\n\n";
             TerminalCustomization();
             return text;
+        }
+
+        internal static int PlayerNameToTarget(string query, List<TransformAndName> radarTargets)
+        {
+            if (query.Length <= 2) //too short to compare names
+                return -1;
+
+            Dictionary<int, int> nameToScore = [];
+
+            for (int i = 0; i < radarTargets.Count; i++) //iterate through all targets
+            {
+                if (TargetIsValid(radarTargets[i]?.transform)) //verify target is valid
+                {
+                    if (radarTargets[i].name.ToLower().StartsWith(query.ToLower().Substring(0, 2))) //still need to test this
+                    {
+                        int score = Levenshtein.Distance(query, radarTargets[i].name); //get score at current target
+                        Plugin.Spam($"TargetNum {i} has score {score}");
+                        nameToScore.Add(i, score); //map score to current target
+                    }
+                    else
+                        Plugin.Spam($"name does not match start of query");
+                }
+            }
+
+            return nameToScore.OrderBy(x => x.Value).First().Key; //order by score values and return targetnum with highest score
         }
     }
 

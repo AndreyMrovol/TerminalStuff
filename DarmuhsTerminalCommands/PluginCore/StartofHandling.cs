@@ -228,7 +228,8 @@ namespace TerminalStuff
 
                     if (Plugin.instance.TwoRadarMapsMod)
                     {
-                        int playernum = TwoRadarMapsCompatibility.CheckForPlayerNameCommand(firstWord, words[1].ToLower());
+                        int playernum = TwoRadarMapsCompatibility.CheckForPlayerNameCommand(words[1].ToLower());
+                        Plugin.Spam($"PlayerNameToTarget determined playernum - {playernum}");
                         if (playernum != -1)
                         {
                             TwoRadarMapsCompatibility.UpdateTerminalRadarTarget(terminal, playernum);
@@ -243,7 +244,8 @@ namespace TerminalStuff
                     }
                     else
                     {
-                        int playernum = terminal.CheckForPlayerNameCommand(firstWord, words[1].ToLower());
+                        int playernum = PlayerNameToTarget(words[1].ToLower(), StartOfRound.Instance.mapScreen.radarTargets);
+                        Plugin.Spam($"PlayerNameToTarget determined playernum - {playernum}");
                         if (playernum != -1)
                         {
                             StartOfRound.Instance.mapScreen.SwitchRadarTargetAndSync(playernum);
@@ -251,6 +253,7 @@ namespace TerminalStuff
                             CamEvents.UpdateTextures.Invoke();
                             ViewCommands.DisplayTextUpdater(out string displayText);
                             resultNode.displayText = displayText;
+                            DelayedUpdateText(terminal);
                             return resultNode;
                         }
 
