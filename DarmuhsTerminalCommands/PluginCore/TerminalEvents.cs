@@ -63,7 +63,8 @@ namespace TerminalStuff
         }
         internal static string QuitTerminalCommand()
         {
-            string text = $"{ConfigSettings.QuitString.Value}\n";
+            string text = $"{ConfigSettings.QuitString.Value}\n";        
+
             Plugin.instance.Terminal.StartCoroutine(TerminalQuitter(Plugin.instance.Terminal));
             return text;
         }
@@ -71,6 +72,16 @@ namespace TerminalStuff
         {
             if (quitTerminalEnum)
                 yield break;
+
+            if (Plugin.instance.CruiserTerm)
+            {
+                quitTerminalEnum = true;
+                yield return new WaitForSeconds(0.5f);
+                Compatibility.CruiserTerm.Quit();
+                quitTerminalEnum = false;
+                yield break;
+            }
+
             quitTerminalEnum = true;
             yield return new WaitForSeconds(0.5f);
             terminal.QuitTerminal();

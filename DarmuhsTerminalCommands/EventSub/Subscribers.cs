@@ -55,6 +55,8 @@ namespace TerminalStuff.EventSub
             FontStuff.SetCachedDefault();
             StuffForLibrary.AddCommands(); //replaced addkeywords
             AlwaysOnStuff.screenSettings ??= new(ConfigSettings.TerminalScreen.Value);
+            if(Plugin.instance.CruiserTerm)
+                Compatibility.CruiserTerm.CreateDenyKeyword();
         }
 
         internal static void CacheDefaultDisplayTexts()

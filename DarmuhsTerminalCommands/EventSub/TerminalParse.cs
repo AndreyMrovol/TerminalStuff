@@ -11,6 +11,9 @@ namespace TerminalStuff.EventSub
         {
             if (node == null) // handling cases where node is null for some reason
                 return Plugin.instance.Terminal.currentNode;
+            
+            if (Plugin.instance.CruiserTerm)
+                StartofHandling.ParseCruiserTerm(ref node);
 
             StartofHandling.FirstCheck(node);
 

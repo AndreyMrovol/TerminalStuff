@@ -227,6 +227,9 @@ namespace TerminalStuff
         public static ConfigEntry<int> CustomFontSizeMoney { get; internal set; }
         public static ConfigEntry<int> CustomFontSizeClock { get; internal set; }
 
+        //Cruiser Terminal
+        public static ConfigEntry<string> CruiserTerminalFilterType { get; internal set; }
+        public static ConfigEntry<string> CruiserKeywordList { get; internal set; }
 
         public static void BindConfigSettings()
         {
@@ -586,6 +589,7 @@ namespace TerminalStuff
             CustomFontSizeMain = MakeClampedInt(Plugin.instance.Config, "Terminal Customization", "CustomFontSizeMain", -1, "Set a custom size for your custom font (main text), leave at -1 if you wish not to change it", -1, 72);
             CustomFontSizeMoney = MakeClampedInt(Plugin.instance.Config, "Terminal Customization", "CustomFontSizeMoney", -1, "Set a custom size for your font (credits at the top left), leave at -1 if you wish not to change it", -1, 72);
             CustomFontSizeClock = MakeClampedInt(Plugin.instance.Config, "Terminal Customization", "CustomFontSizeClock", -1, "Set a custom size for your font (TerminalClock), leave at -1 if you wish not to change it", -1, 72);
+            CruiserTerminalConfigs();
 
             PluginCore.StuffForLibrary.ManualCommands(); //add more managedbools that dont come from a specific config item
 
@@ -595,5 +599,10 @@ namespace TerminalStuff
             NetworkingCheck(ModNetworking.Value, Plugin.instance.Config, defaultManaged);
         }
 
+        public static void CruiserTerminalConfigs()
+        {
+            CruiserTerminalFilterType = MakeClampedString(Plugin.instance.Config, "CruiserTerminal", "Cruiser Terminal Filter Type", "Deny", "Use this to set whether the Cruiser Keyword List is a list of keywords to permit or deny", new AcceptableValueList<string>("Deny", "Permit"));
+            CruiserKeywordList = MakeString(Plugin.instance.Config, "CruiserTerminal", "Cruiser Terminal Keyword List", "mirror, reflection, show mirror, restart, tp, use teleporter, teleport, itp, use inverse, inverse, door, lights, toggle lights, lol, play video, route random, random moon, refresh colors, paintme, customize, scolor, fcolor, lever, link, link2, fov, restart, reset", "Comma-separated listing of keywords to permit OR deny depending on Cruiser Terminal Filter Type");
+        }
     }
 }

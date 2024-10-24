@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.6.6]
+ - Added Soft-Compatibility for CruiserTerminal.
+	- Commands that quit the terminal now properly quit from the CruiserTerminal
+	- Added config items to permit/deny certain keywords from the cruiserterminal. Use the CruiserKeywordList as either a permit or deny list.
+
 ## [3.6.5]
  - Added config item [TerminalInputMaxChars] to adjust maximum character input for the majority of terminal nodes. Leave at -1 to make no changes.
  - Updated handling for switch command matching to a player name per request from @thephxrises on the modding discord

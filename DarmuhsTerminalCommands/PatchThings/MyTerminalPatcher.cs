@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using TerminalStuff.Compatibility;
 using TerminalStuff.SpecialStuff;
 using UnityEngine;
 using UnityEngine.Video;
@@ -15,6 +16,7 @@ namespace TerminalStuff
         {
             static void Postfix(string playerWord, ref TerminalKeyword __result)
             {
+
                 if (!ConfigSettings.TerminalConflictResolution.Value)
                     return;
 

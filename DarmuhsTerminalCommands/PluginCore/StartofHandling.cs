@@ -1,7 +1,9 @@
 ﻿using OpenLib.Common;
 using OpenLib.CoreMethods;
+using Steamworks.Ugc;
 using System.Collections;
 using System.Collections.Generic;
+using TerminalStuff.Compatibility;
 using TerminalStuff.VisualCore;
 using UnityEngine;
 using static OpenLib.ConfigManager.ConfigSetup;
@@ -298,14 +300,28 @@ namespace TerminalStuff
 
         }
 
+        internal static void ParseCruiserTerm(ref TerminalNode result)
+        {
+            if (!Plugin.instance.CruiserTerm)
+                return;
+
+            string query = CommonStringStuff.GetCleanedScreenText(Plugin.instance.Terminal);
+
+            if (!CruiserTerm.CanParseWord(query))
+            {
+                Plugin.Spam("NO ACCESS\n\n\n\n\n\n\n\nCRUISERTERMINAL BLOCKED WORD");
+                result = CruiserTerm.NoAccess;
+                return;
+            }
+        }
+
         internal static void FirstCheck(TerminalNode initialResult)
         {
-            if (ConfigSettings.TerminalHistory.Value)
-            {
-                string s = CommonStringStuff.GetCleanedScreenText(Plugin.instance.Terminal);
-                TerminalHistory.AddToCommandHistory(CommonStringStuff.RemovePunctuation(s));
-            }
+            string query = CommonStringStuff.GetCleanedScreenText(Plugin.instance.Terminal);
+            if (ConfigSettings.TerminalHistory.Value)                
+                TerminalHistory.AddToCommandHistory(CommonStringStuff.RemovePunctuation(query));
 
+            
             if (initialResult == null)
                 return;
 

@@ -29,6 +29,7 @@
  - Expanded compatibility with LethalLevelLoader, OpenBodyCams, and TwoRadarMaps!
 	- [NEW IN 3.5.7] Will now check if BodyCam upgrade has been purchased when using OpenBodyCams cameras!
  - [NEW IN 3.6.0] Loot commands have added compatiblility with ShipInventory
+ - [NEW IN 3.6.6] Special config items for CruiserTerminal compatibility!
 
 ### Comfort Commands:
  - Lobby: Display the current lobby name.
