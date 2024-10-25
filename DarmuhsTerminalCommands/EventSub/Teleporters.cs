@@ -1,4 +1,5 @@
-﻿using static OpenLib.ConfigManager.ConfigSetup;
+﻿using System.Collections.Generic;
+using static OpenLib.ConfigManager.ConfigSetup;
 using static OpenLib.CoreMethods.AddingThings;
 
 namespace TerminalStuff.EventSub
@@ -24,7 +25,13 @@ namespace TerminalStuff.EventSub
 
             Plugin.MoreLogs("NormalTP instance detected, adding keyword");
 
-            AddNodeManual("Use Teleporter", ConfigSettings.TpKeywords, ShipControls.RegularTeleporterCommand, true, 0, defaultListing, defaultManaged, "CONTROLS", "Activate the Teleporter. Type a crewmate's name after the command to target them");
+            TerminalNode tpNode = AddNodeManual("Use Teleporter", ConfigSettings.TpKeywords, ShipControls.RegularTeleporterCommand, true, 0, defaultListing, defaultManaged, "CONTROLS", "Activate the Teleporter. Type a crewmate's name after the command to target them");
+
+            List<string> keywords = OpenLib.Common.CommonStringStuff.GetKeywordsPerConfigItem(ConfigSettings.TpKeywords.Value);
+
+            foreach (string keyword in keywords)
+                OpenLib.CoreMethods.CommandRegistry.AddSpecialListString(ref defaultListing, tpNode, keyword);
+
             if (MenuBuild.myMenuItems.Count > 0)
                 MenuBuild.RefreshMyMenu(); //refresh menu items
         }

@@ -161,6 +161,8 @@ namespace TerminalStuff
 
         internal static int PlayerNameToTarget(string query, List<TransformAndName> radarTargets)
         {
+            query = query.TrimStart();
+
             if (query.Length <= 2) //too short to compare names
                 return -1;
 
@@ -177,9 +179,42 @@ namespace TerminalStuff
                         nameToScore.Add(i, score); //map score to current target
                     }
                     else
-                        Plugin.Spam($"name does not match start of query");
+                        Plugin.Spam($"name [ {radarTargets[i].name.ToLower()} ] does not match start of query [ {query.ToLower().Substring(0, 2)} ]");
                 }
             }
+
+            if (nameToScore.Count == 0)
+                return -1;
+
+            return nameToScore.OrderBy(x => x.Value).First().Key; //order by score values and return targetnum with highest score
+        }
+
+        internal static string QueryToPlayerName(string query, List<TransformAndName> radarTargets)
+        {
+            query = query.TrimStart();
+
+            if (query.Length <= 2) //too short to compare names
+                return "";
+
+            Dictionary<string, int> nameToScore = [];
+
+            for (int i = 0; i < radarTargets.Count; i++) //iterate through all targets
+            {
+                if (TargetIsValid(radarTargets[i]?.transform)) //verify target is valid
+                {
+                    if (radarTargets[i].name.ToLower().StartsWith(query.ToLower().Substring(0, 2))) //still need to test this
+                    {
+                        int score = Levenshtein.Distance(query, radarTargets[i].name); //get score at current target
+                        Plugin.Spam($"TargetNum {i} has score {score}");
+                        nameToScore.Add(radarTargets[i].name, score); //map score to current target
+                    }
+                    else
+                        Plugin.Spam($"name [ {radarTargets[i].name.ToLower()} ] does not match start of query [ {query.ToLower().Substring(0, 2)} ]");
+                }
+            }
+
+            if (nameToScore.Count == 0)
+                return "";
 
             return nameToScore.OrderBy(x => x.Value).First().Key; //order by score values and return targetnum with highest score
         }

@@ -121,13 +121,12 @@ namespace TerminalStuff
                     if (val.Length > 1)
                     {
                         Plugin.MoreLogs("attempting to tp specific player");
-                        string playerName = val;
+                        string playerName = TerminalEvents.QueryToPlayerName(val, StartOfRound.Instance.mapScreen.radarTargets);
                         PlayerControllerB player = GetPlayerFromName(playerName);
                         if (player != null && player.isPlayerControlled)
                         {
-                            StartOfRound.Instance.mapScreen.targetedPlayer = player;
-                            tp.PressTeleportButtonOnLocalClient();
-                            displayText = $"{ConfigSettings.TpMessageString.Value}\n\tPlayer: {val}\n\n";
+                            tp.StartCoroutine(TeleportSpecificPlayer(player, tp));
+                            displayText = $"{ConfigSettings.TpMessageString.Value}\n\tPlayer: {playerName}\n\n";
                             return displayText;
                         }
                         else
@@ -149,6 +148,25 @@ namespace TerminalStuff
             }
             else displayText = "Can't teleport at this time.\n Do you even have a teleporter?\n";
             return displayText;
+        }
+
+        private static IEnumerator TeleportSpecificPlayer(PlayerControllerB player, ShipTeleporter tp)
+        {
+            if (player == null)
+                yield break;
+
+            int current = StartOfRound.Instance.mapScreen.targetTransformIndex;
+            int playerIndex = StartOfRound.Instance.mapScreen.radarTargets.FindIndex(t => t.name == player.playerUsername);
+
+            StartOfRound.Instance.mapScreen.SwitchRadarTargetAndSync(playerIndex);
+            Plugin.Spam($"Set radartarget to {player.playerUsername} @ [ {playerIndex} ]");
+            yield return new WaitForSeconds(0.1f);
+            tp.PressTeleportButtonOnLocalClient();
+            Plugin.Spam($"teleporting {player.playerUsername}");
+            yield return new WaitForSeconds(0.1f);
+            StartOfRound.Instance.mapScreen.SwitchRadarTargetAndSync(current);
+            Plugin.Spam($"Set radartarget back to {current}");
+
         }
 
         private static string BaseUseNormalTP(out string displayText, ShipTeleporter tp)

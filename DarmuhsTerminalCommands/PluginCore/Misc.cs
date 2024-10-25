@@ -8,7 +8,7 @@ namespace TerminalStuff
         {
             foreach (PlayerControllerB player in StartOfRound.Instance.allPlayerScripts)
             {
-                if (player.playerUsername.ToLower() == playerName)
+                if (player.playerUsername.ToLower() == playerName.ToLower())
                 {
                     return player;
                 }

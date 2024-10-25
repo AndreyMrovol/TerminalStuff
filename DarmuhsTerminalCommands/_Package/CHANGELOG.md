@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.6.7]
+ - Fixed issue with gamble command where input failures would cause the terminal to get stuck waiting for a confirm/deny
+	- Thanks @weoneguy for the report on discord
+ - Fixed/Updated tp name matching to properly take input for a player name and tp the best matching name
+ - Added handling for when no names match the input provided to the better name matching used by switch & tp
+
 ## [3.6.6]
  - Added Soft-Compatibility for CruiserTerminal.
 	- Commands that quit the terminal now properly quit from the CruiserTerminal

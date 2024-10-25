@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TerminalStuff.EventSub;
+using UnityEngine;
 using static TerminalStuff.DynamicCommands;
 using static TerminalStuff.StringStuff;
 
@@ -15,6 +16,7 @@ namespace TerminalStuff
 
             if (val.Length < 1)
             {
+                TerminalGeneral.CancelConfirmation = true;
                 validGambleValue = false;
                 string displayText = "Unable to gamble at this time...\r\n\tInvalid input detected, no digits were provided!\r\n\r\n";
                 Plugin.WARNING("not enough words for the gamble command!");
@@ -23,6 +25,8 @@ namespace TerminalStuff
 
             if (int.TryParse(val, out int parsedValue))
             {
+                if(parsedValue < 0 || parsedValue > 100)
+                    return BadInputGamble(val);
                 newParsedValue = true;
                 validGambleValue = true;
                 Plugin.MoreLogs("))))))))))))))))))Integer Established");
@@ -33,11 +37,17 @@ namespace TerminalStuff
             }
             else
             {
-                validGambleValue = false;
-                string displayText = $"Unable to gamble at this time...\r\n\tInvalid input detected, digits were provided!\r\n\tInput: {val}\r\n\r\n";
-                Plugin.WARNING("there are no digits for the gamble command!");
-                return displayText;
+                return BadInputGamble(val);
             }
+        }
+
+        internal static string BadInputGamble(string val)
+        {
+            TerminalGeneral.CancelConfirmation = true;
+            validGambleValue = false;
+            string displayText = $"Unable to gamble at this time...\r\n\tInvalid input detected!\r\n\tInput: {val}\r\n\r\n";
+            Plugin.WARNING("there are no digits for the gamble command!");
+            return displayText;
         }
 
         internal static string GambleConfirm()

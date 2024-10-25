@@ -6,6 +6,8 @@ namespace TerminalStuff.EventSub
     internal class TerminalGeneral
     {
         internal static TerminalNode lastNodeFormatted;
+        internal static bool CancelConfirmation = false;
+        internal static TerminalNode GeneralDummy = OpenLib.CoreMethods.AddingThings.CreateDummyNode("", true, "");
         internal static void OnTerminalDisable()
         {
             //Plugin.instance.Config.Reload();
@@ -18,6 +20,17 @@ namespace TerminalStuff.EventSub
 
         internal static void OnLoadNode(TerminalNode node)
         {
+            Plugin.Spam($"CancelConfirmation: {CancelConfirmation}");
+
+            if (CancelConfirmation)
+            {
+                CancelConfirmation = false;
+                GeneralDummy.displayText = node.displayText;
+                Plugin.instance.Terminal.LoadNewNode(GeneralDummy);
+                Plugin.Spam("Saving terminal user from unnecessary confirmation");
+            }
+
+
             Plugin.MoreLogs($"LoadNewNode patch, nNS: {NetHandler.netNodeSet}");
             Plugin.Spam(Plugin.instance.Terminal.screenText.textComponent.textInfo.lineCount.ToString());
 
