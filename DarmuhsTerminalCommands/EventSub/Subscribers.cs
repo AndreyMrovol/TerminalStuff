@@ -38,6 +38,7 @@ namespace TerminalStuff.EventSub
             OpenLib.PlayerUpdatePatch.usePatch = true;
             EventManager.PlayerIsInShip.AddListener(AlwaysOnStuff.PlayerShipChanged);
             EventManager.PlayerIsDead.AddListener(AlwaysOnStuff.IsPlayerDead);
+            EventManager.SpecatingPlayerIsInShip.AddListener(AlwaysOnStuff.OnSpecateShipCheck);
 
             //Unique
             EventManager.GetNewDisplayText.AddListener(TerminalParse.OnNewDisplayText);

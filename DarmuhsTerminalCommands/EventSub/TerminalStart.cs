@@ -39,6 +39,7 @@ namespace TerminalStuff.EventSub
             ShortcutBindings.InitSavedShortcuts();
             TerminalCustomizer.TerminalCustomization();
             MenuBuild.CategoryList();
+            SaveManager.InitUnlocks(); // sync upgrades status for this save
         }
 
 
@@ -107,7 +108,6 @@ namespace TerminalStuff.EventSub
             SplitViewChecks.CheckForSplitView("neither");
             Plugin.MoreLogs("disabling cams views");
             ViewCommands.isVideoPlaying = false;
-            NetHandler.UpgradeStatusCheck(); // sync upgrades status for this save
             TerminalClockStuff.StartClockCoroutine();
             AlwaysOnStart(Plugin.instance.Terminal, startNode);
             yield return new WaitForSeconds(0.1f);

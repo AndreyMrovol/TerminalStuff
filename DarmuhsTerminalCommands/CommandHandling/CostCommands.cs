@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using TerminalStuff.EventSub;
+using TerminalStuff.PluginCore;
 using UnityEngine;
 
 namespace TerminalStuff
@@ -18,25 +20,6 @@ namespace TerminalStuff
         internal static string currentPackName;
         internal static string buyPackName;
         internal static Dictionary<Item, int> itemsIndexed = [];
-
-        internal static bool CheckUpgradeStatus(ref bool upgrade, string itemName)
-        {
-            if (upgrade)
-            {
-                Plugin.MoreLogs("upgrade is already set to true");
-                return upgrade;
-            }
-
-            if (!GameNetworkManager.Instance.localPlayerController.IsHost)
-            {
-                NetHandler.Instance.GetItemStatusServerRpc(itemName, upgrade);
-                return upgrade;
-            }
-
-            upgrade = CheckUnlockableStatus(itemName);
-
-            return upgrade;
-        }
 
         internal static bool CheckUnlockableStatus(string itemName)
         {
@@ -72,10 +55,28 @@ namespace TerminalStuff
             return false;
         }
 
+        internal static void UpdateUnlockStatus()
+        {
+            enemyScanUpgradeEnabled = false;
+            vitalsUpgradeEnabled = false;
+
+            foreach(string name in SaveManager.AllUpgradesUnlocked)
+            {
+                Plugin.Spam($"Updating upgrade status for {name}");
+
+                if (name == "BioscanPatch")
+                    enemyScanUpgradeEnabled = true;
+                else if (name == "VitalsPatch")
+                    vitalsUpgradeEnabled = true;
+                else
+                    Plugin.WARNING($"Unexpected upgrade unlock name [ {name} ]");
+            }
+
+        }
+
         internal static string BioscanCommand()
         {
             string displayText;
-            CheckUpgradeStatus(ref enemyScanUpgradeEnabled, "BioscanPatch");
 
             if (RoundManager.Instance != null)
             {
@@ -157,7 +158,6 @@ namespace TerminalStuff
         internal static string VitalsCommand()
         {
             string displayText;
-            CheckUpgradeStatus(ref vitalsUpgradeEnabled, "VitalsPatch");
             PlayerControllerB getPlayerInfo = StartOfRound.Instance.mapScreen.targetedPlayer;
 
             if (getPlayerInfo == null)
@@ -217,6 +217,7 @@ namespace TerminalStuff
             }
             else
             {
+                TerminalGeneral.CancelConfirmation = true;
                 string displayText = $"BioScanner software has already been updated to the latest patch (2.0).\r\n\r\n";
                 return displayText;
             }
@@ -230,6 +231,7 @@ namespace TerminalStuff
             }
             else
             {
+                TerminalGeneral.CancelConfirmation = true;
                 string displayText = $"Vitals Scanner software has already been updated to the latest patch (2.0).\r\n\r\n";
                 return displayText;
             }
@@ -342,7 +344,7 @@ namespace TerminalStuff
             else
             {
                 Plugin.MoreLogs("not enough credits to purchase, sending to cannot afford display");
-                Plugin.instance.escapeConfirmation = true;
+                TerminalGeneral.CancelConfirmation = true;
                 return $"You cannot afford the {currentPackName} PurchasePack ({itemCount} items).\r\n\r\n\tTotal Cost: ■<color=#BD3131>{totalCost}</color>\r\n\r\n";
             }
         }
@@ -584,7 +586,8 @@ namespace TerminalStuff
             {
                 int newCreds = Plugin.instance.Terminal.groupCredits - ConfigSettings.BioScanUpgradeCost.Value;
                 string displayText = $"Biomatter Scanner software has been updated to the latest patch (2.0) and now provides more detailed information!\r\n\r\nYour new balance is ■{newCreds} Credits\r\n";
-                enemyScanUpgradeEnabled = true;
+                SaveManager.NewUnlock("BioscanPatch");
+                Plugin.instance.Terminal.SyncGroupCreditsServerRpc(newCreds, Plugin.instance.Terminal.numberOfItemsInDropship);
                 Plugin.instance.Terminal.PlayTerminalAudioServerRpc(0);
                 return displayText;
             }
@@ -665,8 +668,9 @@ namespace TerminalStuff
             if (vitalsUpgradeEnabled == false)
             {
                 int newCreds = Plugin.instance.Terminal.groupCredits - ConfigSettings.VitalsUpgradeCost.Value;
-                vitalsUpgradeEnabled = true;
+                SaveManager.NewUnlock("VitalsPatch");
                 string displayText = $"Vitals Scanner software has been updated to the latest patch (2.0) and no longer requires credits to scan.\r\n\r\nYour new balance is ■{newCreds} credits\r\n";
+                Plugin.instance.Terminal.SyncGroupCreditsServerRpc(newCreds, Plugin.instance.Terminal.numberOfItemsInDropship);
                 Plugin.instance.Terminal.PlayTerminalAudioServerRpc(0);
                 return displayText;
             }

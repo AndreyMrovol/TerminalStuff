@@ -9,7 +9,6 @@ namespace TerminalStuff
 {
     internal class MoreCamStuff //UPDATE excludedNames to configItem Names for Nodes that dont specify nodeName!!!
     {
-        internal static int originalArmsLayer;
 
         internal static void ResetPluginInstanceBools()
         {

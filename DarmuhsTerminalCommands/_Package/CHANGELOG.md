@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 This project does NOT adhere to perfect Semantic Versioning. Mostly because I don't have the time to learn how to use it.
 
+## [3.6.8]
+ - Fixed issue with vitals and bioscan upgrades persisting to different game saves. They are now added to a key in the game save.
+ - Fixed issue with credits not being reduced for upgrades (bioscan/vitals) purchased.
+ - Added handling for screen logic when spectating for the different possible modes.
+ - Improved flashlight color handling. You no longer need to be holding a flashlight to run the command and it will now save your preference.
+	- Already modified flashlights will not be changed and your helmet light color will update to any flashlight you are holding.
+	- Rainbow flashlight coroutine will stop and start depending on if you have an active flashlight.
+	- Setting flashlight color preference to "default" or "normal" will return the color to it's default.
+ - Fixed issue with CruiserTerminal blocked command page still running the blocked command's added logic. (ie. tp still teleporting the player)
+
 ## [3.6.7]
  - Fixed issue with gamble command where input failures would cause the terminal to get stuck waiting for a confirm/deny
 	- Thanks @weoneguy for the report on discord

@@ -14,9 +14,9 @@ namespace TerminalStuff.Compatibility
         {
             if (cruiserTerminal == null)
             {
-                Plugin.Spam("Attempting to find cruiserTerminal instance");
+                //Plugin.Spam("Attempting to find cruiserTerminal instance");
                 cruiserTerminal = UnityEngine.Object.FindObjectOfType<CruiserTerminal.CruiserTerminal>();
-                Plugin.Spam($"Instance found [ {cruiserTerminal != null} ]");
+                //Plugin.Spam($"Instance found [ {cruiserTerminal != null} ]");
             }
 
             return cruiserTerminal != null;

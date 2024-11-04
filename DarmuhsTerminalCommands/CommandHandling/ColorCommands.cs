@@ -10,57 +10,36 @@ namespace TerminalStuff
 {
     internal class ColorCommands
     {
-        internal static Color? CustomColor { get; private set; } // Public static variable to store the flashlight color
+        internal static Color? CustomFlashColor; // static variable to store the flashlight color
         internal static string flashLightColor;
         internal static bool usingHexCode = false;
+        internal static bool RainbowFlash = false;
 
         internal static void FlashLightCommandAction(out string displayText)
         {
-            string playerName = GameNetworkManager.Instance.localPlayerController.playerUsername;
-            ulong playerID = GameNetworkManager.Instance.localPlayerController.playerClientId;
-            string colorName = flashLightColor;
+            RainbowFlash = false;
+            Color fColor = CustomFlashColor ?? Color.white; // Use white as a default color
+            Plugin.MoreLogs($"got {flashLightColor} - {fColor}");
 
-            Plugin.MoreLogs($"{playerName} trying to set color {colorName} to flashlight");
-            Color flashlightColor = CustomColor ?? Color.white; // Use white as a default color
-            Plugin.MoreLogs($"got {colorName} - {flashlightColor}");
-
-            NetHandler.Instance.FlashColorServerRpc(flashlightColor, playerID, playerName);
-            if (Plugin.instance.fSuccess && Plugin.instance.hSuccess)
-            {
-                displayText = $"Flashlight Color set to {colorName}.\r\nHelmet Light Color set to {colorName}.\r\n\r\n";
-                Plugin.instance.fSuccess = false;
-                Plugin.instance.hSuccess = false;
-                return;
-            }
-            else if (Plugin.instance.fSuccess && !Plugin.instance.hSuccess)
-            {
-                displayText = $"Flashlight Color set to {colorName}.\r\nUnable to set Helmet Light Color.\r\n\r\n";
-                Plugin.instance.fSuccess = false;
-                Plugin.instance.hSuccess = false;
-                return;
-            }
-            else
-            {
-                displayText = "Cannot set flashlight color.\r\n\r\nEnsure you have equipped a flashlight before using this command.\r\n\r\n";
-                return;
-            }
+            displayText = $"The next time you turn on your flashlight, the color will be set to {flashLightColor}!\r\n\r\n";
+            return;
         }
 
-        internal static void SetCustomColor(string colorKeyword)
+        internal static void SetCustomColor(string colorKeyword, out Color? customColor)
         {
+
             if (IsHexColorCode(colorKeyword))
             {
                 // If it's a valid hex code, convert it to a Color
                 usingHexCode = true;
-                CustomColor = HexToColor("#" + colorKeyword);
+                customColor = HexToColor("#" + colorKeyword);
                 return;
             }
             else
             {
-                CustomColor = colorKeyword.ToLower() switch
+                customColor = colorKeyword.ToLower() switch
                 {
-                    "normal" => (Color?)Color.white,
-                    "default" => (Color?)Color.white,
+                    "white" => (Color?)Color.white,
                     "red" => (Color?)Color.red,
                     "blue" => (Color?)Color.blue,
                     "yellow" => (Color?)Color.yellow,
@@ -74,7 +53,7 @@ namespace TerminalStuff
                     "orange" => (Color?)new Color32(255, 117, 24, 1),//new
                     "sasstro" => (Color?)new Color32(212, 148, 180, 1),
                     "samstro" => (Color?)new Color32(180, 203, 240, 1),
-                    _ => null,//this needs to be null for invalid results to return invalid
+                    _ => null, //this needs to be null for invalid results to return invalid
                 };
             }
         }
@@ -157,10 +136,10 @@ namespace TerminalStuff
 
             targetColor = words[1];
             Plugin.MoreLogs($"Attempting to set {words[0]} ship light colors to {targetColor}");
-            SetCustomColor(targetColor);
-            if (CustomColor.HasValue && targetColor != null)
+            SetCustomColor(targetColor, out Color? ShipColor);
+            if (ShipColor.HasValue && targetColor != null)
             {
-                newColor = CustomColor.Value;
+                newColor = ShipColor.Value;
                 displayText = $"Color of {words[0]} ship lights set to {targetColor}!\r\n\r\n";
                 return true;
             }
@@ -205,14 +184,21 @@ namespace TerminalStuff
                 Plugin.MoreLogs("running rainbow command");
                 return message;
             }
+            if(val.ToLower().Contains("normal") || val.ToLower().Contains("default"))
+            {
+                Plugin.MoreLogs("Player no longer wants a custom flashlight color!");
+                CustomFlashColor = null;
+                RainbowFlash = false;
+                return "Flashlight color preference set back to default!\n\nFlashlight's with the default color will no longer be updated!\r\n\r\n";
+            }
 
             string targetColor = val.TrimStart();
 
             Plugin.MoreLogs($"Attempting to set flashlight color to {targetColor}");
-            SetCustomColor(targetColor);
+            SetCustomColor(targetColor, out CustomFlashColor);
             flashLightColor = targetColor;
 
-            if (CustomColor.HasValue)
+            if (CustomFlashColor.HasValue)
             {
                 Plugin.MoreLogs($"Using flashlight color: {targetColor}");
                 NetHandler.Instance.endFlashRainbow = true;
@@ -244,7 +230,8 @@ namespace TerminalStuff
             }
             else
             {
-                string displayText = $"You have to be holding a flashlight to change it's color!\r\n\r\n";
+                RainbowFlash = true;
+                string displayText = $"The next flashlight you hold will be set to rainbow mode! (performance may vary)\r\n\r\n";
                 return displayText;
             }
 

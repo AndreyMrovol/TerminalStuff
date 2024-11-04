@@ -48,28 +48,7 @@ namespace TerminalStuff
             else
                 Plugin.Spam($"terminalstuffmain listing count: {ConfigSettings.TerminalStuffMain.Listing.Count} - listing count did not find node");
 
-            if (ConfigSettings.TerminalStuffMain.storePacks.ContainsKey(resultNode))
-            {
-                EscapeConfirmCheck(ref resultNode);
-            }
-
-
             return resultNode;
-        }
-
-        internal static void EscapeConfirmCheck(ref TerminalNode resultNode)
-        {
-            if (Plugin.instance.escapeConfirmation)
-            {
-                Plugin.Spam("escape confirmation detected");
-                resultNode.overrideOptions = false;
-                Plugin.instance.escapeConfirmation = false;
-            }
-            else
-            {
-                Plugin.Spam("escape confirmation is false");
-                resultNode.overrideOptions = true;
-            }
         }
 
         internal static int FindViewInt(TerminalNode givenNode)
@@ -204,6 +183,14 @@ namespace TerminalStuff
 
         internal static TerminalNode HandleAnyNode(Terminal terminal, TerminalNode currentNode, string[] words, string firstWord, out TerminalNode resultNode)
         {
+            if (Plugin.instance.CruiserTerm)
+            {
+                ParseCruiserTerm(ref currentNode);
+                resultNode = currentNode;
+                return currentNode;
+            }
+                
+
             if (firstWord == "switch")
             {
                 if (words.Length == 1)

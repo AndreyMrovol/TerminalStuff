@@ -2,12 +2,12 @@
 using OpenLib.Events;
 using System.Collections;
 using System.Collections.Generic;
+using TerminalStuff.PluginCore;
 using Unity.Netcode;
 using UnityEngine;
 using static OpenLib.CoreMethods.AddingThings;
 using static OpenLib.CoreMethods.LogicHandling;
 using static TerminalStuff.EventSub.TerminalStart;
-using Object = UnityEngine.Object;
 
 namespace TerminalStuff
 {
@@ -366,40 +366,38 @@ namespace TerminalStuff
         }
 
         [ServerRpc(RequireOwnership = false)]
-        internal void GetItemStatusServerRpc(string upgradeName, bool upgradeStatus)
+        internal void AskUpgradeStatusServerRpc()
         {
-            Plugin.MoreLogs("Server: Requesting item status");
-            GetItemStatusClientRpc(upgradeName, upgradeStatus);
+            Plugin.MoreLogs($"Server: Client requesting Update of upgrades status for all clients");
+            AskUpgradeStatusClientRpc();
         }
 
         [ClientRpc]
-        internal void GetItemStatusClientRpc(string upgradeName, bool upgradeStatus)
+        internal void AskUpgradeStatusClientRpc()
         {
             NetworkManager networkManager = base.NetworkManager;
             if (networkManager.IsHost || networkManager.IsServer)
             {
-                CostCommands.CheckUpgradeStatus(ref upgradeStatus, upgradeName);
-                SendItemStatusServerRpc(upgradeName, upgradeStatus);
-                Plugin.MoreLogs($"returning - {upgradeName} is {upgradeStatus}");
+                foreach (string name in SaveManager.AllUpgradesUnlocked)
+                    UpgradeStatusServerRpc(name);
             }
         }
 
-        [ServerRpc(RequireOwnership = true)]
-        internal void SendItemStatusServerRpc(string upgradeName, bool upgradeStatus)
+        [ServerRpc(RequireOwnership = false)]
+        internal void UpgradeStatusServerRpc(string upgradeName)
         {
-            Plugin.MoreLogs("Server: Sending item status to clients");
-            SendItemStatusClientRpc(upgradeName, upgradeStatus);
+            Plugin.MoreLogs($"Server: Updating {upgradeName} upgrade status for all clients");
+            UpgradeStatusClientRpc(upgradeName);
         }
 
         [ClientRpc]
-        internal void SendItemStatusClientRpc(string upgradeName, bool upgradeStatus)
+        internal void UpgradeStatusClientRpc(string upgradeName)
         {
-            if (upgradeName.Contains("vitalspatch"))
-                CostCommands.vitalsUpgradeEnabled = upgradeStatus;
-            else if (upgradeName.Contains("bioscanpatch"))
-                CostCommands.enemyScanUpgradeEnabled = upgradeStatus;
-            else
-                Plugin.MoreLogs($"{upgradeName} could not be updated to {upgradeStatus}");
+            if(!SaveManager.AllUpgradesUnlocked.Contains(upgradeName))
+                SaveManager.AllUpgradesUnlocked.Add(upgradeName);
+
+            Plugin.MoreLogs($"Client: Updating {upgradeName} upgrade status for all clients");
+            CostCommands.UpdateUnlockStatus();
         }
 
         [ServerRpc(RequireOwnership = true)]
@@ -552,71 +550,95 @@ namespace TerminalStuff
         {
             //Plugin.MoreLogs("Fcolor serverRpc called");
             FlashColorClientRpc(newColor, playerID, playerName);
+            HelmetLightColorClientRpc(newColor, playerID);
         }
 
         [ClientRpc]
         internal void FlashColorClientRpc(Color newColor, ulong playerID, string playerName)
         {
+            if (StartOfRound.Instance.localPlayerController.actualClientId == playerID)
+                return;
+
             //Plugin.MoreLogs("Fcolor clientRpc called");
-            SetFlash(newColor, playerID, playerName);
+            FlashlightItem getFlash = FindFlashlightObject(playerName);
+            if (getFlash != null)
+            {
+                SetFlash(ref getFlash, newColor);
+            }
+                
+            else
+                Plugin.WARNING($"Unable to find flashlight of player [ {playerName} ] to set custom color [ {newColor} ]");
         }
 
-        private GrabbableObject FindFlashlightObject(string playerName)
+        [ServerRpc(RequireOwnership = false)]
+        internal void HelmetLightColorServerRpc(Color newColor, ulong playerID)
         {
-            GrabbableObject[] objectsOfType = Object.FindObjectsOfType<GrabbableObject>();
-            GrabbableObject getMyFlash = null;
+            //Plugin.MoreLogs("Fcolor serverRpc called");
+            HelmetLightColorClientRpc(newColor, playerID);
+        }
 
-            foreach (GrabbableObject thisFlash in objectsOfType)
+        [ClientRpc]
+        internal void HelmetLightColorClientRpc(Color newColor, ulong playerID)
+        {
+            if (StartOfRound.Instance.localPlayerController.actualClientId == playerID)
+                return;
+
+            SetHelmetLight(newColor, playerID);
+        }
+
+        private FlashlightItem FindFlashlightObject(string playerName)
+        {
+            List<FlashlightItem> allflashlights = [.. FindObjectsByType<FlashlightItem>(sortMode:FindObjectsSortMode.None)];
+            FlashlightItem flashlightItem = null;
+
+            if (allflashlights.Count == 0)
+                return flashlightItem;
+
+            foreach (FlashlightItem thisFlash in allflashlights)
             {
                 if (thisFlash.playerHeldBy != null)
                 {
                     if (thisFlash.playerHeldBy.playerUsername == playerName && thisFlash.gameObject.name.Contains("Flashlight"))
                     {
-                        getMyFlash = thisFlash;
+                        flashlightItem = thisFlash.GetComponent<FlashlightItem>();
                         break;
                     }
                 }
             }
 
-            return getMyFlash;
+            return flashlightItem;
         }
 
-        private void SetFlash(Color newColor, ulong playerID, string playerName)
+        internal static void SetFlash(ref FlashlightItem flashlightItem, Color newColor)
         {
-            GrabbableObject getMyFlash = FindFlashlightObject(playerName);
 
             // Move the null check outside the loop
-            if (getMyFlash != null)
-            {
-                // Use TryGetComponent to safely get the FlashlightItem component
-                if (getMyFlash.gameObject.TryGetComponent<FlashlightItem>(out FlashlightItem flashlightItem))
-                {
-                    if (flashlightItem.flashlightBulb != null && flashlightItem.flashlightBulbGlow != null)
-                    {
-                        flashlightItem.flashlightBulb.color = newColor;
-                        flashlightItem.flashlightBulbGlow.color = newColor;
-                        Plugin.instance.fSuccess = true;
+            if (flashlightItem == null)
+                return;
 
-                        if (StartOfRound.Instance.allPlayerScripts[playerID].helmetLight)
-                        {
-                            StartOfRound.Instance.allPlayerScripts[playerID].helmetLight.color = newColor;
-                            Plugin.instance.hSuccess = true;
-                        }
-                    }
-                    else
-                    {
-                        Plugin.MoreLogs($"flashlightBulb or flashlightBulbGlow is null on {getMyFlash.gameObject}");
-                    }
-                }
-                else
-                {
-                    Plugin.Log.LogError($"FlashlightItem component not found on {getMyFlash.gameObject}");
-                }
+            if (flashlightItem.flashlightBulb != null && flashlightItem.flashlightBulbGlow != null)
+            {
+                flashlightItem.flashlightBulb.color = newColor;
+                flashlightItem.flashlightBulbGlow.color = newColor;
+            }
+            else
+            {
+                Plugin.WARNING($"flashlightBulb or flashlightBulbGlow is null");
+            }
+        }
+
+        internal static void SetHelmetLight(Color newColor, ulong playerID)
+        {
+            if (StartOfRound.Instance.allPlayerScripts[playerID].helmetLight)
+            {
+                StartOfRound.Instance.allPlayerScripts[playerID].helmetLight.color = newColor;
             }
         }
 
         internal void CycleThroughRainbowFlash()
         {
+            if (rainbowFlashEnum)
+                return;
 
             // Start the new coroutine for the rainbow effect
             string playerName = GameNetworkManager.Instance.localPlayerController.playerUsername;
@@ -635,11 +657,12 @@ namespace TerminalStuff
                 yield break;
 
             rainbowFlashEnum = true;
+            Plugin.Spam("RainbowFlashCoroutine!");
 
-            GrabbableObject getMyFlash = FindFlashlightObject(playerName);
-            if (getMyFlash != null)
+            FlashlightItem flashlight = FindFlashlightObject(playerName);
+            if (flashlight != null)
             {
-                getMyFlash.itemProperties.itemName += "(Rainbow)";
+                flashlight.itemProperties.itemName += "(Rainbow)";
 
                 while (!player.isPlayerDead && !endFlashRainbow)
                 {
@@ -647,31 +670,23 @@ namespace TerminalStuff
                     float hue = Mathf.PingPong(Time.time * rainbowSpeed, 1f);
                     Color flashlightColor = Color.HSVToRGB(hue, 1f, 1f);
 
-                    if (getMyFlash.isHeld && !getMyFlash.deactivated)
-                    {
-                        Instance.FlashColorServerRpc(flashlightColor, playerID, playerName);
+                    SetFlash(ref flashlight, flashlightColor);
+                    SetHelmetLight(flashlightColor, playerID);
+                    Instance.FlashColorServerRpc(flashlightColor, playerID, playerName);
 
-                        // Wait for a short duration before updating the color again
-                        yield return new WaitForSeconds(0.05f);
-                    }
-                    else
-                    {
-                        yield return new WaitForSeconds(0.05f);
-                    }
+                    // Wait for a short duration before updating the color again
+                    yield return new WaitForSeconds(0.05f);
 
-
-                    if (StartOfRound.Instance.allPlayersDead || getMyFlash.insertedBattery.empty || !getMyFlash.isHeld)
+                    if (StartOfRound.Instance.allPlayersDead || flashlight.insertedBattery.empty || !flashlight.isHeld || !flashlight.flashlightBulb.enabled || !ColorCommands.RainbowFlash)
                     {
                         Plugin.MoreLogs("ending flashy rainbow");
+                        flashlight.itemProperties.itemName = flashlight.itemProperties.itemName.Replace("(Rainbow)", "");
                         endFlashRainbow = true;
                     }
-
                 }
-                string returnItemName = getMyFlash.itemProperties.itemName.Replace("(Rainbow)", "");
-                getMyFlash.itemProperties.itemName = returnItemName;
             }
             else
-                Plugin.Log.LogError("no flashlights found");
+                Plugin.Log.LogWarning("no flashlights found for rainbow!");
 
             rainbowFlashEnum = false;
         }
@@ -727,16 +742,6 @@ namespace TerminalStuff
                 return;
 
         }
-
-        internal static void UpgradeStatusCheck()
-        {
-            if (ConfigSettings.TerminalBioScan.Value && ConfigSettings.TerminalBioScanPatch.Value && ConfigSettings.ModNetworking.Value)
-                Instance.GetItemStatusServerRpc("BioscanPatch", CostCommands.enemyScanUpgradeEnabled);
-
-            if (ConfigSettings.TerminalVitals.Value && ConfigSettings.TerminalVitalsUpgrade.Value && ConfigSettings.ModNetworking.Value)
-                Instance.GetItemStatusServerRpc("VitalsPatch", CostCommands.vitalsUpgradeEnabled);
-        }
-
 
     }
 }

@@ -14,7 +14,6 @@ namespace TerminalStuff
 
         internal static string KickPlayersAsk()
         {
-
             playerToKick = null;
             string displayText;
             string val = GetAfterKeyword(GetKeywordsPerConfigItem(ConfigSettings.KickKeywords.Value));

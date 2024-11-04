@@ -1,4 +1,5 @@
-﻿using static TerminalStuff.TerminalEvents;
+﻿using GameNetcodeStuff;
+using static TerminalStuff.TerminalEvents;
 
 
 namespace TerminalStuff.EventSub
@@ -119,7 +120,7 @@ namespace TerminalStuff.EventSub
 
             AlwaysOnStuff.screenSettings ??= new(ConfigSettings.TerminalScreen.Value);
 
-            if (AlwaysOnStuff.screenSettings.inUse && StartOfRound.Instance.localPlayerController.isInHangarShipRoom)
+            if (AlwaysOnStuff.screenSettings.inUse && InUseCheck(StartOfRound.Instance.localPlayerController))
             {
                 Plugin.instance.Terminal.terminalUIScreen.gameObject.SetActive(Plugin.instance.Terminal.placeableObject.inUse);
                 Plugin.Spam($"OnSetTerminalInUse {Plugin.instance.Terminal.placeableObject.inUse}");
@@ -128,9 +129,20 @@ namespace TerminalStuff.EventSub
             if (setting == "nochange")
                 return;
             else if (setting == "disable")
-                ShouldDisableTerminalLight(Plugin.instance.Terminal.terminalInUse, setting);
+                ShouldDisableTerminalLight(Plugin.instance.Terminal.placeableObject.inUse, setting);
             else if (setting == "alwayson")
                 ShouldDisableTerminalLight(false, setting);
+        }
+
+        internal static bool InUseCheck(PlayerControllerB player)
+        {
+            if (player == null)
+                return false;
+
+            if(player.spectatedPlayerScript != null && player.isPlayerDead)
+                return player.spectatedPlayerScript.isInHangarShipRoom;
+            else 
+                return player.isInHangarShipRoom;
         }
     }
 }

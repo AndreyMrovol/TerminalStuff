@@ -52,10 +52,6 @@ namespace TerminalStuff.EventSub
             {
                 TerminalClockStuff.showTime = false;
             }
-
-
-            //Cheat credits, only uncomment when testing and needing credits
-            //NetHandler.Instance.SyncCreditsServerRpc(999999, Plugin.instance.Terminal.numberOfItemsInDropship);
         }
 
         private static void CompatibilityCheck()

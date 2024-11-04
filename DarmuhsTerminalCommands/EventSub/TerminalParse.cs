@@ -6,14 +6,10 @@ namespace TerminalStuff.EventSub
 {
     internal class TerminalParse
     {
-
         internal static TerminalNode OnParseSent(ref TerminalNode node)
         {
             if (node == null) // handling cases where node is null for some reason
                 return Plugin.instance.Terminal.currentNode;
-            
-            if (Plugin.instance.CruiserTerm)
-                StartofHandling.ParseCruiserTerm(ref node);
 
             StartofHandling.FirstCheck(node);
 
@@ -68,9 +64,12 @@ namespace TerminalStuff.EventSub
             }
         }
 
-        internal static void OnNewDisplayText(TerminalNode node)
+        internal static TerminalNode OnNewDisplayText(ref TerminalNode node)
         {
             Plugin.Spam("newdisplaytext event!");
+
+            if (Plugin.instance.CruiserTerm)
+                StartofHandling.ParseCruiserTerm(ref node);
 
             if (ConfigSettings.TerminalStuffMain.storePacks.TryGetValue(node, out string value))
             {
@@ -81,7 +80,7 @@ namespace TerminalStuff.EventSub
                     CostCommands.currentPackName = node.creatureName;
             }
 
-            return;
+            return node;
         }
     }
 }

@@ -32,7 +32,7 @@
     </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <DebugSymbols>true</DebugSymbols>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
@@ -41,9 +41,9 @@
     <DebugType>embedded</DebugType>
     <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=./</PathMap>
   </PropertyGroup>
-  <Target Name="NetcodePatch" AfterTargets="PostBuildEvent">
-    <Exec Command="netcode-patch &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')" />
-  </Target>
+<Target Name="NetcodePatch" AfterTargets="PostBuildEvent">
+    <Exec Command="netcode-patch -nv 1.5.2 &quot;$(TargetPath)&quot; @(ReferencePathWithRefAssemblies->'&quot;%(Identity)&quot;', ' ')"/>
+</Target>
   <ItemGroup>
     <None Remove="darmuhngo" />
     <None Include="_Package\CHANGELOG.md" />
@@ -60,6 +60,10 @@
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL" Publicize="true">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\Lethal Company_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="BepInEx">
@@ -84,7 +88,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="LethalConstellations">
-      <HintPath>C:\Users\irroy\source\repos\LethalConstellations\Template\LethalConstellations\_Release Files\LethalConstellations.dll</HintPath>
+      <HintPath>C:\Users\user\source\repos\LethalConstellations\Template\LethalConstellations\_Release Files\LethalConstellations.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="OpenBodyCams">
@@ -93,6 +97,7 @@
     </Reference>
     <Reference Include="OpenLib">
       <HintPath>..\..\..\publicDevLibrary\OpenLib\_Release Files\OpenLib.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="ShipInventory">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\BepInEx\dontloadpls\WarperSan-ShipInventory\ShipInventory.dll</HintPath>
@@ -211,6 +216,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="PluginCore\BoolStuff.cs" />
     <Compile Include="PluginCore\Misc.cs" />
+    <Compile Include="PluginCore\SaveManager.cs" />
     <Compile Include="PluginCore\StringStuff.cs" />
     <Compile Include="PluginCore\StuffForLibrary.cs" />
     <Compile Include="PluginCore\TerminalCustomizer.cs" />

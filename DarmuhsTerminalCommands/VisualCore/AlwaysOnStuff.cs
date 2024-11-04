@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using UnityEngine;
-using static TerminalStuff.EventSub.TerminalQuit;
 
 namespace TerminalStuff
 {
@@ -17,6 +16,25 @@ namespace TerminalStuff
                 if (Plugin.instance.Terminal.terminalUIScreen.gameObject.activeSelf)
                     Plugin.instance.Terminal.terminalUIScreen.gameObject.SetActive(false);
             }
+        }
+
+        internal static void OnSpecateShipCheck()
+        {
+            if (DisableScreenOnDeath() || !screenSettings.Dynamic)
+                return;
+
+            Plugin.Spam($"Spectated Player detected in ship [ {StartOfRound.Instance.localPlayerController.spectatedPlayerScript.isInHangarShipRoom} ]");
+
+            if (screenSettings.inUse && !Plugin.instance.Terminal.terminalUIScreen.gameObject.activeSelf)
+            {
+                if(!Plugin.instance.Terminal.terminalUIScreen.gameObject.activeSelf && StartOfRound.Instance.localPlayerController.spectatedPlayerScript.isInHangarShipRoom && Plugin.instance.Terminal.placeableObject.inUse)
+                    Plugin.instance.Terminal.terminalUIScreen.gameObject.SetActive(true);
+            }
+
+            if (!Plugin.instance.Terminal.terminalUIScreen.gameObject.activeSelf && StartOfRound.Instance.localPlayerController.spectatedPlayerScript.isInHangarShipRoom)
+                Plugin.instance.Terminal.terminalUIScreen.gameObject.SetActive(true);
+            else if (Plugin.instance.Terminal.terminalUIScreen.gameObject.activeSelf && !StartOfRound.Instance.localPlayerController.spectatedPlayerScript.isInHangarShipRoom)
+                Plugin.instance.Terminal.terminalUIScreen.gameObject.SetActive(false);
         }
 
         internal static void PlayerShipChanged()
